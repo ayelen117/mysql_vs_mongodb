@@ -1,6 +1,6 @@
 <?php
 
-use App\User;
+use App\Models\Mysql\User;
 /*
 |--------------------------------------------------------------------------
 | Model Factories

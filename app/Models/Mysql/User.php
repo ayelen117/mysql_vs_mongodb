@@ -1,14 +1,16 @@
 <?php
 
-namespace App;
+namespace App\Models\Mysql;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Jenssegers\Mongodb\Eloquent\HybridRelations;
 
 class User extends Authenticatable
 {
-    use Notifiable;
+    use Notifiable, HybridRelations;
 
+    protected $connection = 'mysql';
     /**
      * The attributes that are mass assignable.
      *
@@ -23,7 +25,7 @@ class User extends Authenticatable
      *
      * @var array
      */
-    protected $hidden = [
-        'password', 'remember_token',
-    ];
+//    protected $hidden = [
+//        'password', 'remember_token',
+//    ];
 }

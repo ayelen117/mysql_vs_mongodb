@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Mysql\User;
 /*
 |--------------------------------------------------------------------------
 | Model Factories
@@ -11,7 +12,7 @@
 |
 */
 
-$factory->define(App\User::class, function (Faker\Generator $faker) {
+$factory->define(User::class, function (Faker\Generator $faker) {
     static $password;
 
     return [

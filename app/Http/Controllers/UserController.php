@@ -3,9 +3,17 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use MongoDB\BSON\ObjectID;
+use MongoDB\Client;
 
 class UserController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->client = new Client();
+        $this->users = $this->client->tesis->users;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -13,7 +21,10 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
+        $result = $this->users->find()->toArray();
+        $result = json_encode($result);
+
+        return response($result, 200);
     }
 
     /**
@@ -34,7 +45,13 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->all();
+
+        $user_id = $this->users->insertOne([$data])->getInsertedId();
+        $user = $this->users->findOne(['_id' => new ObjectID($user_id)]);
+        $result = json_encode($user);
+
+        return response($result, 200);
     }
 
     /**
@@ -45,7 +62,10 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        //
+        $user = $this->users->findOne(['_id' => new ObjectID($id)]);
+        $result = json_encode($user);
+
+        return response($result, 200);
     }
 
     /**

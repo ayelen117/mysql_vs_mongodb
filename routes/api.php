@@ -17,3 +17,4 @@ Route::resource('users', 'UserController');
 Route::resource('currencies', 'CurrencyController');
 Route::resource('companies', 'CompanyController');
 Route::resource('responsibilities', 'ResponsibilityController');
+Route::resource('identifications', 'IdentificationController');

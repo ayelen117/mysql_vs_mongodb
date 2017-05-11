@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Mysql\User;
+use App\Models\Mysql\Company;
 /*
 |--------------------------------------------------------------------------
 | Model Factories
@@ -27,5 +28,21 @@ $factory->define(User::class, function (Faker\Generator $faker) {
         'activation_code' => null,
         'activated_at' => null,
         'last_login' => null,
+    ];
+});
+
+$factory->define(Company::class, function (Faker\Generator $faker) {
+    return [
+        'name' => $faker->company,
+        'status' => 'activated',
+        'abbreviation' => $faker->numerify('t_###'),
+        'description' => $faker->sentence(5),
+        'cuit' => '2735663969',
+        'legal_name' => $faker->company,
+        'gross_income' => $faker->numerify('####'),
+        'activities_start_date' => '',
+        'street_name' => $faker->streetName,
+        'street_number' => $faker->numberBetween(150, 900),
+        'phone' => $faker->phoneNumber,
     ];
 });

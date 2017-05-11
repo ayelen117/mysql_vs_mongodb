@@ -2,6 +2,7 @@
 
 use App\Models\Mysql\User;
 use App\Models\Mysql\Company;
+use App\Models\Mysql\Category;
 /*
 |--------------------------------------------------------------------------
 | Model Factories
@@ -44,5 +45,11 @@ $factory->define(Company::class, function (Faker\Generator $faker) {
         'street_name' => $faker->streetName,
         'street_number' => $faker->numberBetween(150, 900),
         'phone' => $faker->phoneNumber,
+    ];
+});
+
+$factory->define(Category::class, function (Faker\Generator $faker) {
+    return [
+        'name' => $faker->numerify('category_###'),
     ];
 });

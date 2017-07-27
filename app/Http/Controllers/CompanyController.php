@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\GeneralHelper;
 use Illuminate\Http\Request;
 use MongoDB\BSON\ObjectID;
 use MongoDB\Client;
@@ -10,11 +11,13 @@ class CompanyController extends Controller
 {
     public $client;
     public $companies;
+    public $helper;
 
     public function __construct()
     {
         $this->client = new Client();
         $this->companies = $this->client->tesis->companies;
+        $this->helper = new GeneralHelper();
     }
 
     /**
@@ -51,6 +54,9 @@ class CompanyController extends Controller
     {
         $data = $request->all();
 
+        $data = $this->helper->setRelationships($data, 'users', 'user_id');
+        $data = $this->helper->setRelationships($data, 'currencies', 'currencies');
+        $data = $this->helper->setRelationships($data, 'responsibilities', 'responsibility_id');
         $company_id = $this->companies->insertOne($data)->getInsertedId();
         $company = $this->companies->findOne(['_id' => new ObjectID($company_id)]);
         $result = json_encode($company);
@@ -96,6 +102,10 @@ class CompanyController extends Controller
     public function update(Request $request, $id)
     {
         $data = $request->all();
+        $data = $this->helper->setRelationships($data, 'users', 'user_id');
+        $data = $this->helper->setRelationships($data, 'currencies', 'currencies');
+        $data = $this->helper->setRelationships($data, 'responsibilities', 'responsibility_id');
+
         $this->companies->updateOne(
             ['_id' => new ObjectID($id)],
             ['$set' => $data]

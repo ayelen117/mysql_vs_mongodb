@@ -36,6 +36,8 @@ $factory->define(Company::class, function (Faker\Generator $faker) {
     return [
         'name' => $faker->company,
         'status' => 'activated',
+        'user_id' => [],
+        'currencies' => [],
         'abbreviation' => $faker->numerify('t_###'),
         'description' => $faker->sentence(5),
         'cuit' => '2735663969',
@@ -45,11 +47,16 @@ $factory->define(Company::class, function (Faker\Generator $faker) {
         'street_name' => $faker->streetName,
         'street_number' => $faker->numberBetween(150, 900),
         'phone' => $faker->phoneNumber,
+        'fiscal_ws' => '',
+        'fiscal_ws_status' => 0,
+        'responsibility_id' => [],
     ];
 });
 
 $factory->define(Category::class, function (Faker\Generator $faker) {
     return [
         'name' => $faker->numerify('category_###'),
+        'company_id' => [],
+        'parent_id' => [],
     ];
 });

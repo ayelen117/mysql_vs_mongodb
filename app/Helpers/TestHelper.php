@@ -22,7 +22,7 @@ class TestHelper
         $total = $this->$collection_name->count();
         $skip = mt_rand(0, $total);
         $options = [
-            //'skip' => $skip < 0 ? 0 : $skip,
+            'skip' => $skip < 0 ? 0 : $skip,
             'limit' => $limit,
         ];
         if ($limit > 1){

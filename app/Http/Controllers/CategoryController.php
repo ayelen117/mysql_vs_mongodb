@@ -5,16 +5,19 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use MongoDB\BSON\ObjectID;
 use MongoDB\Client;
+use App\Helpers\GeneralHelper;
 
 class CategoryController extends Controller
 {
     public $client;
     public $categories;
+    public $helper;
 
     public function __construct()
     {
         $this->client = new Client();
         $this->categories = $this->client->tesis->categories;
+        $this->helper = new GeneralHelper();
     }
 
     /**
@@ -51,6 +54,7 @@ class CategoryController extends Controller
     {
         $data = $request->all();
 
+        $data = $this->helper->setRelationships($data, 'companies', 'company_id');
         $category_id = $this->categories->insertOne($data)->getInsertedId();
         $category = $this->categories->findOne(['_id' => new ObjectID($category_id)]);
         $result = json_encode($category);
@@ -96,6 +100,7 @@ class CategoryController extends Controller
     public function update(Request $request, $id)
     {
         $data = $request->all();
+        $data = $this->helper->setRelationships($data, 'companies', 'company_id');
         $this->categories->updateOne(
             ['_id' => new ObjectID($id)],
             ['$set' => $data]

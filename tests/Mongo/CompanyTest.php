@@ -50,8 +50,7 @@ class CompanyTest extends \TestCase
     public function test_if_company_show()
     {
         $company = $this->companies->findOne([], ['sort' => ['_id' => -1],]);
-        $company_id = (string)$company['_id'];
-        $this->callGet(route('companies.show', ['company_id' => $company_id]));
+        $this->callGet(route('companies.show', ['company_id' => $company->_id]));
         $this->assertResponseOk();
     }
 
@@ -72,9 +71,8 @@ class CompanyTest extends \TestCase
     public function test_if_company_deletes()
     {
         $company = $this->companies->findOne([], ['sort' => ['_id' => -1],]);
-        $company_id = (string)$company['_id'];
 
-        $this->callDelete(route('companies.destroy', ['company_id' => $company_id]));
+        $this->callDelete(route('companies.destroy', ['company_id' => $company->_id]));
         $this->assertResponseOk();
     }
 }

@@ -20,3 +20,4 @@ Route::resource('responsibilities', 'ResponsibilityController');
 Route::resource('identifications', 'IdentificationController');
 Route::resource('receipts', 'ReceiptController');
 Route::resource('categories', 'CategoryController');
+Route::resource('fiscalpos', 'FiscalposController');

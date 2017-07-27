@@ -3,6 +3,7 @@
 use App\Models\Mysql\User;
 use App\Models\Mysql\Company;
 use App\Models\Mysql\Category;
+use App\Models\Mysql\Fiscalpos;
 /*
 |--------------------------------------------------------------------------
 | Model Factories
@@ -58,5 +59,15 @@ $factory->define(Category::class, function (Faker\Generator $faker) {
         'name' => $faker->numerify('category_###'),
         'company_id' => null,
         'parent_id' => null,
+    ];
+});
+
+$factory->define(Fiscalpos::class, function (Faker\Generator $faker) {
+    return [
+        'number' => $faker->numerify('##'),
+        'pos_type' => $faker->randomElement(['electronic', 'fiscal_printer', 'manual']),
+        'alias' => $faker->word(),
+        'status' => $faker->boolean(),
+        'company_id' => null,
     ];
 });

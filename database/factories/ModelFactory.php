@@ -7,6 +7,7 @@ use App\Models\Mysql\Fiscalpos;
 use App\Models\Mysql\Product;
 use App\Models\Mysql\Pricelist;
 use App\Models\Mysql\PricelistProduct;
+use App\Models\Mysql\Entity;
 use App\Helpers\TestHelper;
 /*
 |--------------------------------------------------------------------------
@@ -148,6 +149,44 @@ $factory->define(PricelistProduct::class, function (Faker\Generator $faker) {
         'activated' => $faker->boolean(),
     ];
     $array =(new TestHelper())->addRandomObjectToArray($array, 'pricelists', 'pricelist_id');
+
+    return $array;
+});
+
+$factory->define(Entity::class, function (Faker\Generator $faker) {
+
+    $helper = new TestHelper();
+    $array = [
+        'name' => $faker->name,
+        'company_id' => null,
+        'author_id' => null,
+        'identification_id' => null,
+        'identification_number' => $faker->numerify('########'),
+        'contact_name' => $faker->firstName,
+        'street_name' => $faker->streetName,
+        'street_number' => $faker->numerify('###'),
+        'latitude' => 0,
+        'longitude' => 0,
+        'additional_info' => $faker->sentence(),
+        'email' => $faker->email,
+        'phone' => $faker->phoneNumber,
+        'pricelist_id' => null,
+        'entity_type' => $faker->randomElement(['client','supplier','employee','creditor','subdist','prevent','seller']),
+        'responsibility_id' => null,
+        'observations' => $faker->sentence(),
+        'has_account' => $faker->boolean(),
+        'balance' => $faker->randomFloat(2, -1000, 10000),
+        'balance_at' => '2017-05-06',
+        'parent'  => null,
+        'children'  => [],
+        'ancestors'  => [],
+        'transactions' => []
+    ];
+    $array = $helper->addRandomObjectToArray($array, 'companies', 'company_id');
+    $array = $helper->addRandomObjectToArray($array, 'users', 'author_id');
+    $array = $helper->addRandomObjectToArray($array, 'identifications', 'identification_id');
+    $array = $helper->addRandomObjectToArray($array, 'pricelists', 'pricelist_id');
+    $array = $helper->addRandomObjectToArray($array, 'responsibilities', 'responsibility_id');
 
     return $array;
 });

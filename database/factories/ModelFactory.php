@@ -8,6 +8,7 @@ use App\Models\Mysql\Product;
 use App\Models\Mysql\Pricelist;
 use App\Models\Mysql\PricelistProduct;
 use App\Models\Mysql\Entity;
+use App\Models\Mysql\Inventory;
 use App\Helpers\TestHelper;
 /*
 |--------------------------------------------------------------------------
@@ -187,6 +188,24 @@ $factory->define(Entity::class, function (Faker\Generator $faker) {
     $array = $helper->addRandomObjectToArray($array, 'identifications', 'identification_id');
     $array = $helper->addRandomObjectToArray($array, 'pricelists', 'pricelist_id');
     $array = $helper->addRandomObjectToArray($array, 'responsibilities', 'responsibility_id');
+
+    return $array;
+});
+
+$factory->define(Inventory::class, function (Faker\Generator $faker) {
+
+    $helper = new TestHelper();
+    $array = [
+        'qty' => 0,
+        'current_stock_qty' => 0,
+        'product_id' => null,
+        'detail_id' => null,
+        'unit_price' => $faker->randomFloat(2, 0, 10000),
+        'total_price' => 0,
+        'total' => 0,
+    ];
+    $array = $helper->addRandomObjectToArray($array, 'products', 'product_id');
+    $array = $helper->addRandomObjectToArray($array, 'details', 'detail_id');
 
     return $array;
 });

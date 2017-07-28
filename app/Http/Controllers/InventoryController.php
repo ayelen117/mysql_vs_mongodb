@@ -7,16 +7,16 @@ use MongoDB\BSON\ObjectID;
 use MongoDB\Client;
 use App\Helpers\GeneralHelper;
 
-class EntityController extends Controller
+class InventoryController extends Controller
 {
     public $client;
-    public $entities;
+    public $inventories;
     public $helper;
 
     public function __construct()
     {
         $this->client = new Client();
-        $this->entities = $this->client->tesis->entities;
+        $this->inventories = $this->client->tesis->inventories;
         $this->helper = new GeneralHelper();
     }
 
@@ -27,7 +27,7 @@ class EntityController extends Controller
      */
     public function index()
     {
-        $result = $this->entities->find()->toArray();
+        $result = $this->inventories->find()->toArray();
         $result = json_encode($result);
 
         return response($result, 200);
@@ -54,14 +54,10 @@ class EntityController extends Controller
     {
         $data = $request->all();
 
-        $data = $this->helper->setRelationships($data, 'companies', 'company_id');
-        $data = $this->helper->setRelationships($data, 'users', 'author_id');
-        $data = $this->helper->setRelationships($data, 'identifications', 'identification_id');
-        $data = $this->helper->setRelationships($data, 'pricelists', 'pricelist_id');
-        $data = $this->helper->setRelationships($data, 'responsibilities', 'responsibility_id');
-        $entity_id = $this->entities->insertOne($data)->getInsertedId();
-        $entity = $this->entities->findOne(['_id' => new ObjectID($entity_id)]);
-        $result = json_encode($entity);
+        $data = $this->helper->setRelationships($data, 'products', 'product_id');
+        $inventory_id = $this->inventories->insertOne($data)->getInsertedId();
+        $inventory = $this->inventories->findOne(['_id' => new ObjectID($inventory_id)]);
+        $result = json_encode($inventory);
 
         return response($result, 201);
     }
@@ -75,8 +71,8 @@ class EntityController extends Controller
      */
     public function show($id)
     {
-        $entity = $this->entities->findOne(['_id' => new ObjectID($id)]);
-        $result = json_encode($entity);
+        $inventory = $this->inventories->findOne(['_id' => new ObjectID($id)]);
+        $result = json_encode($inventory);
 
         return response($result, 200);
     }
@@ -104,17 +100,13 @@ class EntityController extends Controller
     public function update(Request $request, $id)
     {
         $data = $request->all();
-        $data = $this->helper->setRelationships($data, 'companies', 'company_id');
-        $data = $this->helper->setRelationships($data, 'users', 'author_id');
-        $data = $this->helper->setRelationships($data, 'identifications', 'identification_id');
-        $data = $this->helper->setRelationships($data, 'pricelists', 'pricelist_id');
-        $data = $this->helper->setRelationships($data, 'responsibilities', 'responsibility_id');
-        $this->entities->updateOne(
+        $data = $this->helper->setRelationships($data, 'products', 'product_id');
+        $this->inventories->updateOne(
             ['_id' => new ObjectID($id)],
             ['$set' => $data]
         );
-        $entity = $this->entities->findOne(['_id' => new ObjectID($id)]);
-        $result = json_encode($entity);
+        $inventory = $this->inventories->findOne(['_id' => new ObjectID($id)]);
+        $result = json_encode($inventory);
 
         return response($result, 200);
     }
@@ -128,7 +120,7 @@ class EntityController extends Controller
      */
     public function destroy($id)
     {
-        $this->entities->deleteOne(['_id' => new ObjectID($id)]);
+        $this->inventories->deleteOne(['_id' => new ObjectID($id)]);
 
         return response()->json(['status' => 'success'], 200);
     }

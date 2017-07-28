@@ -24,3 +24,4 @@ Route::resource('fiscalpos', 'FiscalposController');
 Route::resource('products', 'ProductController');
 Route::resource('pricelists', 'PricelistController');
 Route::resource('entities', 'EntityController');
+Route::resource('inventories', 'InventoryController');

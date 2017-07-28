@@ -29,5 +29,9 @@ class DatabaseSeeder extends Seeder
         $collection = $client->tesis->responsibilities;
         $responsibilities = config('seed.responsibilities');
         $collection->insertMany($responsibilities);
+
+        $collection = $client->tesis->taxes;
+        $responsibilities = config('seed.taxes');
+        $collection->insertMany($responsibilities);
     }
 }

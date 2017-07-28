@@ -21,3 +21,5 @@ Route::resource('identifications', 'IdentificationController');
 Route::resource('receipts', 'ReceiptController');
 Route::resource('categories', 'CategoryController');
 Route::resource('fiscalpos', 'FiscalposController');
+Route::resource('products', 'ProductController');
+Route::resource('pricelists', 'PricelistController');

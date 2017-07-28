@@ -212,4 +212,12 @@ return [
         ['code_afip' => '14', 'name' => 'Pequeño Contribuyente Eventual Social', 'abbreviation' => 'PS'],
     ],
 
+    'taxes' => [
+        ['code_afip' => '1', 'name' => 'No Gravado', 'percent_value' => 0],
+        ['code_afip' => '2', 'name' => 'Exento', 'percent_value' => 0],
+        ['code_afip' => '3', 'name' => '0%', 'percent_value' => 0],
+        ['code_afip' => '4', 'name' => '10,50%', 'percent_value' => 10.5],
+        ['code_afip' => '5', 'name' => '21%', 'percent_value' => 21],
+        ['code_afip' => '6', 'name' => '27%', 'percent_value' => 27],
+    ],
 ];

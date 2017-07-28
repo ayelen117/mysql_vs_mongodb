@@ -4,6 +4,10 @@ use App\Models\Mysql\User;
 use App\Models\Mysql\Company;
 use App\Models\Mysql\Category;
 use App\Models\Mysql\Fiscalpos;
+use App\Models\Mysql\Product;
+use App\Models\Mysql\Pricelist;
+use App\Models\Mysql\PricelistProduct;
+use App\Helpers\TestHelper;
 /*
 |--------------------------------------------------------------------------
 | Model Factories
@@ -70,4 +74,64 @@ $factory->define(Fiscalpos::class, function (Faker\Generator $faker) {
         'status' => $faker->boolean(),
         'company_id' => null,
     ];
+});
+
+$factory->define(Product::class, function (Faker\Generator $faker) {
+    $helper = new TestHelper();
+
+    $array = [
+        'name' => $faker->word,
+        'description' => $faker->sentence(),
+        'barcode' => $faker->isbn10,
+        'product_type' => $faker->randomElement(['product', 'service']),
+        'stock_type' => 'negative',
+        'replacement_cost' => '1',
+        'author_id' => null,
+        'company_id' => null,
+        'category_id' => null,
+        'tax_id' => null,
+        'currency_id' => null,
+        'stock' => $faker->numerify('##'),
+        'stock_alert' => $faker->numerify('##'),
+        'stock_desired' => $faker->numerify('##'),
+        'high' => '0.00',
+        'width' => '0.00',
+        'length' => '0',
+        'weight' => '0',
+        'weight_element' => '0',
+        'pricelists' => [],
+    ];
+
+    $array['pricelists'] = factory(PricelistProduct::class, 2)->make()->toArray();
+    $array = $helper->addRandomObjectToArray($array, 'companies', 'company_id');
+    $array = $helper->addRandomObjectToArray($array, 'users', 'author_id');
+    $array = $helper->addRandomObjectToArray($array, 'categories', 'category_id');
+    $array = $helper->addRandomObjectToArray($array, 'taxes', 'tax_id');
+    $array = $helper->addRandomObjectToArray($array, 'currencies', 'currency_id');
+
+    return $array;
+});
+
+$factory->define(Pricelist::class, function (Faker\Generator $faker) {
+    return [
+        'name' => $faker->word,
+        'company_id' => null,
+        'percent_price' => $faker->randomFloat(2, 0, 50),
+        'percent_subdist' => $faker->randomFloat(2, 0, 50),
+        'percent_prevent' => $faker->randomFloat(2, 0, 50),
+    ];
+});
+
+$factory->define(PricelistProduct::class, function (Faker\Generator $faker) {
+
+    $array = [
+        'pricelist_id' => null,
+        'price' => $faker->randomFloat(2, 0, 100),
+        'percent_subdist' => $faker->randomFloat(2, 0, 50),
+        'percent_prevent' => $faker->randomFloat(2, 0, 50),
+        'activated' => $faker->boolean(),
+    ];
+    $array =(new \App\Helpers\TestHelper())->addRandomObjectToArray($array, 'pricelists', 'pricelist_id');
+
+    return $array;
 });

@@ -21,7 +21,7 @@ class UserTest extends \TestCase
         $client = new Client();
         $collection = $client->tesis->users;
 
-        $objects = factory(MysqlUser::class, 1000)->make()->toArray();
+        $objects = factory(MysqlUser::class, 2)->make()->toArray();
         $collection->insertMany($objects);
     }
 
@@ -31,7 +31,6 @@ class UserTest extends \TestCase
     {
         $this->callGet(route('users.index'));
         $this->assertResponseOk();
-//        $this->dump();
     }
 
     public function test_if_user_saves()
@@ -39,38 +38,30 @@ class UserTest extends \TestCase
         $array = factory(MysqlUser::class)->make()->toArray();
         $this->callPost(route('users.store'), $array);
         $this->assertResponseStatus(201);
-//        $this->dump();
     }
 
     public function test_if_user_show()
     {
         $user = $this->users->findOne([], ['sort' => ['_id' => -1],]);
-        $user_id = (string)$user['_id'];
-        $this->callGet(route('users.show', ['user_id' => $user_id]));
+        $this->callGet(route('users.show', ['user_id' => $user->_id]));
         $this->assertResponseOk();
-//        $this->dump();
     }
 
     public function test_if_user_update()
     {
         $user = $this->users->findOne([], ['sort' => ['_id' => -1],]);
-        $user_id = (string)$user['_id'];
         $array = factory(MysqlUser::class)->make()->toArray();
         unset($array['name']);
 
-        $this->callPatch(route('users.update', ['user_id' => $user_id]), $array);
+        $this->callPatch(route('users.update', ['user_id' => $user->_id]), $array);
         $this->assertResponseOk();
-//        $this->dump();
     }
 
 
     public function test_if_user_deletes()
     {
         $user = $this->users->findOne([], ['sort' => ['_id' => -1],]);
-        $user_id = (string)$user['_id'];
-
-        $this->callDelete(route('users.destroy', ['user_id' => $user_id]));
+        $this->callDelete(route('users.destroy', ['user_id' => $user->_id]));
         $this->assertResponseOk();
-//        $this->dump();
     }
 }

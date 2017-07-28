@@ -19,7 +19,6 @@ class ResponsibilityTest extends \TestCase
     {
         $this->callGet(route('responsibilities.index'));
         $this->assertResponseOk();
-//        $this->dump();
     }
 
     public function test_if_responsibility_show()
@@ -28,6 +27,5 @@ class ResponsibilityTest extends \TestCase
         $responsibility_id = (string)$responsibility['_id'];
         $this->callGet(route('responsibilities.show', ['responsibility_id' => $responsibility_id]));
         $this->assertResponseOk();
-//        $this->dump();
     }
 }

@@ -38,7 +38,9 @@ $factory->define(User::class, function (Faker\Generator $faker) {
 });
 
 $factory->define(Company::class, function (Faker\Generator $faker) {
-    return [
+    $helper = new TestHelper();
+
+    $array =  [
         'name' => $faker->company,
         'status' => 'activated',
         'user_id' => null,
@@ -56,24 +58,35 @@ $factory->define(Company::class, function (Faker\Generator $faker) {
         'fiscal_ws_status' => 0,
         'responsibility_id' => null,
     ];
+    $array = $helper->addRandomObjectToArray($array, 'users', 'user_id');
+    $array = $helper->addRandomObjectToArray($array, 'currencies', 'currencies', 2);
+    $array = $helper->addRandomObjectToArray($array, 'responsibilities', 'responsibility_id');
+
+    return $array;
 });
 
 $factory->define(Category::class, function (Faker\Generator $faker) {
-    return [
+    $array =  [
         'name' => $faker->numerify('category_###'),
         'company_id' => null,
         'parent_id' => null,
     ];
+    $array = (new TestHelper())->addRandomObjectToArray($array, 'companies', 'company_id');
+
+    return $array;
 });
 
 $factory->define(Fiscalpos::class, function (Faker\Generator $faker) {
-    return [
+    $array =  [
         'number' => $faker->numerify('##'),
         'pos_type' => $faker->randomElement(['electronic', 'fiscal_printer', 'manual']),
         'alias' => $faker->word(),
         'status' => $faker->boolean(),
         'company_id' => null,
     ];
+    $array = (new TestHelper())->addRandomObjectToArray($array, 'companies', 'company_id');
+
+    return $array;
 });
 
 $factory->define(Product::class, function (Faker\Generator $faker) {
@@ -113,13 +126,16 @@ $factory->define(Product::class, function (Faker\Generator $faker) {
 });
 
 $factory->define(Pricelist::class, function (Faker\Generator $faker) {
-    return [
+    $array =  [
         'name' => $faker->word,
         'company_id' => null,
         'percent_price' => $faker->randomFloat(2, 0, 50),
         'percent_subdist' => $faker->randomFloat(2, 0, 50),
         'percent_prevent' => $faker->randomFloat(2, 0, 50),
     ];
+    $array = (new TestHelper())->addRandomObjectToArray($array, 'companies', 'company_id');
+
+    return $array;
 });
 
 $factory->define(PricelistProduct::class, function (Faker\Generator $faker) {
@@ -131,7 +147,7 @@ $factory->define(PricelistProduct::class, function (Faker\Generator $faker) {
         'percent_prevent' => $faker->randomFloat(2, 0, 50),
         'activated' => $faker->boolean(),
     ];
-    $array =(new \App\Helpers\TestHelper())->addRandomObjectToArray($array, 'pricelists', 'pricelist_id');
+    $array =(new TestHelper())->addRandomObjectToArray($array, 'pricelists', 'pricelist_id');
 
     return $array;
 });

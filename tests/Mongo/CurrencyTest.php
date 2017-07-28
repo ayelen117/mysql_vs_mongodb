@@ -19,7 +19,6 @@ class CurrencyTest extends \TestCase
     {
         $this->callGet(route('currencies.index'));
         $this->assertResponseOk();
-//        $this->dump();
     }
 
     public function test_if_currency_show()
@@ -28,6 +27,5 @@ class CurrencyTest extends \TestCase
         $currency_id = (string)$currency['_id'];
         $this->callGet(route('currencies.show', ['currency_id' => $currency_id]));
         $this->assertResponseOk();
-//        $this->dump();
     }
 }

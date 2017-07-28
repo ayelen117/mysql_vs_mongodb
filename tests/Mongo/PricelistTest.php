@@ -39,8 +39,6 @@ class PricelistTest extends \TestCase
     public function test_if_pricelist_saves()
     {
         $array = factory(MysqlPricelist::class)->make()->toArray();
-        $array = $this->helper->addRandomObjectToArray($array, 'companies', 'company_id');
-
         $this->callPost(route('pricelists.store'), $array);
         $this->assertResponseStatus(201);
     }
@@ -56,12 +54,9 @@ class PricelistTest extends \TestCase
     {
         $pricelist = $this->pricelists->findOne([], ['sort' => ['_id' => -1],]);
         $array = factory(MysqlPricelist::class)->make()->toArray();
-        $array = $this->helper->addRandomObjectToArray($array, 'companies', 'company_id');
-
         $this->callPatch(route('pricelists.update', ['pricelist_id' => $pricelist->_id]), $array);
         $this->assertResponseOk();
     }
-
 
     public function test_if_pricelist_deletes()
     {

@@ -19,7 +19,6 @@ class ReceiptTest extends \TestCase
     {
         $this->callGet(route('receipts.index'));
         $this->assertResponseOk();
-//        $this->dump();
     }
 
     public function test_if_receipt_show()
@@ -28,6 +27,5 @@ class ReceiptTest extends \TestCase
         $receipt_id = (string)$receipt['_id'];
         $this->callGet(route('receipts.show', ['receipt_id' => $receipt_id]));
         $this->assertResponseOk();
-//        $this->dump();
     }
 }

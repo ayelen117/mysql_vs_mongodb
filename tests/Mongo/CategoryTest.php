@@ -24,7 +24,7 @@ class CategoryTest extends \TestCase
         $client = new Client();
         $collection = $client->tesis->categories;
 
-        $objects = factory(MysqlCategory::class, 10)->make()->toArray();
+        $objects = factory(MysqlCategory::class, 2)->make()->toArray();
         $collection->insertMany($objects);
     }
 
@@ -39,8 +39,6 @@ class CategoryTest extends \TestCase
     public function test_if_category_saves()
     {
         $array = factory(MysqlCategory::class)->make()->toArray();
-        $array = $this->helper->addRandomObjectToArray($array, 'companies', 'company_id');
-
         $this->callPost(route('categories.store'), $array);
         $this->assertResponseStatus(201);
     }
@@ -56,12 +54,9 @@ class CategoryTest extends \TestCase
     {
         $category = $this->categories->findOne([], ['sort' => ['_id' => -1],]);
         $array = factory(MysqlCategory::class)->make()->toArray();
-        $array = $this->helper->addRandomObjectToArray($array, 'companies', 'company_id');
-
         $this->callPatch(route('categories.update', ['category_id' => $category->_id]), $array);
         $this->assertResponseOk();
     }
-
 
     public function test_if_category_deletes()
     {

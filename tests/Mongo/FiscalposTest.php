@@ -24,7 +24,7 @@ class FiscalposTest extends \TestCase
         $client = new Client();
         $collection = $client->tesis->fiscalpos;
 
-        $objects = factory(MysqlFiscalpos::class, 10)->make()->toArray();
+        $objects = factory(MysqlFiscalpos::class, 2)->make()->toArray();
         $collection->insertMany($objects);
     }
 
@@ -39,8 +39,6 @@ class FiscalposTest extends \TestCase
     public function test_if_fiscalpos_saves()
     {
         $array = factory(MysqlFiscalpos::class)->make()->toArray();
-        $array = $this->helper->addRandomObjectToArray($array, 'companies', 'company_id');
-
         $this->callPost(route('fiscalpos.store'), $array);
         $this->assertResponseStatus(201);
     }
@@ -56,12 +54,9 @@ class FiscalposTest extends \TestCase
     {
         $fiscalpos = $this->fiscalpos->findOne([], ['sort' => ['_id' => -1],]);
         $array = factory(MysqlFiscalpos::class)->make()->toArray();
-        $array = $this->helper->addRandomObjectToArray($array, 'companies', 'company_id');
-
         $this->callPatch(route('fiscalpos.update', ['fiscalpos_id' => $fiscalpos->_id]), $array);
         $this->assertResponseOk();
     }
-
 
     public function test_if_fiscalpos_deletes()
     {

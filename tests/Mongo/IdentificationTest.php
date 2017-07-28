@@ -19,7 +19,6 @@ class IdentificationTest extends \TestCase
     {
         $this->callGet(route('identifications.index'));
         $this->assertResponseOk();
-//        $this->dump();
     }
 
     public function test_if_identification_show()
@@ -28,6 +27,5 @@ class IdentificationTest extends \TestCase
         $identification_id = (string)$identification['_id'];
         $this->callGet(route('identifications.show', ['identification_id' => $identification_id]));
         $this->assertResponseOk();
-//        $this->dump();
     }
 }

@@ -25,3 +25,5 @@ Route::resource('products', 'ProductController');
 Route::resource('pricelists', 'PricelistController');
 Route::resource('entities', 'EntityController');
 Route::resource('inventories', 'InventoryController');
+Route::resource('documents', 'DocumentController');
+Route::resource('details', 'DetailController');

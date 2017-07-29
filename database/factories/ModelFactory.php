@@ -9,6 +9,8 @@ use App\Models\Mysql\Pricelist;
 use App\Models\Mysql\PricelistProduct;
 use App\Models\Mysql\Entity;
 use App\Models\Mysql\Inventory;
+use App\Models\Mysql\Document;
+use App\Models\Mysql\Detail;
 use App\Helpers\TestHelper;
 /*
 |--------------------------------------------------------------------------
@@ -206,6 +208,84 @@ $factory->define(Inventory::class, function (Faker\Generator $faker) {
     ];
     $array = $helper->addRandomObjectToArray($array, 'products', 'product_id');
     $array = $helper->addRandomObjectToArray($array, 'details', 'detail_id');
+
+    return $array;
+});
+
+$factory->define(Document::class, function (Faker\Generator $faker) {
+
+    $helper = new TestHelper();
+    $array = [
+        'author_id' => null,
+        'company_id' => null,
+        'entity_id' => null,
+        'seller_id' => null,
+        'currency_id' => null,
+        'receipt_id' => null,
+        'section' => $faker->randomElement(['sales', 'purchases']),
+        'receipt_type' => $faker->randomElement(['invoice', 'credit', 'debit', 'order_sell', 'order_buy', 'quotation', 'zeta']),
+        'receipt_volume' => $faker->numerify('#'),
+        'receipt_number' => $faker->numerify('00000###'),
+        'total_commission' => $faker->randomFloat(2, 0, 10000),
+        'total_cost' => $faker->randomFloat(2, 0, 10000),
+        'total_net_price' => $faker->randomFloat(2, 0, 10000),
+        'total_final_price' => $faker->randomFloat(2, 0, 10000),
+        'emission_date' => '2017-10-20',
+        'cae' => $faker->numerify('###########'),
+        'cae_expiration_date' => '2017-10-20',
+        'observation' => $faker->sentence(),
+        'status' => $faker->randomElement(['draft', 'confirmed', 'failed']),
+        'details' => [],
+        'parent' => null,
+        'children' => [],
+        'ancestors' => [],
+        'transactions' => [],
+    ];
+
+    $array['details'] = factory(Detail::class, 3)->make()->toArray();
+    $array = $helper->addRandomObjectToArray($array, 'users', 'author_id');
+    $array = $helper->addRandomObjectToArray($array, 'companies', 'company_id');
+    $array = $helper->addRandomObjectToArray($array, 'entities', 'entity_id');
+    $array = $helper->addRandomObjectToArray($array, 'entities', 'seller_id');
+    $array = $helper->addRandomObjectToArray($array, 'currencies', 'currency_id');
+    $array = $helper->addRandomObjectToArray($array, 'receipts', 'receipt_id');
+//    $array = $helper->addRandomObjectToArray($array, 'details', 'details');
+
+    return $array;
+});
+
+$factory->define(Detail::class, function (Faker\Generator $faker) {
+
+    $helper = new TestHelper();
+    $array = [
+        'qty' => $faker->numerify('##'),
+        'product_id' => null,
+        'calculated_inventory_cost' => $faker->randomFloat(2, 10, 100),
+        'subdist_price' => $faker->randomFloat(2, 10, 100),
+        'net_unit_price' => $faker->randomFloat(2, 10, 100),
+        'final_unit_price' => $faker->randomFloat(2, 10, 100),
+        'commission' => $faker->randomFloat(2, 10, 100),
+    ];
+    $array = $helper->addRandomObjectToArray($array, 'products', 'product_id');
+
+    return $array;
+});
+
+
+
+$factory->define(Detail::class, function (Faker\Generator $faker) {
+
+    $helper = new TestHelper();
+    $array = [
+        'qty' => $faker->numerify('##'),
+        'product_id' => null,
+        'calculated_inventory_cost' => $faker->randomFloat(2, 10, 100),
+        'subdist_price' => $faker->randomFloat(2, 10, 100),
+        'net_unit_price' => $faker->randomFloat(2, 10, 100),
+        'final_unit_price' => $faker->randomFloat(2, 10, 100),
+        'commission' => $faker->randomFloat(2, 10, 100),
+    ];
+    $array = $helper->addRandomObjectToArray($array, 'products', 'product_id');
 
     return $array;
 });

@@ -11,6 +11,8 @@ use App\Models\Mysql\Entity;
 use App\Models\Mysql\Inventory;
 use App\Models\Mysql\Document;
 use App\Models\Mysql\Detail;
+use App\Models\Mysql\Transaction;
+use Carbon\Carbon;
 use App\Helpers\TestHelper;
 /*
 |--------------------------------------------------------------------------
@@ -36,8 +38,8 @@ $factory->define(User::class, function (Faker\Generator $faker) {
         'banned' => 0,
         'super_admin' => 0,
         'activation_code' => null,
-        'activated_at' => null,
-        'last_login' => null,
+        'activated_at' => Carbon::yesterday()->toDateTimeString(),
+        'last_login' => Carbon::now()->toDateTimeString(),
     ];
 });
 
@@ -54,7 +56,7 @@ $factory->define(Company::class, function (Faker\Generator $faker) {
         'cuit' => '2735663969',
         'legal_name' => $faker->company,
         'gross_income' => $faker->numerify('####'),
-        'activities_start_date' => '',
+        'activities_start_date' => Carbon::today()->subYear()->toDateTimeString(),
         'street_name' => $faker->streetName,
         'street_number' => $faker->numberBetween(150, 900),
         'phone' => $faker->phoneNumber,
@@ -179,7 +181,7 @@ $factory->define(Entity::class, function (Faker\Generator $faker) {
         'observations' => $faker->sentence(),
         'has_account' => $faker->boolean(),
         'balance' => $faker->randomFloat(2, -1000, 10000),
-        'balance_at' => '2017-05-06',
+        'balance_at' => Carbon::yesterday()->toDateTimeString(),
         'parent'  => null,
         'children'  => [],
         'ancestors'  => [],
@@ -230,9 +232,9 @@ $factory->define(Document::class, function (Faker\Generator $faker) {
         'total_cost' => $faker->randomFloat(2, 0, 10000),
         'total_net_price' => $faker->randomFloat(2, 0, 10000),
         'total_final_price' => $faker->randomFloat(2, 0, 10000),
-        'emission_date' => '2017-10-20',
+        'emission_date' => Carbon::now()->toDateTimeString(),
         'cae' => $faker->numerify('###########'),
-        'cae_expiration_date' => '2017-10-20',
+        'cae_expiration_date' => Carbon::now()->addMonth()->toDateTimeString(),
         'observation' => $faker->sentence(),
         'status' => $faker->randomElement(['draft', 'confirmed', 'failed']),
         'details' => [],
@@ -271,8 +273,6 @@ $factory->define(Detail::class, function (Faker\Generator $faker) {
     return $array;
 });
 
-
-
 $factory->define(Detail::class, function (Faker\Generator $faker) {
 
     $helper = new TestHelper();
@@ -286,6 +286,20 @@ $factory->define(Detail::class, function (Faker\Generator $faker) {
         'commission' => $faker->randomFloat(2, 10, 100),
     ];
     $array = $helper->addRandomObjectToArray($array, 'products', 'product_id');
+
+    return $array;
+});
+
+$factory->define(Transaction::class, function (Faker\Generator $faker) {
+
+    $helper = new TestHelper();
+    $array = [
+        'due_date' => Carbon::today()->toDateString(),
+        'amount' => $faker->randomFloat(2, 10, 100),
+        'currency_id' => null,
+        'observations' => $faker->sentence(),
+    ];
+    $array = $helper->addRandomObjectToArray($array, 'currencies', 'currency_id');
 
     return $array;
 });

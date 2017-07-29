@@ -187,11 +187,13 @@ $factory->define(Entity::class, function (Faker\Generator $faker) {
         'ancestors'  => [],
         'transactions' => []
     ];
+
     $array = $helper->addRandomObjectToArray($array, 'companies', 'company_id');
     $array = $helper->addRandomObjectToArray($array, 'users', 'author_id');
     $array = $helper->addRandomObjectToArray($array, 'identifications', 'identification_id');
     $array = $helper->addRandomObjectToArray($array, 'pricelists', 'pricelist_id');
     $array = $helper->addRandomObjectToArray($array, 'responsibilities', 'responsibility_id');
+    $array = $helper->addRandomObjectToArray($array, 'transactions', 'transactions', 3);
 
     return $array;
 });
@@ -251,7 +253,7 @@ $factory->define(Document::class, function (Faker\Generator $faker) {
     $array = $helper->addRandomObjectToArray($array, 'entities', 'seller_id');
     $array = $helper->addRandomObjectToArray($array, 'currencies', 'currency_id');
     $array = $helper->addRandomObjectToArray($array, 'receipts', 'receipt_id');
-//    $array = $helper->addRandomObjectToArray($array, 'details', 'details');
+    $array = $helper->addRandomObjectToArray($array, 'transactions', 'transactions',2);
 
     return $array;
 });

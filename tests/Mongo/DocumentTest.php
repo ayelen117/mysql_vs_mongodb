@@ -5,8 +5,9 @@ namespace tests\Mongo\DocumentTests;
 use App\Models\Mysql\Document as MysqlDocument;
 use MongoDB\Client;
 use App\Helpers\TestHelper;
+use tests\BaseTest;
 
-class DocumentTest extends \TestCase
+class DocumentTest extends BaseTest
 {
     public $client;
     public $documents;

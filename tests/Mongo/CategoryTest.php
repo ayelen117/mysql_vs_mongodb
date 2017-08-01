@@ -5,8 +5,9 @@ namespace tests\Mongo\CategoryTests;
 use App\Models\Mysql\Category as MysqlCategory;
 use MongoDB\Client;
 use App\Helpers\TestHelper;
+use tests\BaseTest;
 
-class CategoryTest extends \TestCase
+class CategoryTest extends BaseTest
 {
     public $client;
     public $categories;

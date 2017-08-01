@@ -5,8 +5,9 @@ namespace tests\Mongo\PricelistTests;
 use App\Models\Mysql\Pricelist as MysqlPricelist;
 use MongoDB\Client;
 use App\Helpers\TestHelper;
+use tests\BaseTest;
 
-class PricelistTest extends \TestCase
+class PricelistTest extends BaseTest
 {
     public $client;
     public $pricelists;

@@ -5,8 +5,9 @@ namespace tests\Mongo\TransactionTests;
 use App\Models\Mysql\Transaction as MysqlTransaction;
 use MongoDB\Client;
 use App\Helpers\TestHelper;
+use tests\BaseTest;
 
-class TransactionTest extends \TestCase
+class TransactionTest extends BaseTest
 {
     public $client;
     public $transactions;

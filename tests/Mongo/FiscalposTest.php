@@ -5,8 +5,9 @@ namespace tests\Mongo\FiscalposTests;
 use App\Models\Mysql\Fiscalpos as MysqlFiscalpos;
 use MongoDB\Client;
 use App\Helpers\TestHelper;
+use tests\BaseTest;
 
-class FiscalposTest extends \TestCase
+class FiscalposTest extends BaseTest
 {
     public $client;
     public $fiscalpos;

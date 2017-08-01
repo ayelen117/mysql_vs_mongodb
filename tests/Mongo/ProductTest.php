@@ -5,8 +5,9 @@ namespace tests\Mongo\ProductTests;
 use App\Models\Mysql\Product as MysqlProduct;
 use MongoDB\Client;
 use App\Helpers\TestHelper;
+use tests\BaseTest;
 
-class ProductTest extends \TestCase
+class ProductTest extends BaseTest
 {
     public $client;
     public $products;

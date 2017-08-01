@@ -5,8 +5,9 @@ namespace tests\Mongo\CompanyTests;
 use App\Helpers\TestHelper;
 use App\Models\Mysql\Company as MysqlCompany;
 use MongoDB\Client;
+use tests\BaseTest;
 
-class CompanyTest extends \TestCase
+class CompanyTest extends BaseTest
 {
     public $client;
     public $companies;

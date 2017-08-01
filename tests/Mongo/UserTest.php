@@ -4,8 +4,9 @@ namespace tests\Mongo\UserTests;
 
 use App\Models\Mysql\User as MysqlUser;
 use MongoDB\Client;
+use tests\BaseTest;
 
-class UserTest extends \TestCase
+class UserTest extends BaseTest
 {
     public $client;
     public $users;

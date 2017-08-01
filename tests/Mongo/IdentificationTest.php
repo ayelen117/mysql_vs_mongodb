@@ -3,8 +3,9 @@
 namespace tests\Mongo\IdentificationTests;
 
 use MongoDB\Client;
+use tests\BaseTest;
 
-class IdentificationTest extends \TestCase
+class IdentificationTest extends BaseTest
 {
     public $client;
     public $identifications;

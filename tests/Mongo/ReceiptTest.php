@@ -3,8 +3,9 @@
 namespace tests\Mongo\ReceiptTests;
 
 use MongoDB\Client;
+use tests\BaseTest;
 
-class ReceiptTest extends \TestCase
+class ReceiptTest extends BaseTest
 {
     public $client;
     public $receipts;

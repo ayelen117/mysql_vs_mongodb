@@ -3,8 +3,9 @@
 namespace tests\Mongo\CurrencyTests;
 
 use MongoDB\Client;
+use tests\BaseTest;
 
-class CurrencyTest extends \TestCase
+class CurrencyTest extends BaseTest
 {
     public $client;
     public $currencies;

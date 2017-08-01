@@ -3,8 +3,9 @@
 namespace tests\Mongo\ResponsibilityTests;
 
 use MongoDB\Client;
+use tests\BaseTest;
 
-class ResponsibilityTest extends \TestCase
+class ResponsibilityTest extends BaseTest
 {
     public $client;
     public $responsibilities;

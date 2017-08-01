@@ -5,8 +5,9 @@ namespace tests\Mongo\DetailTests;
 use App\Models\Mysql\Detail as MysqlDetail;
 use MongoDB\Client;
 use App\Helpers\TestHelper;
+use tests\BaseTest;
 
-class DetailTest extends \TestCase
+class DetailTest extends BaseTest
 {
     public $client;
     public $details;

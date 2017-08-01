@@ -5,8 +5,9 @@ namespace tests\Mongo\InventoryTests;
 use App\Models\Mysql\Inventory as MysqlInventory;
 use MongoDB\Client;
 use App\Helpers\TestHelper;
+use tests\BaseTest;
 
-class InventoryTest extends \TestCase
+class InventoryTest extends BaseTest
 {
     public $client;
     public $inventories;

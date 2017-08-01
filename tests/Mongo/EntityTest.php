@@ -5,8 +5,9 @@ namespace tests\Mongo\EntityTests;
 use App\Models\Mysql\Entity as MysqlEntity;
 use MongoDB\Client;
 use App\Helpers\TestHelper;
+use tests\BaseTest;
 
-class EntityTest extends \TestCase
+class EntityTest extends BaseTest
 {
     public $client;
     public $entities;

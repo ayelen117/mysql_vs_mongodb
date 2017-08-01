@@ -1,0 +1,5 @@
+{
+    "require": {
+        "arcanedev/log-viewer": "^4.3"
+    }
+}

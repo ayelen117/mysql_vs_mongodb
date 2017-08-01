@@ -164,6 +164,9 @@ return [
         Illuminate\View\ViewServiceProvider::class,
 //        Jenssegers\Mongodb\MongodbServiceProvider::class,
 
+        Arcanedev\LogViewer\LogViewerServiceProvider::class,
+        DaveJamesMiller\Breadcrumbs\ServiceProvider::class,
+        Barryvdh\Debugbar\ServiceProvider::class,
         /*
          * Package Service Providers...
          */
@@ -229,6 +232,7 @@ return [
         'Moloquent'       => Jenssegers\Mongodb\Eloquent\Model::class,
         'Form' => Collective\Html\FormFacade::class,
         'Html' => Collective\Html\HtmlFacade::class,
+        'Breadcrumbs' => DaveJamesMiller\Breadcrumbs\Facade::class,
     ],
 
 ];

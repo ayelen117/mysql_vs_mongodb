@@ -4,9 +4,12 @@
     <div class="title m-b-md">
         {{ config('app.name') }}
     </div>
+
+    <a href="{{ route('admin.dashboard') }}">
+        <i class="fa fa-home" aria-hidden="true"></i>
+        {{ __('views.backend.section.navigation.menu_0_1') }}
+    </a>
     <div class="m-b-md">
-        Sample users:<br/>
-        Admin user: admin.laravel@labs64.com / password: admin<br/>
-        Demo user: demo.laravel@labs64.com / password: demo
+        Descripción de tesis.
     </div>
 @endsection

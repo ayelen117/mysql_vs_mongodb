@@ -167,6 +167,7 @@ return [
         Arcanedev\LogViewer\LogViewerServiceProvider::class,
         DaveJamesMiller\Breadcrumbs\ServiceProvider::class,
         Barryvdh\Debugbar\ServiceProvider::class,
+
         /*
          * Package Service Providers...
          */
@@ -182,6 +183,8 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
+        App\Providers\ToJsServiceProvider::class,
+        App\Providers\MetaServiceProvider::class,
     ],
 
     /*
@@ -233,6 +236,9 @@ return [
         'Form' => Collective\Html\FormFacade::class,
         'Html' => Collective\Html\HtmlFacade::class,
         'Breadcrumbs' => DaveJamesMiller\Breadcrumbs\Facade::class,
+
+        'ToJs' => \App\Helpers\ToJs\Facades\ToJsFacade::class,
+        'Meta' => \App\Helpers\Meta\Facades\MetaFacade::class,
     ],
 
 ];

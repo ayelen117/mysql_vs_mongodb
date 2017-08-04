@@ -56,7 +56,7 @@ class CreateMysqlTables extends Migration
             $table->string('code_iso');
             $table->string('code_afip',3);
             $table->string('symbol',10);
-            $table->float('quotation_usd');
+            $table->float('quotation_usd')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -262,6 +262,26 @@ class CreateMysqlTables extends Migration
             $table->softDeletes();
         });
 
+        Schema::create('measures', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('name',96);
+            $table->string('code_afip',3);
+            $table->string('short_name',15);
+            $table->string('measure_type',96);
+            $table->float('factor');
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        Schema::create('taxes', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('name',96);
+            $table->string('code_afip',3);
+            $table->float('percent_value');
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
     }
 
     /**
@@ -290,5 +310,7 @@ class CreateMysqlTables extends Migration
         Schema::dropIfExists('receipts');
         Schema::dropIfExists('responsibilities');
         Schema::dropIfExists('transactions');
+        Schema::dropIfExists('measures');
+        Schema::dropIfExists('taxes');
     }
 }

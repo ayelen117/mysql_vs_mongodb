@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use MongoDB\BSON\ObjectID;
 use MongoDB\Client;
 use App\Helpers\GeneralHelper;
+use App\Models\Mysql\Entity as MysqlEntity;
+use App\Models\MongoDB\Entity as MongoEntity;
 
 class EntityController extends Controller
 {
@@ -53,17 +56,58 @@ class EntityController extends Controller
     public function store(Request $request)
     {
         $data = $request->all();
+        $qty = isset($data['qty']) ? (int) $data['qty'] : null;
+        $random_data = isset($data['random_data']) ? $data['random_data'] : null;
 
-        $data = $this->helper->setRelationships($data, 'companies', 'company_id');
-        $data = $this->helper->setRelationships($data, 'users', 'author_id');
-        $data = $this->helper->setRelationships($data, 'identifications', 'identification_id');
-        $data = $this->helper->setRelationships($data, 'pricelists', 'pricelist_id');
-        $data = $this->helper->setRelationships($data, 'responsibilities', 'responsibility_id');
-        $entity_id = $this->entities->insertOne($data)->getInsertedId();
-        $entity = $this->entities->findOne(['_id' => new ObjectID($entity_id)]);
-        $result = json_encode($entity);
+        if ($qty){
+            $mongo_objects = [];
+            $mysql_objects = [];
 
-        return response($result, 201);
+            if ($random_data){
+                $mongo_objects = factory(MysqlEntity::class, 'mongo', $qty)->make()->toArray();
+                foreach ($mongo_objects as &$mongo_object){
+                    (new MongoEntity())->setRelationships($mongo_object);
+                }
+
+                $mysql_objects = factory(MysqlEntity::class, 'mysql', $qty)->make()->toArray();
+            } else {
+                $mongo_object = factory(MysqlEntity::class, 'mongo')->make()->toArray();
+                $mysql_object = factory(MysqlEntity::class, 'mysql')->make()->toArray();
+                for ($i=0; $i<$qty;$i++){
+                    $mongo_objects[] = $mongo_object;
+                    $mysql_objects[] = $mysql_object;
+                }
+            }
+
+            $mysql_start = microtime(true);
+            DB::table('entities')->insert($mysql_objects);
+            $mysql_total = microtime(true) - $mysql_start;
+
+            $mongo_start = microtime(true);
+            $result = $this->entities->insertMany($mongo_objects);
+            $mongo_total = microtime(true) - $mongo_start;
+
+            $comparison = [
+                'qty' => $qty,
+                'mongo' => [
+                    'time' => $mongo_total
+                ],
+                'mysql' => [
+                    'time' => $mysql_total
+                ],
+                'data' => $result->getInsertedCount(),
+            ];
+
+            return view('admin.dashboard', ['comparison' => $comparison]);
+
+        } else {
+            (new MongoEntity())->setRelationships($data);
+            $entity_id = $this->entities->insertOne($data)->getInsertedId();
+            $entity = $this->entities->findOne(['_id' => new ObjectID($entity_id)]);
+            $result = json_encode($entity);
+
+            return response($result, 201);
+        }
     }
 
     /**
@@ -104,11 +148,7 @@ class EntityController extends Controller
     public function update(Request $request, $id)
     {
         $data = $request->all();
-        $data = $this->helper->setRelationships($data, 'companies', 'company_id');
-        $data = $this->helper->setRelationships($data, 'users', 'author_id');
-        $data = $this->helper->setRelationships($data, 'identifications', 'identification_id');
-        $data = $this->helper->setRelationships($data, 'pricelists', 'pricelist_id');
-        $data = $this->helper->setRelationships($data, 'responsibilities', 'responsibility_id');
+        (new MongoEntity())->setRelationships($data);
         $this->entities->updateOne(
             ['_id' => new ObjectID($id)],
             ['$set' => $data]

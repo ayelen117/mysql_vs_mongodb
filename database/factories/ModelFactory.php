@@ -158,7 +158,34 @@ $factory->define(PricelistProduct::class, function (Faker\Generator $faker) {
     return $array;
 });
 
-$factory->define(Entity::class, function (Faker\Generator $faker) {
+$factory->defineAs(Entity::class, 'mysql', function (Faker\Generator $faker) {
+    $array = [
+        'name' => $faker->firstName,
+        'company_id' => $faker->randomElement(Company::all()->pluck('id')->toArray()),
+        'author_id' => $faker->randomElement(User::all()->pluck('id')->toArray()),
+        'identification_id' => 25,
+        'identification_number' => 20327936221,
+        'contact_name' => $faker->firstName,
+        'street_name' => $faker->streetName,
+        'street_number' => $faker->numberBetween(150, 900),
+        'latitude' => null,
+        'longitude' => null, //-34.613265, -68.330706
+        'additional_info' => $faker->sentence(3),
+        'email' => $faker->email,
+        'phone' => $faker->phoneNumber,
+        'pricelist_id' => $faker->randomElement(Pricelist::all()->pluck('id')->toArray()),
+        'entity_type' => $faker->randomElement(['client', 'supplier', 'employee', 'creditor', 'subdist', 'seller']),
+        'responsibility_id' => $faker->randomElement([1, 5, 6]),
+        'observations' => $faker->sentence(),
+        'has_account' => $faker->boolean(),
+        'balance' => $faker->randomFloat(2, -1000, 10000),
+        'balance_at' => Carbon::yesterday()->toDateTimeString(),
+    ];
+
+    return $array;
+});
+
+$factory->defineAs(Entity::class, 'mongo', function (Faker\Generator $faker) {
 
     $helper = new TestHelper();
     $array = [

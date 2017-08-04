@@ -25,7 +25,7 @@ class EntityTest extends BaseTest
         $client = new Client();
         $collection = $client->tesis->entities;
 
-        $objects = factory(MysqlEntity::class, 2)->make()->toArray();
+        $objects = factory(MysqlEntity::class, 'mongo', 2)->make()->toArray();
         $collection->insertMany($objects);
     }
 
@@ -39,7 +39,7 @@ class EntityTest extends BaseTest
 
     public function test_if_entity_saves()
     {
-        $array = factory(MysqlEntity::class)->make()->toArray();
+        $array = factory(MysqlEntity::class, 'mongo')->make()->toArray();
         $this->callPost(route('entities.store'), $array);
         $this->assertResponseStatus(201);
     }
@@ -54,7 +54,7 @@ class EntityTest extends BaseTest
     public function test_if_entity_update()
     {
         $entity = $this->entities->findOne([], ['sort' => ['_id' => -1],]);
-        $array = factory(MysqlEntity::class)->make()->toArray();
+        $array = factory(MysqlEntity::class, 'mongo')->make()->toArray();
         $this->callPatch(route('entities.update', ['entity_id' => $entity->_id]), $array);
         $this->assertResponseOk();
     }

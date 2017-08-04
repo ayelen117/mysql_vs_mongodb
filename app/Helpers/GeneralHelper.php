@@ -39,7 +39,7 @@ class GeneralHelper
         return $relationships;
     }
 
-    public function setRelationships($data, $collection_name, $key){
+    public function setRelationships(&$data, $collection_name, $key){
         $relationships = $this->getRelationships($data, $collection_name, $key);
         $cursor_class = 'MongoDB\Driver\Cursor';
 
@@ -53,7 +53,5 @@ class GeneralHelper
                 $data[$key] = new ObjectID($relationships->_id);
             }
         }
-
-        return $data;
     }
 }

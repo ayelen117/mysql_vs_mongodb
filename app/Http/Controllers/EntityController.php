@@ -98,8 +98,7 @@ class EntityController extends Controller
                 'data' => $result->getInsertedCount(),
             ];
 
-            return view('admin.dashboard', ['comparison' => $comparison]);
-
+            return response($comparison, 201);
         } else {
             (new MongoEntity())->setRelationships($data);
             $entity_id = $this->entities->insertOne($data)->getInsertedId();

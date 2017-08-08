@@ -8,7 +8,6 @@
         <div class="col-md-12 col-sm-12 col-xs-12">
             {{ Form::open(['route'=>['entities.store'],'method' => 'post','class'=>'form-horizontal form-label-left']) }}
 
-
             <div class="form-group">
                 <label class="control-label col-md-3 col-sm-3 col-xs-12" for="name" >
                     Cantidad de registros
@@ -23,12 +22,13 @@
                     Generar registros aleatorios
                 </label>
                 <div class="col-md-6 col-sm-6 col-xs-12">
-                    <input type="checkbox" id="random-data" name="random-data"/>
+                    <input type="checkbox" id="random_data" name="random_data"/>
                 </div>
             </div>
 
             <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
                 <canvas id="myChart"></canvas>
+                <div id="result"></div>
             </div>
 
             <input type="hidden" id="mongo_time" name="mongo_time" value="@if(isset($comparison['mongo']['time'])) {{$comparison['mongo']['time']}} @endif">
@@ -37,19 +37,15 @@
             @if(isset($comparison['mongo']['time']))
                 {{$comparison['mongo']['time']}}
             @endif
-            <div class="form-group">
+            <div class="form-group center-block">
                 <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
-                    <a class="btn btn-primary" href="{{ URL::previous() }}">Reset</a>
-                    <button type="submit" class="btn btn-success"> Enviar</button>
+                    <input type="reset" class="btn btn-primary" value="Reset">
+                    <input type="button" class="btn btn-success" href="javascript:;" onclick="addDataset($('#qty').val(), $('#random-data').val());return false;" value="Calcular"/>
+                    <input type="button" class="btn btn-success" href="javascript:;" onclick="removeData();return false;" value="Eliminar"/>
+
                 </div>
             </div>
             {{ Form::close() }}
-
-            <div>
-                <pre>
-                    @if(isset($comparison['data'])) {{json_decode(json_encode($comparison['data']), true)}} @endif
-                </pre>
-            </div>
         </div>
     </div>
 @endsection
@@ -65,26 +61,17 @@
         var chart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: ["Insertion " + qty, 'Other'],
+                labels: [],
                 datasets: [
-//                        {
-//                    label: "MongoDB vs MySQL insertion",
-//                    backgroundColor: [
-//                        '#4BC0C0',
-//                        '#FF9F40',
-//                    ],
-//                    data: [mongo_time, mysql_time],
-//                    borderWidth: 0
-//                },
                     {
                         label: "MongoDB",
                         backgroundColor: '#4BC0C0',
-                        data: [mongo_time, mongo_time],
+                        data: [],
                     },
                     {
                         label: "MySQL",
                         backgroundColor: '#FF9F40',
-                        data: [mysql_time, mysql_time],
+                        data: [],
                     }
                 ]
             },
@@ -98,5 +85,44 @@
                 }
             }
         });
+
+        function addDataset(qty, random_data){
+            var data = {
+                "qty" : qty,
+                "random_data" : random_data
+            };
+            $.ajax({
+                data:  data,
+                url:   'api/entities',
+                type:  'post',
+                beforeSend: function () {
+                    $("#result").html("Procesando, espere por favor...");
+                },
+                success:  function (response) {
+                    $("#result").html("");
+                    var mongo_time = response.mongo.time;
+                    var mysql_time = response.mysql.time;
+                    var qty = response.data;
+                    addData(chart, qty, [mongo_time,mysql_time])
+                }
+            });
+        }
+
+        function addData(chart, label, data) {
+            chart.data.labels.push(label);
+            chart.data.datasets.forEach(function(dataset, key, mapObj) {
+                dataset.data.push(data[key]);
+            });
+            chart.update();
+        }
+
+        function removeData() {
+            chart.data.labels.pop();
+            chart.data.datasets.forEach(function(dataset) {
+                dataset.data.pop();
+            });
+            chart.update();
+        }
+
     </script>
 @endsection

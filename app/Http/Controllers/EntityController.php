@@ -78,14 +78,13 @@ class EntityController extends Controller
                     $mysql_objects[] = $mysql_object;
                 }
             }
+            $mongo_start = microtime(true);
+            $result = $this->entities->insertMany($mongo_objects);
+            $mongo_total = microtime(true) - $mongo_start;
 
             $mysql_start = microtime(true);
             DB::table('entities')->insert($mysql_objects);
             $mysql_total = microtime(true) - $mysql_start;
-
-            $mongo_start = microtime(true);
-            $result = $this->entities->insertMany($mongo_objects);
-            $mongo_total = microtime(true) - $mongo_start;
 
             $comparison = [
                 'qty' => $qty,

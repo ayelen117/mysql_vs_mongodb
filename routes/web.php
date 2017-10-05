@@ -47,8 +47,8 @@ Route::group(['namespace' => 'Auth'], function () {
     }
 
     // Social Authentication Routes...
-    Route::get('social/redirect/{provider}', 'SocialLoginController@redirect')->name('social.redirect');
-    Route::get('social/login/{provider}', 'SocialLoginController@login')->name('social.login');
+//    Route::get('social/redirect/{provider}', 'SocialLoginController@redirect')->name('social.redirect');
+//    Route::get('social/login/{provider}', 'SocialLoginController@login')->name('social.login');
 });
 
 /**
@@ -59,24 +59,24 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin'], fu
     // Dashboard
     Route::get('/', 'DashboardController@index')->name('dashboard');
 
-    //Users
-    Route::get('users', 'UserController@index')->name('users');
-    Route::get('users/{user}', 'UserController@show')->name('users.show');
-    Route::get('users/{user}/edit', 'UserController@edit')->name('users.edit');
-    Route::put('users/{user}', 'UserController@update')->name('users.update');
-    Route::delete('users/{user}', 'UserController@destroy')->name('users.destroy');
-    Route::get('permissions', 'PermissionController@index')->name('permissions');
-    Route::get('permissions/{user}/repeat', 'PermissionController@repeat')->name('permissions.repeat');
 });
 
+//Users
+Route::get('users', 'UserController@index')->name('users');
+Route::get('users/{user}', 'UserController@show')->name('users.show');
+Route::get('users/{user}/edit', 'UserController@edit')->name('users.edit');
+Route::put('users/{user}', 'UserController@update')->name('users.update');
+Route::delete('users/{user}', 'UserController@destroy')->name('users.destroy');
+//Route::get('permissions', 'PermissionController@index')->name('permissions');
+//Route::get('permissions/{user}/repeat', 'PermissionController@repeat')->name('permissions.repeat');
 
 Route::get('/', 'HomeController@index');
 
 /**
  * Membership
  */
-Route::group(['as' => 'protection.'], function () {
-    Route::get('membership', 'MembershipController@index')->name('membership')->middleware('protection:' . config('protection.membership.product_module_number') . ',protection.membership.failed');
-    Route::get('membership/access-denied', 'MembershipController@failed')->name('membership.failed');
-    Route::get('membership/clear-cache/', 'MembershipController@clearValidationCache')->name('membership.clear_validation_cache');
-});
+//Route::group(['as' => 'protection.'], function () {
+//    Route::get('membership', 'MembershipController@index')->name('membership')->middleware('protection:' . config('protection.membership.product_module_number') . ',protection.membership.failed');
+//    Route::get('membership/access-denied', 'MembershipController@failed')->name('membership.failed');
+//    Route::get('membership/clear-cache/', 'MembershipController@clearValidationCache')->name('membership.clear_validation_cache');
+//});

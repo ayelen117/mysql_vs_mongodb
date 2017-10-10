@@ -28,8 +28,34 @@ class EntityController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $data = $request->all();
+        $qty = isset($data['qty']) ? (int) $data['qty'] : null;
+
+        if ($qty){
+            $mongo_start = microtime(true);
+            $result_mongo = $this->entities->find([],['limit' => $qty]);
+            $mongo_total = microtime(true) - $mongo_start;
+
+            $mysql_start = microtime(true);
+            $result_mysql = DB::table('entities')->limit($qty)->get();
+            $mysql_total = microtime(true) - $mysql_start;
+
+            $comparison = [
+                'qty' => $qty,
+                'mongo' => [
+                    'time' => $mongo_total
+                ],
+                'mysql' => [
+                    'time' => $mysql_total
+                ],
+                'data' => $qty,
+            ];
+
+            return response($comparison, 201);
+        } else {}
+
         $result = $this->entities->find()->toArray();
         $result = json_encode($result);
 

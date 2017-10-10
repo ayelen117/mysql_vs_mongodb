@@ -178,15 +178,6 @@
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label class="control-label col-md-6 col-sm-6 col-xs-12" for="name" >
-                            Generar registros aleatorios
-                        </label>
-                        <div class="col-md-6 col-sm-6 col-xs-12">
-                            <input type="checkbox" class="random_data" name="random_data"/>
-                        </div>
-                    </div>
-
                     <div class="col-md-12">
                         <canvas id="readingChart"></canvas>
                         <div class="result"></div>
@@ -408,10 +399,29 @@
                 "qty" : qty,
                 "random_data" : random_data
             };
+
+            var type;
+            switch(id) {
+                case 'insertion':
+                    type = 'post';
+                    break;
+                case 'update':
+                    type = '';
+                    break;
+                case 'reading':
+                    type = 'get';
+                    break;
+                case 'deleting':
+                    type = '';
+                    break;
+                default:
+                    type = 'post';
+            }
+
             $.ajax({
                 data:  data,
                 url:   'api/entities',
-                type:  'post',
+                type:  type,
                 beforeSend: function () {
                     $("#"+id+" .result").html("Procesando, espere por favor...");
                 },

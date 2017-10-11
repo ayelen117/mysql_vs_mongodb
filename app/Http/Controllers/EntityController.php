@@ -199,14 +199,46 @@ class EntityController extends Controller
     /**
      * Remove the specified resource from storage.
      *
+     * @param  \Illuminate\Http\Request $request
      * @param  int $id
      *
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        $this->entities->deleteOne(['_id' => new ObjectID($id)]);
+        $data = $request->all();
+        $qty = isset($data['qty']) ? (int) $data['qty'] : null;
 
-        return response()->json(['status' => 'success'], 200);
+        if ($qty){
+            $start_id = $this->entities->find([],['limit' => 1])->toArray()[0]->_id;
+            $end_id = $this->entities->find([], ['limit' => 1, 'skip' => ($qty-1)])->toArray()[0]->_id;
+
+            $mongo_start = microtime(true);
+            $result = $this->entities->deleteMany(
+                ['_id' => ['$gte' => $start_id, '$lte' => $end_id]]
+            );
+            $mongo_total = microtime(true) - $mongo_start;
+
+            $mysql_start = microtime(true);
+            DB::table('entities')->where('id', '!=', 0)->limit($qty)->delete();
+            $mysql_total = microtime(true) - $mysql_start;
+
+            $comparison = [
+                'qty' => $qty,
+                'mongo' => [
+                    'time' => $mongo_total
+                ],
+                'mysql' => [
+                    'time' => $mysql_total
+                ],
+                'data' => $result->getDeletedCount(),
+            ];
+
+            return response($comparison, 200);
+        } else {
+            $this->entities->deleteOne(['_id' => new ObjectID($id)]);
+
+            return response()->json(['status' => 'success'], 200);
+        }
     }
 }

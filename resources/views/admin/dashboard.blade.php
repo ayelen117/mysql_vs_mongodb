@@ -192,7 +192,6 @@
             </div>
         </div>
 
-
         <div class="col-sm-6 col-xs-12" id="deleting">
             <div class="x_panel">
                 <div class="x_title">
@@ -249,7 +248,6 @@
                 </div>
             </div>
         </div>
-
     </div>
 @endsection
 
@@ -393,10 +391,11 @@
                     type = 'get';
                     break;
                 case 'deleting':
-                    type = '';
+                    type = 'delete';
+                    parameter = '/1';
                     break;
                 default:
-                    type = 'post';
+                    type = 'get';
             }
             console.log('Tipo '+type);
 

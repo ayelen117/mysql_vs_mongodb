@@ -6,6 +6,24 @@
 
     <div class="row">
         <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel" id="general">
+                <div class="form-group">
+                    <label class="control-label col-md-6 col-sm-6 col-xs-12" for="name" >
+                        Cantidad de registros
+                    </label>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <input type="number" class="qty form-control col-md-7 col-xs-12" name="qty" value="lala" required>
+                    </div>
+                </div>
+
+                <div class="form-group center-block">
+                    <div class="col-md-12">
+                        <input type="reset" class="btn btn-primary" value="Reset">
+                        <input type="button" class="btn btn-success" href="javascript:;" onclick="addAllDatasets( $('#general .qty:first-child').val());return false;" value="Calcular"/>
+                        <input type="button" class="btn btn-success" href="javascript:;" onclick="removeAllDatasets();return false;" value="Eliminar"/>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <div class="row">
@@ -371,7 +389,23 @@
             }
         });
 
+        var datasets = ['insertion', 'update', 'reading', 'deleting'];
+
+        function addAllDatasets(qty){
+            datasets.forEach(function(dataset) {
+                addDataset( qty, false, dataset);
+            });
+        }
+
+        function removeAllDatasets(){
+            datasets.forEach(function(dataset) {
+                removeData(dataset);
+            });
+        }
+
         function addDataset(qty, random_data, id){
+
+            console.log('Adding '+id+' dataset.');
             var data = {
                 "qty" : qty,
                 "random_data" : random_data
@@ -397,7 +431,6 @@
                 default:
                     type = 'get';
             }
-            console.log('Tipo '+type);
 
             $.ajax({
                 data:  data,
@@ -426,6 +459,7 @@
         }
 
         function removeData(id) {
+            console.log('Removing last '+id+' dataset.');
             var chart = window[id + '_chart'];
             chart.data.labels.pop();
             chart.data.datasets.forEach(function(dataset) {

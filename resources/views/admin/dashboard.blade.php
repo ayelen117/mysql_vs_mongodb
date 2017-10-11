@@ -110,15 +110,6 @@
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label class="control-label col-md-6 col-sm-6 col-xs-12" for="name" >
-                            Generar registros aleatorios
-                        </label>
-                        <div class="col-md-6 col-sm-6 col-xs-12">
-                            <input type="checkbox" class="random_data" name="random_data"/>
-                        </div>
-                    </div>
-
                     <div class="col-md-12">
                         <canvas id="updateChart"></canvas>
                         <div class="result"></div>
@@ -236,15 +227,6 @@
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label class="control-label col-md-6 col-sm-6 col-xs-12" for="name" >
-                            Generar registros aleatorios
-                        </label>
-                        <div class="col-md-6 col-sm-6 col-xs-12">
-                            <input type="checkbox" class="random_data" name="random_data"/>
-                        </div>
-                    </div>
-
                     <div class="col-md-12">
                         <canvas id="deletingChart"></canvas>
                         <div class="result"></div>
@@ -275,9 +257,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js"></script>
     <script>
 
-//        var mongo_time = parseFloat(document.getElementById('mongo_time').value);
-//        var mysql_time = parseFloat(document.getElementById('mysql_time').value);
-//        var qty = parseInt(document.getElementById('last_qty').value);
         var insertion_ctx = document.getElementById('insertionChart').getContext('2d');
         var insertion_chart = new Chart(insertion_ctx, {
             type: 'bar',
@@ -401,12 +380,14 @@
             };
 
             var type;
+            var parameter = '';
             switch(id) {
                 case 'insertion':
                     type = 'post';
                     break;
                 case 'update':
-                    type = '';
+                    type = 'put';
+                    parameter = '/1';
                     break;
                 case 'reading':
                     type = 'get';
@@ -417,10 +398,11 @@
                 default:
                     type = 'post';
             }
+            console.log('Tipo '+type);
 
             $.ajax({
                 data:  data,
-                url:   'api/entities',
+                url:   'api/entities' + parameter,
                 type:  type,
                 beforeSend: function () {
                     $("#"+id+" .result").html("Procesando, espere por favor...");

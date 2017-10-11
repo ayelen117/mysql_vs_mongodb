@@ -63,16 +63,6 @@ class EntityController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request $request
@@ -150,18 +140,6 @@ class EntityController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int $id
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request $request
@@ -172,15 +150,50 @@ class EntityController extends Controller
     public function update(Request $request, $id)
     {
         $data = $request->all();
-        (new MongoEntity())->setRelationships($data);
-        $this->entities->updateOne(
-            ['_id' => new ObjectID($id)],
-            ['$set' => $data]
-        );
-        $entity = $this->entities->findOne(['_id' => new ObjectID($id)]);
-        $result = json_encode($entity);
+        $qty = isset($data['qty']) ? (int) $data['qty'] : null;
 
-        return response($result, 200);
+        if ($qty){
+            $mongo_object = factory(MysqlEntity::class, 'mongo')->make()->toArray();
+            $mysql_object = factory(MysqlEntity::class, 'mysql')->make()->toArray();
+
+            $start_id = $this->entities->find([],['limit' => 1])->toArray()[0]->_id;
+            $end_id = $this->entities->find([], ['limit' => 1, 'skip' => ($qty-1)])->toArray()[0]->_id;
+
+            $mongo_start = microtime(true);
+            $result = $this->entities->updateMany(
+                ['_id' => ['$gte' => $start_id, '$lte' => $end_id]],
+                ['$set' => $mongo_object]
+            );
+            $mongo_total = microtime(true) - $mongo_start;
+
+            $mysql_start = microtime(true);
+            DB::table('entities')->where('id', '!=', 0)->limit($qty)->update($mysql_object);
+            $mysql_total = microtime(true) - $mysql_start;
+
+            $comparison = [
+                'qty' => $qty,
+                'mongo' => [
+                    'time' => $mongo_total
+                ],
+                'mysql' => [
+                    'time' => $mysql_total
+                ],
+                'data' => $result->getModifiedCount(),
+            ];
+
+            return response($comparison, 200);
+        } else {
+            $data = $request->all();
+            (new MongoEntity())->setRelationships($data);
+            $this->entities->updateOne(
+                ['_id' => new ObjectID($id)],
+                ['$set' => $data]
+            );
+            $entity = $this->entities->findOne(['_id' => new ObjectID($id)]);
+            $result = json_encode($entity);
+
+            return response($result, 200);
+        }
     }
 
     /**

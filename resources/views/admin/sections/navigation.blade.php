@@ -39,16 +39,16 @@
                 <ul class="nav side-menu">
                     <li>
                         <a href="#">
-                        {{--<a href="{{ route('admin.users') }}">--}}
-                            <i class="fa fa-users" aria-hidden="true"></i>
-                            {{ __('views.backend.section.navigation.menu_1_1') }}
-                        </a>
+                            <a href="{{ route('entities.dashboard') }}">
+                                <i class="fa fa-bar-chart" aria-hidden="true"></i>
+                                {{ __('views.backend.section.navigation.menu_1_2') }}
+                            </a>
                     </li>
                     <li>
                         <a href="#">
-                        {{--<a href="{{ route('admin.entities') }}">--}}
-                            <i class="fa fa-bar-chart" aria-hidden="true"></i>
-                            {{ __('views.backend.section.navigation.menu_1_2') }}
+                        {{--<a href="{{ route('admin.users') }}">--}}
+                            <i class="fa fa-users" aria-hidden="true"></i>
+                            {{ __('views.backend.section.navigation.menu_1_1') }}
                         </a>
                     </li>
                 </ul>

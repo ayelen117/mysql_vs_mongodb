@@ -23,6 +23,12 @@ class EntityController extends Controller
         $this->helper = new GeneralHelper();
     }
 
+
+    public function dashboard()
+    {
+        return view('entities.dashboard');
+    }
+
     /**
      * Display a listing of the resource.
      *

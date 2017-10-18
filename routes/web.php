@@ -72,6 +72,9 @@ Route::delete('users/{user}', 'UserController@destroy')->name('users.destroy');
 
 Route::get('/', 'HomeController@index');
 
+//Users
+Route::get('entities', 'EntityController@dashboard')->name('entities.dashboard');
+
 /**
  * Membership
  */

@@ -12,7 +12,7 @@
                         Cantidad de registros
                     </label>
                     <div class="col-md-6 col-sm-6 col-xs-12">
-                        <input type="number" class="qty form-control col-md-7 col-xs-12" name="qty" value="lala" required>
+                        <input type="number" class="qty form-control col-md-7 col-xs-12" name="qty" value="10" required>
                     </div>
                 </div>
 
@@ -57,7 +57,7 @@
                             Cantidad de registros
                         </label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
-                            <input type="number" class="qty form-control col-md-7 col-xs-12" name="qty" value="lala" required>
+                            <input type="number" class="qty form-control col-md-7 col-xs-12" name="qty" value="10" required>
                         </div>
                     </div>
 
@@ -124,7 +124,7 @@
                             Cantidad de registros
                         </label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
-                            <input type="number" class="qty form-control col-md-7 col-xs-12" name="qty" value="lala" required>
+                            <input type="number" class="qty form-control col-md-7 col-xs-12" name="qty" value="10" required>
                         </div>
                     </div>
 
@@ -183,7 +183,7 @@
                             Cantidad de registros
                         </label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
-                            <input type="number" class="qty form-control col-md-7 col-xs-12" name="qty" value="lala" required>
+                            <input type="number" class="qty form-control col-md-7 col-xs-12" name="qty" value="10" required>
                         </div>
                     </div>
 
@@ -240,7 +240,7 @@
                             Cantidad de registros
                         </label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
-                            <input type="number" class="qty form-control col-md-7 col-xs-12" name="qty" value="lala" required>
+                            <input type="number" class="qty form-control col-md-7 col-xs-12" name="qty" value="10" required>
                         </div>
                     </div>
 

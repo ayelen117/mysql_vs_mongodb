@@ -38,17 +38,15 @@
                 <h3>{{ __('views.backend.section.navigation.sub_header_1') }}</h3>
                 <ul class="nav side-menu">
                     <li>
-                        <a href="#">
-                            <a href="{{ route('entities.dashboard') }}">
-                                <i class="fa fa-bar-chart" aria-hidden="true"></i>
-                                {{ __('views.backend.section.navigation.menu_1_2') }}
-                            </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                        {{--<a href="{{ route('admin.users') }}">--}}
+                        <a href="{{ route('users.dashboard') }}">
                             <i class="fa fa-users" aria-hidden="true"></i>
                             {{ __('views.backend.section.navigation.menu_1_1') }}
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('entities.dashboard') }}">
+                            <i class="fa fa-bar-chart" aria-hidden="true"></i>
+                            {{ __('views.backend.section.navigation.menu_1_2') }}
                         </a>
                     </li>
                 </ul>
@@ -76,17 +74,6 @@
                             </li>
                         </ul>
                     </li>
-                </ul>
-            </div>
-            <div class="menu_section">
-                <h3>{{ __('views.backend.section.navigation.sub_header_3') }}</h3>
-                <ul class="nav side-menu">
-                  <li>
-                      <a href="http://netlicensing.io/?utm_source=Laravel_Boilerplate&utm_medium=github&utm_campaign=laravel_boilerplate&utm_content=credits" target="_blank" title="Online Software License Management"><i class="fa fa-lock" aria-hidden="true"></i>NetLicensing</a>
-                  </li>
-                  <li>
-                      <a href="https://photolancer.zone/?utm_source=Laravel_Boilerplate&utm_medium=github&utm_campaign=laravel_boilerplate&utm_content=credits" target="_blank" title="Individual digital content for your next campaign"><i class="fa fa-camera-retro" aria-hidden="true"></i>Photolancer Zone</a>
-                  </li>
                 </ul>
             </div>
         </div>

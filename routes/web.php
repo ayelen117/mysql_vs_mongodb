@@ -74,6 +74,7 @@ Route::get('/', 'HomeController@index');
 
 //Users
 Route::get('entities', 'EntityController@dashboard')->name('entities.dashboard');
+Route::get('users', 'UserController@dashboard')->name('users.dashboard');
 
 /**
  * Membership

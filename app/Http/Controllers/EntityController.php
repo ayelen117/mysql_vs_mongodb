@@ -60,12 +60,12 @@ class EntityController extends Controller
             ];
 
             return response($comparison, 201);
-        } else {}
+        } else {
+            $result = $this->entities->find()->toArray();
+            $result = json_encode($result);
 
-        $result = $this->entities->find()->toArray();
-        $result = json_encode($result);
-
-        return response($result, 200);
+            return response($result, 200);
+        }
     }
 
     /**
@@ -85,7 +85,7 @@ class EntityController extends Controller
             $mongo_objects = [];
             $mysql_objects = [];
 
-            if ($random_data){
+            if ($random_data === 'true'){
                 $mongo_objects = factory(MysqlEntity::class, 'mongo', $qty)->make()->toArray();
                 foreach ($mongo_objects as &$mongo_object){
                     (new MongoEntity())->setRelationships($mongo_object);

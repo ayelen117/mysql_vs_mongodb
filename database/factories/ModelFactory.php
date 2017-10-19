@@ -25,10 +25,9 @@ use App\Helpers\TestHelper;
 |
 */
 
-$factory->define(User::class, function (Faker\Generator $faker) {
+$factory->defineAs(User::class, 'mongo', function (Faker\Generator $faker) {
     static $password;
-
-    return [
+    $array =  [
         'first_name' => $faker->firstName,
         'last_name' => $faker->lastName,
         'email' => $faker->unique()->safeEmail,
@@ -41,6 +40,28 @@ $factory->define(User::class, function (Faker\Generator $faker) {
         'activated_at' => Carbon::yesterday()->toDateTimeString(),
         'last_login' => Carbon::now()->toDateTimeString(),
     ];
+
+    return $array;
+});
+
+$factory->defineAs(User::class, 'mysql', function (Faker\Generator $faker) {
+    static $password;
+
+    $array =  [
+        'first_name' => $faker->firstName,
+        'last_name' => $faker->lastName,
+        'email' => $faker->unique()->safeEmail,
+        'password' => $password ?: $password = bcrypt('secret'),
+        'remember_token' => str_random(10),
+        'activated' => 1,
+        'banned' => 0,
+        'super_admin' => 0,
+        'activation_code' => null,
+        'activated_at' => Carbon::yesterday()->toDateTimeString(),
+        'last_login' => Carbon::now()->toDateTimeString(),
+    ];
+
+    return $array;
 });
 
 $factory->define(Company::class, function (Faker\Generator $faker) {

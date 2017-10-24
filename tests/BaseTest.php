@@ -7,11 +7,10 @@ use DB;
 use Illuminate\Http\Response;
 use JWTAuth;
 use Log;
+use PHPUnit\Framework\Assert;
 
-class BaseTest extends TestCase
+class BaseTest extends \TestCase
 {
-
-
     public function createUser($email)
     {
 
@@ -143,7 +142,10 @@ class BaseTest extends TestCase
      */
     protected function callGet($url, array $parameters = [])
     {
-        return $this->call('GET', $url, $parameters, [], [], $this->getServerArray());
+        $response = $this->call('GET', $url, $parameters, [], [], $this->getServerArray());
+        $this->{'response'} = $response->baseResponse;
+
+        return $response;
     }
 
     /**
@@ -153,7 +155,10 @@ class BaseTest extends TestCase
      */
     protected function callDelete($url)
     {
-        return $this->call('DELETE', $url, [], [], [], $this->getServerArray());
+        $response = $this->call('DELETE', $url, [], [], [], $this->getServerArray());
+        $this->{'response'} = $response->baseResponse;
+
+        return $response;
     }
 
     /**
@@ -164,7 +169,10 @@ class BaseTest extends TestCase
      */
     protected function callPost($url, $content)
     {
-        return $this->call('post', $url, $content, [], [], $this->getServerArray());
+        $response = $this->call('post', $url, $content, [], [], $this->getServerArray());
+        $this->{'response'} = $response->baseResponse;
+
+        return $response;
     }
 
     /**
@@ -175,7 +183,10 @@ class BaseTest extends TestCase
      */
     protected function callPatch($url, $content)
     {
-        return $this->call('PATCH', $url, $content, [], [], $this->getServerArray(), []);
+        $response = $this->call('PATCH', $url, $content, [], [], $this->getServerArray(), []);
+        $this->{'response'} = $response->baseResponse;
+
+        return $response;
     }
 
     /**
@@ -186,13 +197,16 @@ class BaseTest extends TestCase
      */
     protected function callPut($url, $content)
     {
-        return $this->call('PUT', $url, $content, [], [], $this->getServerArray(), []);
+        $response = $this->call('PUT', $url, $content, [], [], $this->getServerArray(), []);
+        $this->{'response'} = $response->baseResponse;
+
+        return $response;
     }
 
     private function getServerArray()
     {
         $server = [
-            'HTTP_Authorization' => 'Bearer ' . $this->token,
+//            'HTTP_Authorization' => 'Bearer ' . $this->token,
         ];
 
         return $server;
@@ -213,4 +227,21 @@ class BaseTest extends TestCase
         }
     }
 
+    public function assertResponseStatus($code)
+    {
+        $actual = $this->response->getStatusCode();
+        $content = $this->response->getContent();
+
+        if ($actual != $code) {
+            $name = $this->getName();
+            Log::notice('Fallo en test @$'.$name.': '.$content);
+        }
+
+        return Assert::assertEquals($code, $actual, "Expected status code {$code}, got {$actual}.");
+    }
+
+    public function assertResponseOk()
+    {
+        $this->assertResponseStatus(200);
+    }
 }

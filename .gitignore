@@ -17,9 +17,41 @@ public/storage
 storage/*.key
 .env.*.php
 .env.php
-.env
 
 # Rocketeer PHP task runner and deployment package. https://github.com/rocketeers/rocketeer
 .rocketeer/
 
 # End of https://www.gitignore.io/api/laravel
+
+!.gitkeep
+
+data/
+
+# Laravel, nodeJS, Bower, Gulp exclusions, Composer exclusions
+.htaccess
+npm-shrinkwrap.json
+bower_components/
+bootstrap/compiled.php
+bootstrap/cache/
+
+storage/
+storage/debugbar/
+storage/framework/views/
+storage/framework/sessions/
+
+composer.phar
+composer.lock
+phpunit.phar
+
+public/assets
+public/mix-manifest.json
+
+.sass-cache
+
+# IDE exclusions
+.DS_Store
+Thumbs.db
+.idea
+_ide_helper.php
+.phpstorm.meta.php
+*.sqlite

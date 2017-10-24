@@ -13,6 +13,18 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:api');
+Route::resource('users', 'UserController');
+Route::resource('currencies', 'CurrencyController');
+Route::resource('companies', 'CompanyController');
+Route::resource('responsibilities', 'ResponsibilityController');
+Route::resource('identifications', 'IdentificationController');
+Route::resource('receipts', 'ReceiptController');
+Route::resource('categories', 'CategoryController');
+Route::resource('fiscalpos', 'FiscalposController');
+Route::resource('products', 'ProductController');
+Route::resource('pricelists', 'PricelistController');
+Route::resource('entities', 'EntityController');
+Route::resource('inventories', 'InventoryController');
+Route::resource('documents', 'DocumentController');
+Route::resource('details', 'DetailController');
+Route::resource('transactions', 'TransactionController');

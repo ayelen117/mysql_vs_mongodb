@@ -2,55 +2,19 @@
 
 namespace tests\Mongo\UserTests;
 
-use App\Models\MongoDB\User as MongoUser;
 use App\Models\Mysql\User as MysqlUser;
-use tests\BaseTest;
 use MongoDB\Client;
+use tests\BaseTest;
 
-class UserTest extends \TestCase
+class UserTest extends BaseTest
 {
+    public $client;
+    public $users;
 
-    public function test_if_user_saves_with_mongo()
+    public function __construct()
     {
-        $tiempo_total = 0;
-        $objects = factory(MysqlUser::class, 100)->make();
-        foreach ($objects as $var) {
-            $tiempo_inicio = microtime(true);
-            $user = new MongoUser();
-            $user->name = $var->name;
-            $user->email = $var->email;
-            $user->password = $var->password;
-            $user->remember_token = $var->remember_token;
-            $user->save();
-            $tiempo_fin   = microtime(true);
-            $tiempo       = $tiempo_fin - $tiempo_inicio;
-            $tiempo_total = $tiempo_total + $tiempo;
-        }
-        dump($tiempo_total);
-    }
-
-    public function test_if_user_insertOne_with_pure_mongo()
-    {
-        $client = new Client();
-        $collection = $client->tesis->users;
-
-        $tiempo_total = 0;
-        $objects = factory(MysqlUser::class, 1000)->make();
-        foreach ($objects as $var) {
-            $tiempo_inicio = microtime(true);
-
-            $collection->insertOne([
-                'name' => $var->name,
-                'email' => $var->email,
-                'password' => $var->password,
-                'remember_token' => $var->remember_token,
-            ]);
-
-            $tiempo_fin   = microtime(true);
-            $tiempo       = $tiempo_fin - $tiempo_inicio;
-            $tiempo_total = $tiempo_total + $tiempo;
-        }
-        dump($tiempo_total);
+        $this->client = new Client();
+        $this->users = $this->client->tesis->users;
     }
 
     public function test_if_user_insertMany_with_pure_mongo()
@@ -58,68 +22,47 @@ class UserTest extends \TestCase
         $client = new Client();
         $collection = $client->tesis->users;
 
-        $tiempo_total = 0;
-        $objects = factory(MysqlUser::class, 1000)->make()->toArray();
-        $tiempo_inicio = microtime(true);
-
+        $objects = factory(MysqlUser::class, 2)->make()->toArray();
         $collection->insertMany($objects);
-
-        $tiempo_fin   = microtime(true);
-        $tiempo       = $tiempo_fin - $tiempo_inicio;
-        $tiempo_total = $tiempo_total + $tiempo;
-        dump($tiempo_total);
     }
 
-    public function test_if_user_findOne_with_pure_mongo()
+    /*** integradores ***/
+
+    public function test_if_user_lists()
     {
-        $client = new Client();
-        $collection = $client->tesis->users;
-
-        $tiempo_total = 0;
-        $tiempo_inicio = microtime(true);
-
-        $user = $collection->findOne();
-        $tiempo_fin   = microtime(true);
-        $tiempo       = $tiempo_fin - $tiempo_inicio;
-        $tiempo_total = $tiempo_total + $tiempo;
-        dump($tiempo_total);
-        dump($user);
+        $this->callGet(route('users.index'));
+        $this->assertResponseOk();
     }
 
-    public function test_if_user_find_with_pure_mongo()
+    public function test_if_user_saves()
     {
-        $client = new Client();
-        $collection = $client->tesis->users;
-
-        $tiempo_total = 0;
-        $tiempo_inicio = microtime(true);
-
-        $users = $collection->find();
-        $tiempo_fin   = microtime(true);
-        $tiempo       = $tiempo_fin - $tiempo_inicio;
-        $tiempo_total = $tiempo_total + $tiempo;
-        dump($tiempo_total);
+        $array = factory(MysqlUser::class)->make()->toArray();
+        $this->callPost(route('users.store'), $array);
+        $this->assertResponseStatus(201);
     }
 
-    public function test_if_user_updateOne_with_pure_mongo()
+    public function test_if_user_show()
     {
-        $client = new Client();
-        $collection = $client->tesis->users;
+        $user = $this->users->findOne([], ['sort' => ['_id' => -1],]);
+        $this->callGet(route('users.show', ['user_id' => $user->_id]));
+        $this->assertResponseOk();
+    }
 
-        $tiempo_total = 0;
-        $tiempo_inicio = microtime(true);
+    public function test_if_user_update()
+    {
+        $user = $this->users->findOne([], ['sort' => ['_id' => -1],]);
+        $array = factory(MysqlUser::class)->make()->toArray();
+        unset($array['name']);
 
-        $updateResult = $collection->updateOne(
-            ['name' => ['$ne' => 'Test']],
-            ['$set' => ['name' => 'Aye']],
-            ['limit' => 1, 'upsert' => false]
-        );
+        $this->callPatch(route('users.update', ['user_id' => $user->_id]), $array);
+        $this->assertResponseOk();
+    }
 
-        $tiempo_fin   = microtime(true);
-        $tiempo       = $tiempo_fin - $tiempo_inicio;
-        $tiempo_total = $tiempo_total + $tiempo;
-        dump($tiempo_total);
-        printf("Matched %d document(s)\n", $updateResult->getMatchedCount());
-        printf("Modified %d document(s)\n", $updateResult->getModifiedCount());
+
+    public function test_if_user_deletes()
+    {
+        $user = $this->users->findOne([], ['sort' => ['_id' => -1],]);
+        $this->callDelete(route('users.destroy', ['user_id' => $user->_id]));
+        $this->assertResponseOk();
     }
 }

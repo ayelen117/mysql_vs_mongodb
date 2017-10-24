@@ -30,6 +30,7 @@ class CreateMysqlTables extends Migration
             $table->string('abbreviation',5);
             $table->text('description');
             $table->string('cuit',11);
+            $table->string('legal_name',11);
             $table->string('street_name',96);
             $table->integer('street_number');
             $table->integer('responsibility_id')->unsigned();
@@ -56,7 +57,7 @@ class CreateMysqlTables extends Migration
             $table->string('code_iso');
             $table->string('code_afip',3);
             $table->string('symbol',10);
-            $table->float('quotation_usd');
+            $table->float('quotation_usd')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -92,6 +93,7 @@ class CreateMysqlTables extends Migration
 
         Schema::create('documents', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->bigInteger('parent_id')->unsigned();
             $table->bigInteger('author_id')->unsigned()->references('id')->on('users');
             $table->bigInteger('company_id')->unsigned()->references('id')->on('companies');
             $table->bigInteger('entity_id')->unsigned()->references('id')->on('entities');
@@ -159,7 +161,7 @@ class CreateMysqlTables extends Migration
             $table->string('alias');
             $table->boolean('status');
             $table->bigInteger('company_id')->unsigned()->references('id')->on('companies');
-            $table->boolean('default');
+            $table->boolean('default')->default(false);
             $table->string('fiscaltoken',1000);
             $table->timestamps();
             $table->softDeletes();
@@ -215,7 +217,7 @@ class CreateMysqlTables extends Migration
             $table->string('name',96);
             $table->text('description');
             $table->string('barcode',96);
-            $table->unique(['barcode', 'company_id']);
+//            $table->unique(['barcode', 'company_id']);
             $table->enum('product_type',['service','product']);
             $table->integer('duration')->unsigned();
             $table->enum('stock_type',['disabled','negative','positive']);
@@ -228,6 +230,11 @@ class CreateMysqlTables extends Migration
             $table->integer('stock');
             $table->integer('stock_alert')->unsigned();
             $table->integer('stock_desired')->unsigned();
+            $table->float('high');
+            $table->float('width');
+            $table->float('length');
+            $table->float('weight');
+            $table->float('weight_element');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -262,6 +269,26 @@ class CreateMysqlTables extends Migration
             $table->softDeletes();
         });
 
+        Schema::create('measures', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('name',96);
+            $table->string('code_afip',3);
+            $table->string('short_name',15);
+            $table->string('measure_type',96);
+            $table->float('factor');
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        Schema::create('taxes', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('name',96);
+            $table->string('code_afip',3);
+            $table->float('percent_value');
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
     }
 
     /**
@@ -290,5 +317,7 @@ class CreateMysqlTables extends Migration
         Schema::dropIfExists('receipts');
         Schema::dropIfExists('responsibilities');
         Schema::dropIfExists('transactions');
+        Schema::dropIfExists('measures');
+        Schema::dropIfExists('taxes');
     }
 }

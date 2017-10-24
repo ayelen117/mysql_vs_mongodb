@@ -6,18 +6,28 @@ use Illuminate\Http\Request;
 use MongoDB\BSON\ObjectID;
 use MongoDB\Client;
 use App\Helpers\GeneralHelper;
+use App\Models\Mysql\Fiscalpos as MysqlFiscalpos;
+use App\Models\MongoDB\Fiscalpos as MongoFiscalpos;
+use App\Services\ServiceCrud;
 
 class FiscalposController extends Controller
 {
     public $client;
     public $fiscalpos;
     public $helper;
+    public $serviceCrud;
 
     public function __construct()
     {
         $this->client = new Client();
         $this->fiscalpos = $this->client->tesis->fiscalpos;
         $this->helper = new GeneralHelper();
+        $this->serviceCrud = new ServiceCrud('fiscalpos');
+    }
+
+    public function dashboard()
+    {
+        return view('fiscalpos.dashboard');
     }
 
     /**
@@ -25,12 +35,21 @@ class FiscalposController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $result = $this->fiscalpos->find()->toArray();
-        $result = json_encode($result);
+        $data = $request->all();
+        $qty = isset($data['qty']) ? (int) $data['qty'] : null;
 
-        return response($result, 200);
+        if ($qty){
+            $result = $this->serviceCrud->index($qty);
+
+            return $result;
+        } else {
+            $result = $this->fiscalpos->find()->toArray();
+            $result = json_encode($result);
+    
+            return response($result, 200);
+        }
     }
 
     /**
@@ -53,13 +72,22 @@ class FiscalposController extends Controller
     public function store(Request $request)
     {
         $data = $request->all();
+        $qty = isset($data['qty']) ? (int) $data['qty'] : null;
+        $random_data = isset($data['random_data']) ? $data['random_data'] : null;
 
-        $data = $this->helper->setRelationships($data, 'companies', 'company_id');
-        $fiscalpos_id = $this->fiscalpos->insertOne($data)->getInsertedId();
-        $fiscalpos = $this->fiscalpos->findOne(['_id' => new ObjectID($fiscalpos_id)]);
-        $result = json_encode($fiscalpos);
+        if ($qty){
+            $result = $this->serviceCrud->store($qty, $random_data, MysqlFiscalpos::class, new MongoFiscalpos());
 
-        return response($result, 201);
+            return $result;
+        } else {
+
+            $data = $this->helper->setRelationships($data, 'companies', 'company_id');
+            $fiscalpos_id = $this->fiscalpos->insertOne($data)->getInsertedId();
+            $fiscalpos = $this->fiscalpos->findOne(['_id' => new ObjectID($fiscalpos_id)]);
+            $result = json_encode($fiscalpos);
+
+            return response($result, 201);
+        }
     }
 
     /**
@@ -100,15 +128,23 @@ class FiscalposController extends Controller
     public function update(Request $request, $id)
     {
         $data = $request->all();
-        $data = $this->helper->setRelationships($data, 'companies', 'company_id');
-        $this->fiscalpos->updateOne(
-            ['_id' => new ObjectID($id)],
-            ['$set' => $data]
-        );
-        $fiscalpos = $this->fiscalpos->findOne(['_id' => new ObjectID($id)]);
-        $result = json_encode($fiscalpos);
+        $qty = isset($data['qty']) ? (int) $data['qty'] : null;
 
-        return response($result, 200);
+        if ($qty){
+            $result = $this->serviceCrud->update($qty,  MysqlFiscalpos::class);
+
+            return $result;
+        } else {
+            $data = $this->helper->setRelationships($data, 'companies', 'company_id');
+            $this->fiscalpos->updateOne(
+                ['_id' => new ObjectID($id)],
+                ['$set' => $data]
+            );
+            $fiscalpos = $this->fiscalpos->findOne(['_id' => new ObjectID($id)]);
+            $result = json_encode($fiscalpos);
+    
+            return response($result, 200);
+        }
     }
 
     /**
@@ -118,10 +154,19 @@ class FiscalposController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        $this->fiscalpos->deleteOne(['_id' => new ObjectID($id)]);
+        $data = $request->all();
+        $qty = isset($data['qty']) ? (int) $data['qty'] : null;
 
-        return response()->json(['status' => 'success'], 200);
+        if ($qty){
+            $result = $this->serviceCrud->destroy($qty);
+
+            return $result;
+        } else {
+            $this->fiscalpos->deleteOne(['_id' => new ObjectID($id)]);
+    
+            return response()->json(['status' => 'success'], 200);
+        }
     }
 }

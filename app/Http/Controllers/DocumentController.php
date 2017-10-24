@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use MongoDB\BSON\ObjectID;
 use MongoDB\Client;
 use App\Helpers\GeneralHelper;
+use App\Models\Mysql\Document as MysqlDocument;
+use App\Models\MongoDB\Document as MongoDocument;
+use App\Services\ServiceCrud;
 
 class DocumentController extends Controller
 {
@@ -18,6 +21,12 @@ class DocumentController extends Controller
         $this->client = new Client();
         $this->documents = $this->client->tesis->documents;
         $this->helper = new GeneralHelper();
+        $this->serviceCrud = new ServiceCrud('documents');
+    }
+
+    public function dashboard()
+    {
+        return view('documents.dashboard');
     }
 
     /**
@@ -25,12 +34,21 @@ class DocumentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $result = $this->documents->find()->toArray();
-        $result = json_encode($result);
+        $data = $request->all();
+        $qty = isset($data['qty']) ? (int) $data['qty'] : null;
 
-        return response($result, 200);
+        if ($qty){
+            $result = $this->serviceCrud->index($qty);
+
+            return $result;
+        } else {
+            $result = $this->documents->find()->toArray();
+            $result = json_encode($result);
+
+            return response($result, 200);
+        }
     }
 
     /**
@@ -53,19 +71,28 @@ class DocumentController extends Controller
     public function store(Request $request)
     {
         $data = $request->all();
+        $qty = isset($data['qty']) ? (int) $data['qty'] : null;
+        $random_data = isset($data['random_data']) ? $data['random_data'] : null;
 
-        $data = $this->helper->setRelationships($data, 'users', 'author_id');
-        $data = $this->helper->setRelationships($data, 'companies', 'company_id');
-        $data = $this->helper->setRelationships($data, 'entities', 'entity_id');
-        $data = $this->helper->setRelationships($data, 'entities', 'seller_id');
-        $data = $this->helper->setRelationships($data, 'currencies', 'currency_id');
-        $data = $this->helper->setRelationships($data, 'receipts', 'receipt_id');
-//        $data = $this->helper->setRelationships($data, 'details', 'details');
-        $document_id = $this->documents->insertOne($data)->getInsertedId();
-        $document = $this->documents->findOne(['_id' => new ObjectID($document_id)]);
-        $result = json_encode($document);
+        if ($qty){
+            $result = $this->serviceCrud->store($qty, $random_data, MysqlDocument::class, new MongoDocument());
 
-        return response($result, 201);
+            return $result;
+        } else {
+
+            $data = $this->helper->setRelationships($data, 'users', 'author_id');
+            $data = $this->helper->setRelationships($data, 'companies', 'company_id');
+            $data = $this->helper->setRelationships($data, 'entities', 'entity_id');
+            $data = $this->helper->setRelationships($data, 'entities', 'seller_id');
+            $data = $this->helper->setRelationships($data, 'currencies', 'currency_id');
+            $data = $this->helper->setRelationships($data, 'receipts', 'receipt_id');
+    //        $data = $this->helper->setRelationships($data, 'details', 'details');
+            $document_id = $this->documents->insertOne($data)->getInsertedId();
+            $document = $this->documents->findOne(['_id' => new ObjectID($document_id)]);
+            $result = json_encode($document);
+
+            return response($result, 201);
+        }
     }
 
     /**
@@ -106,21 +133,29 @@ class DocumentController extends Controller
     public function update(Request $request, $id)
     {
         $data = $request->all();
-        $data = $this->helper->setRelationships($data, 'users', 'author_id');
-        $data = $this->helper->setRelationships($data, 'companies', 'company_id');
-        $data = $this->helper->setRelationships($data, 'entities', 'entity_id');
-        $data = $this->helper->setRelationships($data, 'entities', 'seller_id');
-        $data = $this->helper->setRelationships($data, 'currencies', 'currency_id');
-        $data = $this->helper->setRelationships($data, 'receipts', 'receipt_id');
-//        $data = $this->helper->setRelationships($data, 'details', 'details');
-        $this->documents->updateOne(
-            ['_id' => new ObjectID($id)],
-            ['$set' => $data]
-        );
-        $document = $this->documents->findOne(['_id' => new ObjectID($id)]);
-        $result = json_encode($document);
+        $qty = isset($data['qty']) ? (int) $data['qty'] : null;
 
-        return response($result, 200);
+        if ($qty){
+            $result = $this->serviceCrud->update($qty,  MysqlDocument::class);
+
+            return $result;
+        } else {
+            $data = $this->helper->setRelationships($data, 'users', 'author_id');
+            $data = $this->helper->setRelationships($data, 'companies', 'company_id');
+            $data = $this->helper->setRelationships($data, 'entities', 'entity_id');
+            $data = $this->helper->setRelationships($data, 'entities', 'seller_id');
+            $data = $this->helper->setRelationships($data, 'currencies', 'currency_id');
+            $data = $this->helper->setRelationships($data, 'receipts', 'receipt_id');
+    //        $data = $this->helper->setRelationships($data, 'details', 'details');
+            $this->documents->updateOne(
+                ['_id' => new ObjectID($id)],
+                ['$set' => $data]
+            );
+            $document = $this->documents->findOne(['_id' => new ObjectID($id)]);
+            $result = json_encode($document);
+
+            return response($result, 200);
+        }
     }
 
     /**
@@ -130,10 +165,19 @@ class DocumentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        $this->documents->deleteOne(['_id' => new ObjectID($id)]);
+        $data = $request->all();
+        $qty = isset($data['qty']) ? (int) $data['qty'] : null;
 
-        return response()->json(['status' => 'success'], 200);
+        if ($qty){
+            $result = $this->serviceCrud->destroy($qty);
+
+            return $result;
+        } else {
+            $this->documents->deleteOne(['_id' => new ObjectID($id)]);
+
+            return response()->json(['status' => 'success'], 200);
+        }
     }
 }

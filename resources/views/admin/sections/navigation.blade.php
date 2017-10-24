@@ -40,13 +40,49 @@
                     <li>
                         <a href="{{ route('users.dashboard') }}">
                             <i class="fa fa-users" aria-hidden="true"></i>
-                            {{ __('views.backend.section.navigation.menu_1_1') }}
+                            Usuarios
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('companies.dashboard') }}">
+                            <i class="fa fa-users" aria-hidden="true"></i>
+                            Compañías
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('categories.dashboard') }}">
+                            <i class="fa fa-users" aria-hidden="true"></i>
+                            Categorías
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('pricelists.dashboard') }}">
+                            <i class="fa fa-users" aria-hidden="true"></i>
+                            Listas de precio
                         </a>
                     </li>
                     <li>
                         <a href="{{ route('entities.dashboard') }}">
                             <i class="fa fa-bar-chart" aria-hidden="true"></i>
-                            {{ __('views.backend.section.navigation.menu_1_2') }}
+                            Entidades
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('products.dashboard') }}">
+                            <i class="fa fa-users" aria-hidden="true"></i>
+                            Productos
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('documents.dashboard') }}">
+                            <i class="fa fa-users" aria-hidden="true"></i>
+                            Documentos
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('fiscalpos.dashboard') }}">
+                            <i class="fa fa-users" aria-hidden="true"></i>
+                            Fiscalpos
                         </a>
                     </li>
                 </ul>

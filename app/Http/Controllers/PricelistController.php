@@ -6,18 +6,29 @@ use Illuminate\Http\Request;
 use MongoDB\BSON\ObjectID;
 use MongoDB\Client;
 use App\Helpers\GeneralHelper;
+use App\Models\Mysql\Pricelist as MysqlPricelist;
+use App\Models\MongoDB\Pricelist as MongoPricelist;
+use App\Services\ServiceCrud;
+
 
 class PricelistController extends Controller
 {
     public $client;
     public $pricelists;
     public $helper;
+    public $serviceCrud;
 
     public function __construct()
     {
         $this->client = new Client();
         $this->pricelists = $this->client->tesis->pricelists;
         $this->helper = new GeneralHelper();
+        $this->serviceCrud = new ServiceCrud('pricelists');
+    }
+
+    public function dashboard()
+    {
+        return view('pricelists.dashboard');
     }
 
     /**
@@ -25,12 +36,21 @@ class PricelistController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $result = $this->pricelists->find()->toArray();
-        $result = json_encode($result);
+        $data = $request->all();
+        $qty = isset($data['qty']) ? (int) $data['qty'] : null;
 
-        return response($result, 200);
+        if ($qty){
+            $result = $this->serviceCrud->index($qty);
+
+            return $result;
+        } else {
+            $result = $this->pricelists->find()->toArray();
+            $result = json_encode($result);
+
+            return response($result, 200);
+        }
     }
 
     /**
@@ -53,13 +73,21 @@ class PricelistController extends Controller
     public function store(Request $request)
     {
         $data = $request->all();
+        $qty = isset($data['qty']) ? (int) $data['qty'] : null;
+        $random_data = isset($data['random_data']) ? $data['random_data'] : null;
 
-        $data = $this->helper->setRelationships($data, 'companies', 'company_id');
-        $pricelist_id = $this->pricelists->insertOne($data)->getInsertedId();
-        $pricelist = $this->pricelists->findOne(['_id' => new ObjectID($pricelist_id)]);
-        $result = json_encode($pricelist);
+        if ($qty){
+            $result = $this->serviceCrud->store($qty, $random_data, MysqlPricelist::class, new MongoPricelist());
 
-        return response($result, 201);
+            return $result;
+        } else {
+            $data = $this->helper->setRelationships($data, 'companies', 'company_id');
+            $pricelist_id = $this->pricelists->insertOne($data)->getInsertedId();
+            $pricelist = $this->pricelists->findOne(['_id' => new ObjectID($pricelist_id)]);
+            $result = json_encode($pricelist);
+
+            return response($result, 201);
+        }
     }
 
     /**
@@ -100,15 +128,23 @@ class PricelistController extends Controller
     public function update(Request $request, $id)
     {
         $data = $request->all();
-        $data = $this->helper->setRelationships($data, 'companies', 'company_id');
-        $this->pricelists->updateOne(
-            ['_id' => new ObjectID($id)],
-            ['$set' => $data]
-        );
-        $pricelist = $this->pricelists->findOne(['_id' => new ObjectID($id)]);
-        $result = json_encode($pricelist);
+        $qty = isset($data['qty']) ? (int) $data['qty'] : null;
 
-        return response($result, 200);
+        if ($qty){
+            $result = $this->serviceCrud->update($qty,  MysqlPricelist::class);
+
+            return $result;
+        } else {
+            $data = $this->helper->setRelationships($data, 'companies', 'company_id');
+            $this->pricelists->updateOne(
+                ['_id' => new ObjectID($id)],
+                ['$set' => $data]
+            );
+            $pricelist = $this->pricelists->findOne(['_id' => new ObjectID($id)]);
+            $result = json_encode($pricelist);
+
+            return response($result, 200);
+        }
     }
 
     /**
@@ -118,10 +154,19 @@ class PricelistController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        $this->pricelists->deleteOne(['_id' => new ObjectID($id)]);
+        $data = $request->all();
+        $qty = isset($data['qty']) ? (int) $data['qty'] : null;
 
-        return response()->json(['status' => 'success'], 200);
+        if ($qty){
+            $result = $this->serviceCrud->destroy($qty);
+
+            return $result;
+        } else {
+            $this->pricelists->deleteOne(['_id' => new ObjectID($id)]);
+
+            return response()->json(['status' => 'success'], 200);
+        }
     }
 }

@@ -6,31 +6,49 @@ use Illuminate\Http\Request;
 use MongoDB\BSON\ObjectID;
 use MongoDB\Client;
 use App\Helpers\GeneralHelper;
+use App\Models\Mysql\Category as MysqlCategory;
+use App\Models\MongoDB\Category as MongoCategory;
+use App\Services\ServiceCrud;
 
 class CategoryController extends Controller
 {
     public $client;
     public $categories;
     public $helper;
+    public $serviceCrud;
 
     public function __construct()
     {
         $this->client = new Client();
         $this->categories = $this->client->tesis->categories;
         $this->helper = new GeneralHelper();
+        $this->serviceCrud = new ServiceCrud('categories');
     }
 
+    public function dashboard()
+    {
+        return view('categories.dashboard');
+    }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $result = $this->categories->find()->toArray();
-        $result = json_encode($result);
+        $data = $request->all();
+        $qty = isset($data['qty']) ? (int) $data['qty'] : null;
 
-        return response($result, 200);
+        if ($qty){
+            $result = $this->serviceCrud->index($qty);
+
+            return $result;
+        } else {
+            $result = $this->categories->find()->toArray();
+            $result = json_encode($result);
+
+            return response($result, 200);
+        }
     }
 
     /**
@@ -53,13 +71,21 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $data = $request->all();
+        $qty = isset($data['qty']) ? (int) $data['qty'] : null;
+        $random_data = isset($data['random_data']) ? $data['random_data'] : null;
 
-        $data = $this->helper->setRelationships($data, 'companies', 'company_id');
-        $category_id = $this->categories->insertOne($data)->getInsertedId();
-        $category = $this->categories->findOne(['_id' => new ObjectID($category_id)]);
-        $result = json_encode($category);
+        if ($qty){
+            $result = $this->serviceCrud->store($qty, $random_data, MysqlCategory::class, new MongoCategory());
 
-        return response($result, 201);
+            return $result;
+        } else {
+            $data = $this->helper->setRelationships($data, 'companies', 'company_id');
+            $category_id = $this->categories->insertOne($data)->getInsertedId();
+            $category = $this->categories->findOne(['_id' => new ObjectID($category_id)]);
+            $result = json_encode($category);
+
+            return response($result, 201);
+        }
     }
 
     /**
@@ -100,15 +126,23 @@ class CategoryController extends Controller
     public function update(Request $request, $id)
     {
         $data = $request->all();
-        $data = $this->helper->setRelationships($data, 'companies', 'company_id');
-        $this->categories->updateOne(
-            ['_id' => new ObjectID($id)],
-            ['$set' => $data]
-        );
-        $category = $this->categories->findOne(['_id' => new ObjectID($id)]);
-        $result = json_encode($category);
+        $qty = isset($data['qty']) ? (int) $data['qty'] : null;
 
-        return response($result, 200);
+        if ($qty){
+            $result = $this->serviceCrud->update($qty,  MysqlCategory::class);
+
+            return $result;
+        } else {
+            $data = $this->helper->setRelationships($data, 'companies', 'company_id');
+            $this->categories->updateOne(
+                ['_id' => new ObjectID($id)],
+                ['$set' => $data]
+            );
+            $category = $this->categories->findOne(['_id' => new ObjectID($id)]);
+            $result = json_encode($category);
+
+            return response($result, 200);
+        }
     }
 
     /**
@@ -118,10 +152,19 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        $this->categories->deleteOne(['_id' => new ObjectID($id)]);
+        $data = $request->all();
+        $qty = isset($data['qty']) ? (int) $data['qty'] : null;
 
-        return response()->json(['status' => 'success'], 200);
+        if ($qty){
+            $result = $this->serviceCrud->destroy($qty);
+
+            return $result;
+        } else {
+            $this->categories->deleteOne(['_id' => new ObjectID($id)]);
+
+            return response()->json(['status' => 'success'], 200);
+        }
     }
 }

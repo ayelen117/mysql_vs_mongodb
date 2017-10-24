@@ -72,9 +72,15 @@ Route::delete('users/{user}', 'UserController@destroy')->name('users.destroy');
 
 Route::get('/', 'HomeController@index');
 
-//Users
-Route::get('entities', 'EntityController@dashboard')->name('entities.dashboard');
 Route::get('users', 'UserController@dashboard')->name('users.dashboard');
+Route::get('companies', 'CompanyController@dashboard')->name('companies.dashboard');
+Route::get('categories', 'CategoryController@dashboard')->name('categories.dashboard');
+Route::get('pricelists', 'PricelistController@dashboard')->name('pricelists.dashboard');
+Route::get('pricelists', 'PricelistController@dashboard')->name('pricelists.dashboard');
+Route::get('entities', 'EntityController@dashboard')->name('entities.dashboard');
+Route::get('products', 'ProductController@dashboard')->name('products.dashboard');
+Route::get('documents', 'DocumentController@dashboard')->name('documents.dashboard');
+Route::get('fiscalpos', 'FiscalposController@dashboard')->name('fiscalpos.dashboard');
 
 /**
  * Membership

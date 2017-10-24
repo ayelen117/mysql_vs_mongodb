@@ -12,6 +12,10 @@ use App\Models\Mysql\Inventory;
 use App\Models\Mysql\Document;
 use App\Models\Mysql\Detail;
 use App\Models\Mysql\Transaction;
+use App\Models\Mysql\Responsibility;
+use App\Models\Mysql\Currency;
+use App\Models\Mysql\Receipt;
+use App\Models\Mysql\Tax;
 use Carbon\Carbon;
 use App\Helpers\TestHelper;
 /*
@@ -64,7 +68,28 @@ $factory->defineAs(User::class, 'mysql', function (Faker\Generator $faker) {
     return $array;
 });
 
-$factory->define(Company::class, function (Faker\Generator $faker) {
+$factory->defineAs(Company::class, 'mysql', function (Faker\Generator $faker) {
+    $array =  [
+        'name' => $faker->company,
+        'status' => 'activated',
+        'user_id' => $faker->randomElement(User::all()->pluck('id')->toArray()),
+//        'currencies' => [],  // todo: agregar relacion
+        'abbreviation' => $faker->numerify('t_###'),
+        'description' => $faker->sentence(5),
+        'cuit' => '2735663969',
+        'legal_name' => $faker->company,
+        'street_name' => $faker->streetName,
+        'street_number' => $faker->numberBetween(150, 900),
+        'phone' => $faker->phoneNumber,
+        'fiscal_ws' => '',
+        'fiscal_ws_status' => '',
+        'responsibility_id' => null,
+    ];
+
+    return $array;
+});
+
+$factory->defineAs(Company::class, 'mongo', function (Faker\Generator $faker) {
     $helper = new TestHelper();
 
     $array =  [
@@ -76,8 +101,6 @@ $factory->define(Company::class, function (Faker\Generator $faker) {
         'description' => $faker->sentence(5),
         'cuit' => '2735663969',
         'legal_name' => $faker->company,
-        'gross_income' => $faker->numerify('####'),
-        'activities_start_date' => Carbon::today()->subYear()->toDateTimeString(),
         'street_name' => $faker->streetName,
         'street_number' => $faker->numberBetween(150, 900),
         'phone' => $faker->phoneNumber,
@@ -92,7 +115,18 @@ $factory->define(Company::class, function (Faker\Generator $faker) {
     return $array;
 });
 
-$factory->define(Category::class, function (Faker\Generator $faker) {
+
+$factory->defineAs(Category::class, 'mysql', function (Faker\Generator $faker) {
+    $array =  [
+        'name' => $faker->numerify('category_###'),
+        'company_id' => $faker->randomElement(Company::all()->pluck('id')->toArray()),
+        'parent_id' => null,
+    ];
+
+    return $array;
+});
+
+$factory->defineAs(Category::class, 'mongo', function (Faker\Generator $faker) {
     $array =  [
         'name' => $faker->numerify('category_###'),
         'company_id' => null,
@@ -103,20 +137,65 @@ $factory->define(Category::class, function (Faker\Generator $faker) {
     return $array;
 });
 
-$factory->define(Fiscalpos::class, function (Faker\Generator $faker) {
+$factory->defineAs(Fiscalpos::class, 'mysql', function (Faker\Generator $faker) {
+    $array =  [
+        'number' => $faker->numerify('##'),
+        'pos_type' => $faker->randomElement(['electronic', 'fiscal_printer', 'manual']),
+        'alias' => $faker->word(),
+        'status' => $faker->boolean(),
+        'company_id' => $faker->randomElement(Company::all()->pluck('id')->toArray()),
+        'default' => $faker->boolean(),
+        'fiscaltoken' => ''
+        ];
+
+    return $array;
+});
+
+
+$factory->defineAs(Fiscalpos::class, 'mongo', function (Faker\Generator $faker) {
     $array =  [
         'number' => $faker->numerify('##'),
         'pos_type' => $faker->randomElement(['electronic', 'fiscal_printer', 'manual']),
         'alias' => $faker->word(),
         'status' => $faker->boolean(),
         'company_id' => null,
+        'default' => $faker->boolean(),
+        'fiscaltoken' => ''
     ];
     $array = (new TestHelper())->addRandomObjectToArray($array, 'companies', 'company_id');
 
     return $array;
 });
 
-$factory->define(Product::class, function (Faker\Generator $faker) {
+$factory->defineAs(Product::class, 'mysql', function (Faker\Generator $faker) {
+    $array = [
+        'name' => $faker->word,
+        'description' => $faker->sentence(),
+        'barcode' => $faker->isbn10,
+        'product_type' => $faker->randomElement(['product', 'service']),
+        'duration' => 1,
+        'stock_type' => 'negative',
+        'replacement_cost' => '1',
+        'author_id' => $faker->randomElement(User::all()->pluck('id')->toArray()),
+        'company_id' => $faker->randomElement(Company::all()->pluck('id')->toArray()),
+        'category_id' => $faker->randomElement(Category::all()->pluck('id')->toArray()),
+        'tax_id' => $faker->randomElement(Tax::all()->pluck('id')->toArray()),
+        'currency_id' => $faker->randomElement(Currency::all()->pluck('id')->toArray()),
+        'stock' => $faker->numerify('##'),
+        'stock_alert' => $faker->numerify('##'),
+        'stock_desired' => $faker->numerify('##'),
+        'high' => '0.00',
+        'width' => '0.00',
+        'length' => '0',
+        'weight' => '0',
+        'weight_element' => '0',
+//        'pricelists' => [],
+    ];
+
+    return $array;
+});
+
+$factory->defineAs(Product::class, 'mongo', function (Faker\Generator $faker) {
     $helper = new TestHelper();
 
     $array = [
@@ -125,6 +204,7 @@ $factory->define(Product::class, function (Faker\Generator $faker) {
         'barcode' => $faker->isbn10,
         'product_type' => $faker->randomElement(['product', 'service']),
         'stock_type' => 'negative',
+        'duration' => 1,
         'replacement_cost' => '1',
         'author_id' => null,
         'company_id' => null,
@@ -152,7 +232,19 @@ $factory->define(Product::class, function (Faker\Generator $faker) {
     return $array;
 });
 
-$factory->define(Pricelist::class, function (Faker\Generator $faker) {
+$factory->defineAs(Pricelist::class, 'mysql', function (Faker\Generator $faker) {
+    $array =  [
+        'name' => $faker->word,
+        'company_id' => $faker->randomElement(Company::all()->pluck('id')->toArray()),
+        'percent_price' => $faker->randomFloat(2, 0, 50),
+        'percent_subdist' => $faker->randomFloat(2, 0, 50),
+        'percent_prevent' => $faker->randomFloat(2, 0, 50),
+    ];
+
+    return $array;
+});
+
+$factory->defineAs(Pricelist::class, 'mongo', function (Faker\Generator $faker) {
     $array =  [
         'name' => $faker->word,
         'company_id' => null,
@@ -264,7 +356,41 @@ $factory->define(Inventory::class, function (Faker\Generator $faker) {
     return $array;
 });
 
-$factory->define(Document::class, function (Faker\Generator $faker) {
+$factory->defineAs(Document::class, 'mysql', function (Faker\Generator $faker) {
+    $array = [
+        'author_id' => $faker->randomElement(User::all()->pluck('id')->toArray()),
+        'company_id' => $faker->randomElement(Company::all()->pluck('id')->toArray()),
+        'entity_id' => $faker->randomElement(Entity::all()->pluck('id')->toArray()),
+        'seller_id' => $faker->randomElement(Entity::all()->pluck('id')->toArray()),
+        'currency_id' => $faker->randomElement(Currency::all()->pluck('id')->toArray()),
+        'receipt_id' => $faker->randomElement(Receipt::all()->pluck('id')->toArray()),
+        'section' => $faker->randomElement(['sales', 'purchases']),
+        'receipt_type' => $faker->randomElement(['invoice', 'credit', 'debit', 'order_sell', 'order_buy', 'quotation', 'zeta']),
+        'receipt_volume' => $faker->numerify('#'),
+        'receipt_number' => $faker->numerify('00000###'),
+        'total_commission' => $faker->randomFloat(2, 0, 10000),
+        'total_cost' => $faker->randomFloat(2, 0, 10000),
+        'total_net_price' => $faker->randomFloat(2, 0, 10000),
+        'total_final_price' => $faker->randomFloat(2, 0, 10000),
+        'emission_date' => Carbon::now()->toDateTimeString(),
+        'cae' => $faker->numerify('###########'),
+        'cae_expiration_date' => Carbon::now()->addMonth()->toDateTimeString(),
+        'observation' => $faker->sentence(),
+        'status' => $faker->randomElement(['draft', 'confirmed', 'failed']),
+//        'details' => [],
+        'parent_id' => null,
+        'fiscal_observation' => '',
+        'canceled' => false,
+        'show_amounts' => true,
+//        'children' => [],
+//        'ancestors' => [],
+//        'transactions' => [],
+    ];
+
+    return $array;
+});
+
+$factory->defineAs(Document::class, 'mongo', function (Faker\Generator $faker) {
 
     $helper = new TestHelper();
     $array = [
@@ -288,7 +414,10 @@ $factory->define(Document::class, function (Faker\Generator $faker) {
         'observation' => $faker->sentence(),
         'status' => $faker->randomElement(['draft', 'confirmed', 'failed']),
         'details' => [],
-        'parent' => null,
+        'parent_id' => null,
+        'fiscal_observation' => '',
+        'canceled' => false,
+        'show_amounts' => true,
         'children' => [],
         'ancestors' => [],
         'transactions' => [],

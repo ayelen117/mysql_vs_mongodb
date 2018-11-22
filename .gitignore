@@ -44,7 +44,7 @@ composer.lock
 phpunit.phar
 
 public/assets
-public/mix-manifest.json
+#public/mix-manifest.json
 
 .sass-cache
 

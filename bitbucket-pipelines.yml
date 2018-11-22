@@ -15,6 +15,7 @@ pipelines:
           - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
           - composer install
           - vendor/bin/phpunit
+          - npm install
     - step:
         # set HEROKU_API_KEY and HEROKU_APP_NAME environment variables
         # set clone `depth: full' as described here: https://confluence.atlassian.com/x/Y9-5Mw

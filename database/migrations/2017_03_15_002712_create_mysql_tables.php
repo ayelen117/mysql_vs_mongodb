@@ -30,7 +30,7 @@ class CreateMysqlTables extends Migration
             $table->string('abbreviation',5);
             $table->text('description');
             $table->string('cuit',11);
-            $table->string('legal_name',11);
+			$table->string('legal_name', 11)->nullable();
             $table->string('street_name',96);
             $table->integer('street_number');
             $table->integer('responsibility_id')->unsigned();

@@ -27,9 +27,8 @@
         @yield('page')
 
         {{--Common Scripts--}}
-        {{ Html::script(mix('assets/app/js/app.js')) }}
-
-        {{ Html::script('assets/app/js/custom-tesis.js') }}
+        {{ Html::script('js/app.js') }}
+        {{ Html::script('js/custom-tesis.js') }}
 
         {{--Laravel Js Variables--}}
         @tojs

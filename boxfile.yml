@@ -40,8 +40,8 @@ run.config:
 deploy.config:
   before_live:
     web.main:
-      - composer install
-      - composer dump-autoload
+#      - composer install
+#      - composer dump-autoload
       - mkdir -p storage/framework/{sessions,cache,views}
       - php artisan migrate
 #  after_live:
@@ -60,9 +60,8 @@ data.storage:
 
 # add a web server
 web.main:
-  start:
-    php: start-php
-    nginx: start-nginx
+  start: start-php
+#    nginx: start-nginx
 
   # add writable dirs to your web component
   writable_dirs:

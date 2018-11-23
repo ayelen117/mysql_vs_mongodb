@@ -6,7 +6,7 @@ run.config:
   engine.config:
 
     # sets the php version to 7.0
-    runtime: php-7.2
+    runtime: php-7.1
 
     cache_dirs:
       - vendor
@@ -22,7 +22,6 @@ run.config:
     # enables php extensions
     extensions:
       - pdo
-      - pdo_mysql
       - mbstring
       - tokenizer
       - session
@@ -30,6 +29,10 @@ run.config:
       - dom
       - xml
       - ctype
+      - xmlwriter
+      - pdo
+      - mongodb
+      - pdo_mysql
 
     extra_steps:
       - npm install
@@ -37,14 +40,15 @@ run.config:
 deploy.config:
   before_live:
     web.main:
+      - composer install
+      - composer dump-autoload
       - mkdir -p storage/framework/{sessions,cache,views}
-      - php artisan migrate --force
-  after_live:
-    web.main:
-      - composer dump-autoload --optimize
-      - php artisan cache:clear
-      - php artisan clear-compiled
-      - php artisan optimize
+      - php artisan migrate
+#  after_live:
+#    web.main:
+#      - php artisan cache:clear
+#      - php artisan clear-compiled
+#      - php artisan optimize
 
 # add a MySQL database
 data.db:
@@ -56,7 +60,9 @@ data.storage:
 
 # add a web server
 web.main:
-  start: php-server
+  start:
+    php: start-php
+    nginx: start-nginx
 
   # add writable dirs to your web component
   writable_dirs:
@@ -70,3 +76,6 @@ web.main:
   network_dirs:
     data.storage:
       - storage
+
+data.mongodb:
+  image: nanobox/mongodb:3.0

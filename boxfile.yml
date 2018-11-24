@@ -43,6 +43,8 @@ deploy.config:
 #      - composer install
 #      - composer dump-autoload
       - mkdir -p storage/framework/{sessions,cache,views}
+#      - mongod --version
+#      - mongo start
       - php artisan migrate
 #  after_live:
 #    web.main:
@@ -78,3 +80,10 @@ web.main:
 
 data.mongodb:
   image: nanobox/mongodb:3.0
+  config:
+    objcheck: true
+    log_verbosity: 'v'
+    directoryperdb: true
+    logappend: true
+    nojournal: false
+    noscripting: false

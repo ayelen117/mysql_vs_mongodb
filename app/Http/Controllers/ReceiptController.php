@@ -14,7 +14,7 @@ class ReceiptController extends Controller
 
     public function __construct()
     {
-        $this->client = new Client();
+        $this->client = new Client(config('database.mongodb.url'));
         $this->receipts = $this->client->tesis->receipts;
     }
 

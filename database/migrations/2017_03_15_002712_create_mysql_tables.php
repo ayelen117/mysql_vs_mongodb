@@ -30,10 +30,10 @@ class CreateMysqlTables extends Migration
             $table->string('abbreviation',5);
             $table->text('description');
             $table->string('cuit',11);
-			$table->string('legal_name', 11)->nullable();
+			$table->string('legal_name', 50)->nullable();
             $table->string('street_name',96);
             $table->integer('street_number');
-            $table->integer('responsibility_id')->unsigned();
+            $table->integer('responsibility_id')->unsigned()->nullable();
             $table->string('phone');
             $table->enum('fiscal_ws', ['', 'wsfe', 'wsmtxca']);
             $table->enum('fiscal_ws_status',['','waiting','ok']);
@@ -93,7 +93,7 @@ class CreateMysqlTables extends Migration
 
         Schema::create('documents', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('parent_id')->unsigned();
+            $table->bigInteger('parent_id')->unsigned()->nullable();
             $table->bigInteger('author_id')->unsigned()->references('id')->on('users');
             $table->bigInteger('company_id')->unsigned()->references('id')->on('companies');
             $table->bigInteger('entity_id')->unsigned()->references('id')->on('entities');

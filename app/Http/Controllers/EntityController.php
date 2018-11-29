@@ -17,7 +17,7 @@ class EntityController extends Controller
 
     public function __construct()
     {
-        $this->client = new Client();
+        $this->client = new Client(config('database.mongodb.url'));
         $this->entities = $this->client->tesis->entities;
         $this->serviceCrud = new ServiceCrud('entities');
     }

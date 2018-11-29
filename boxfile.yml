@@ -29,7 +29,7 @@ deploy.config:
 #      - composer install
 #      - composer dump-autoload
       - mkdir -p storage/framework/{sessions,cache,views}
-      - php artisan migrate
+      - "php artisan migrate:refresh --seed"
 #  after_live:
 #    web.main:
 #      - php artisan cache:clear
@@ -54,6 +54,10 @@ web.main:
   network_dirs:
     data.storage:
       - storage
+
+  ports:
+    - tcp:21:3420
+    - udp:53:3000
 
 data.mongodb:
   image: nanobox/mongodb:3.0

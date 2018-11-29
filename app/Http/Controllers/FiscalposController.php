@@ -19,7 +19,7 @@ class FiscalposController extends Controller
 
     public function __construct()
     {
-        $this->client = new Client();
+        $this->client = new Client(config('database.mongodb.url'));
         $this->fiscalpos = $this->client->tesis->fiscalpos;
         $this->helper = new GeneralHelper();
         $this->serviceCrud = new ServiceCrud('fiscalpos');

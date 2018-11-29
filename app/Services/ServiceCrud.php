@@ -13,7 +13,7 @@ class ServiceCrud
 
     public function __construct($modelName)
     {
-        $this->client = new Client();
+        $this->client = new Client(config('database.mongodb.url'));
         $this->mongoInstance = $this->client->tesis->$modelName;
         $this->modelName = $modelName;
     }

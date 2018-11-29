@@ -12,7 +12,7 @@ return [
     | any other location as required by the application or its packages.
     */
 
-    'name' => 'Tesis de Aye',
+    'name' => 'Bases de datos relacionales vs no relacionales',
 
     /*
     |--------------------------------------------------------------------------

@@ -12,7 +12,7 @@ class CreateMongodbTables extends Migration
      */
     public function up()
     {
-        $client = new Client('mongodb://192.168.0.16:27017');
+        $client = new Client(config('database.mongodb.url'));
         $tables = ['categories', 'companies', 'company_currency', 'currencies', 'details', 'document_document',
                    'document_transaction', 'documents', 'entities', 'entity_entity', 'fiscalpos', 'identifications',
                    'inventories', 'pricelist_product', 'pricelists', 'products', 'receipts', 'responsibilities',
@@ -38,7 +38,7 @@ class CreateMongodbTables extends Migration
      */
     public function down()
     {
-        $client = new Client();
+        $client = new Client(config('database.mongodb.url'));
         $tables = ['categories', 'companies', 'company_currency', 'currencies', 'details', 'document_document',
                    'document_transaction', 'documents', 'entities', 'entity_entity', 'fiscalpos', 'identifications',
                    'inventories', 'pricelist_product', 'pricelists', 'products', 'receipts', 'responsibilities',

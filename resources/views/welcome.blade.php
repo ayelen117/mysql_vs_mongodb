@@ -9,7 +9,4 @@
         <i class="fa fa-home" aria-hidden="true"></i>
         {{ __('views.backend.section.navigation.menu_0_1') }}
     </a>
-    <div class="m-b-md">
-        Descripción de tesis.
-    </div>
 @endsection

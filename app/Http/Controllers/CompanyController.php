@@ -19,7 +19,7 @@ class CompanyController extends Controller
 
     public function __construct()
     {
-        $this->client = new Client();
+        $this->client = new Client(config('database.mongodb.url'));
         $this->companies = $this->client->tesis->companies;
         $this->helper = new GeneralHelper();
         $this->serviceCrud = new ServiceCrud('companies');

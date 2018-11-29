@@ -18,7 +18,7 @@ class DocumentController extends Controller
 
     public function __construct()
     {
-        $this->client = new Client();
+        $this->client = new Client(config('database.mongodb.url'));
         $this->documents = $this->client->tesis->documents;
         $this->helper = new GeneralHelper();
         $this->serviceCrud = new ServiceCrud('documents');

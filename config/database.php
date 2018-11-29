@@ -89,7 +89,8 @@ return [
             'password' => env('DB_MONGODB_PASSWORD'),
             'options'  => [
                 'database' => 'admin' // sets the authentication database required by mongo 3
-            ]
+            ],
+			'url' => 'mongodb://'.env('DB_MONGODB_HOST').':27017',
         ],
     ],
 

@@ -15,7 +15,7 @@ class TransactionController extends Controller
 
     public function __construct()
     {
-        $this->client = new Client();
+        $this->client = new Client(config('database.mongodb.url'));
         $this->transactions = $this->client->tesis->transactions;
         $this->helper = new GeneralHelper();
     }

@@ -19,7 +19,7 @@ class CategoryController extends Controller
 
     public function __construct()
     {
-        $this->client = new Client();
+        $this->client = new Client(config('database.mongodb.url'));
         $this->categories = $this->client->tesis->categories;
         $this->helper = new GeneralHelper();
         $this->serviceCrud = new ServiceCrud('categories');

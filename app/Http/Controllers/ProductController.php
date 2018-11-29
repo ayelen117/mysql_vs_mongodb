@@ -19,7 +19,7 @@ class ProductController extends Controller
 
     public function __construct()
     {
-        $this->client = new Client();
+        $this->client = new Client(config('database.mongodb.url'));
         $this->products = $this->client->tesis->products;
         $this->helper = new GeneralHelper();
         $this->serviceCrud = new ServiceCrud('products');

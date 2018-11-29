@@ -12,7 +12,7 @@ class MongoSeed extends Seeder
      */
     public function run()
     {
-        $client = new Client();
+        $client = new Client(config('database.mongodb.url'));
 
         $collection = $client->tesis->identifications;
         $identifications = config('seed.identifications');

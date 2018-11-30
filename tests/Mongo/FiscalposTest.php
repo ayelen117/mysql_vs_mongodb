@@ -25,7 +25,7 @@ class FiscalposTest extends BaseTest
         $client = new Client();
         $collection = $client->tesis->fiscalpos;
 
-        $objects = factory(MysqlFiscalpos::class, 2)->make()->toArray();
+        $objects = factory(MysqlFiscalpos::class, 'mongo', 2)->make()->toArray();
         $collection->insertMany($objects);
     }
 
@@ -39,7 +39,7 @@ class FiscalposTest extends BaseTest
 
     public function test_if_fiscalpos_saves()
     {
-        $array = factory(MysqlFiscalpos::class)->make()->toArray();
+        $array = factory(MysqlFiscalpos::class, 'mongo')->make()->toArray();
         $this->callPost(route('fiscalpos.store'), $array);
         $this->assertResponseStatus(201);
     }
@@ -54,7 +54,7 @@ class FiscalposTest extends BaseTest
     public function test_if_fiscalpos_update()
     {
         $fiscalpos = $this->fiscalpos->findOne([], ['sort' => ['_id' => -1],]);
-        $array = factory(MysqlFiscalpos::class)->make()->toArray();
+        $array = factory(MysqlFiscalpos::class, 'mongo')->make()->toArray();
         $this->callPatch(route('fiscalpos.update', ['fiscalpos_id' => $fiscalpos->_id]), $array);
         $this->assertResponseOk();
     }

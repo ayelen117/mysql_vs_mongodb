@@ -8,7 +8,7 @@ class CategoryTest extends \TestCase
 {
     public function test_if_category_saves_with_mysql()
     {
-        $objects = factory(MysqlCategory::class, 100)->make();
+        $objects = factory(MysqlCategory::class, 'mysql', 10)->make();
         foreach ($objects as $var) {
             MysqlCategory::create($var->toArray());
         }

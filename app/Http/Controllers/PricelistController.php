@@ -20,7 +20,7 @@ class PricelistController extends Controller
 
     public function __construct()
     {
-        $this->client = new Client(config('database.mongodb.url'));
+        $this->client = new Client(env('MONGODB_URL'));
         $this->pricelists = $this->client->tesis->pricelists;
         $this->helper = new GeneralHelper();
         $this->serviceCrud = new ServiceCrud('pricelists');
@@ -81,7 +81,7 @@ class PricelistController extends Controller
 
             return $result;
         } else {
-            $data = $this->helper->setRelationships($data, 'companies', 'company_id');
+            $this->helper->setRelationships($data, 'companies', 'company_id');
             $pricelist_id = $this->pricelists->insertOne($data)->getInsertedId();
             $pricelist = $this->pricelists->findOne(['_id' => new ObjectID($pricelist_id)]);
             $result = json_encode($pricelist);
@@ -135,7 +135,7 @@ class PricelistController extends Controller
 
             return $result;
         } else {
-            $data = $this->helper->setRelationships($data, 'companies', 'company_id');
+            $this->helper->setRelationships($data, 'companies', 'company_id');
             $this->pricelists->updateOne(
                 ['_id' => new ObjectID($id)],
                 ['$set' => $data]

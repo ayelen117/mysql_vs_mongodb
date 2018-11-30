@@ -8,7 +8,7 @@ class UserTest extends \TestCase
 {
     public function test_if_user_saves_with_mysql()
     {
-        $objects = factory(MysqlUser::class, 100)->make();
+        $objects = factory(MysqlUser::class, 'mysql', 10)->make();
         $tiempo_total = 0;
         foreach ($objects as $var) {
             $tiempo_inicio = microtime(true);
@@ -17,7 +17,6 @@ class UserTest extends \TestCase
             $tiempo       = $tiempo_fin - $tiempo_inicio;
             $tiempo_total = $tiempo_total + $tiempo;
         }
-        dump($tiempo_total);
     }
     public function test_if_user_list_with_mysql()
     {

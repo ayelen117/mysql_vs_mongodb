@@ -19,7 +19,7 @@ class CategoryController extends Controller
 
     public function __construct()
     {
-        $this->client = new Client(config('database.mongodb.url'));
+        $this->client = new Client(env('MONGODB_URL'));
         $this->categories = $this->client->tesis->categories;
         $this->helper = new GeneralHelper();
         $this->serviceCrud = new ServiceCrud('categories');
@@ -79,7 +79,7 @@ class CategoryController extends Controller
 
             return $result;
         } else {
-            $data = $this->helper->setRelationships($data, 'companies', 'company_id');
+			$this->helper->setRelationships($data, 'companies', 'company_id');
             $category_id = $this->categories->insertOne($data)->getInsertedId();
             $category = $this->categories->findOne(['_id' => new ObjectID($category_id)]);
             $result = json_encode($category);
@@ -133,7 +133,7 @@ class CategoryController extends Controller
 
             return $result;
         } else {
-            $data = $this->helper->setRelationships($data, 'companies', 'company_id');
+            $this->helper->setRelationships($data, 'companies', 'company_id');
             $this->categories->updateOne(
                 ['_id' => new ObjectID($id)],
                 ['$set' => $data]

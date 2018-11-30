@@ -18,7 +18,7 @@ class DocumentController extends Controller
 
     public function __construct()
     {
-        $this->client = new Client(config('database.mongodb.url'));
+        $this->client = new Client(env('MONGODB_URL'));
         $this->documents = $this->client->tesis->documents;
         $this->helper = new GeneralHelper();
         $this->serviceCrud = new ServiceCrud('documents');
@@ -80,13 +80,13 @@ class DocumentController extends Controller
             return $result;
         } else {
 
-            $data = $this->helper->setRelationships($data, 'users', 'author_id');
-            $data = $this->helper->setRelationships($data, 'companies', 'company_id');
-            $data = $this->helper->setRelationships($data, 'entities', 'entity_id');
-            $data = $this->helper->setRelationships($data, 'entities', 'seller_id');
-            $data = $this->helper->setRelationships($data, 'currencies', 'currency_id');
-            $data = $this->helper->setRelationships($data, 'receipts', 'receipt_id');
-    //        $data = $this->helper->setRelationships($data, 'details', 'details');
+            $this->helper->setRelationships($data, 'users', 'author_id');
+            $this->helper->setRelationships($data, 'companies', 'company_id');
+            $this->helper->setRelationships($data, 'entities', 'entity_id');
+            $this->helper->setRelationships($data, 'entities', 'seller_id');
+            $this->helper->setRelationships($data, 'currencies', 'currency_id');
+            $this->helper->setRelationships($data, 'receipts', 'receipt_id');
+    //        $this->helper->setRelationships($data, 'details', 'details');
             $document_id = $this->documents->insertOne($data)->getInsertedId();
             $document = $this->documents->findOne(['_id' => new ObjectID($document_id)]);
             $result = json_encode($document);
@@ -140,13 +140,13 @@ class DocumentController extends Controller
 
             return $result;
         } else {
-            $data = $this->helper->setRelationships($data, 'users', 'author_id');
-            $data = $this->helper->setRelationships($data, 'companies', 'company_id');
-            $data = $this->helper->setRelationships($data, 'entities', 'entity_id');
-            $data = $this->helper->setRelationships($data, 'entities', 'seller_id');
-            $data = $this->helper->setRelationships($data, 'currencies', 'currency_id');
-            $data = $this->helper->setRelationships($data, 'receipts', 'receipt_id');
-    //        $data = $this->helper->setRelationships($data, 'details', 'details');
+            $this->helper->setRelationships($data, 'users', 'author_id');
+            $this->helper->setRelationships($data, 'companies', 'company_id');
+            $this->helper->setRelationships($data, 'entities', 'entity_id');
+            $this->helper->setRelationships($data, 'entities', 'seller_id');
+            $this->helper->setRelationships($data, 'currencies', 'currency_id');
+            $this->helper->setRelationships($data, 'receipts', 'receipt_id');
+    //        $this->helper->setRelationships($data, 'details', 'details');
             $this->documents->updateOne(
                 ['_id' => new ObjectID($id)],
                 ['$set' => $data]

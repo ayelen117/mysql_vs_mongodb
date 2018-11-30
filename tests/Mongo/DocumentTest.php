@@ -25,7 +25,7 @@ class DocumentTest extends BaseTest
         $client = new Client();
         $collection = $client->tesis->documents;
 
-        $objects = factory(MysqlDocument::class, 2)->make()->toArray();
+        $objects = factory(MysqlDocument::class, 'mongo', 2)->make()->toArray();
         $collection->insertMany($objects);
     }
 
@@ -39,7 +39,7 @@ class DocumentTest extends BaseTest
 
     public function test_if_document_saves()
     {
-        $array = factory(MysqlDocument::class)->make()->toArray();
+        $array = factory(MysqlDocument::class, 'mongo')->make()->toArray();
         $this->callPost(route('documents.store'), $array);
         $this->assertResponseStatus(201);
     }
@@ -54,7 +54,7 @@ class DocumentTest extends BaseTest
     public function test_if_document_update()
     {
         $document = $this->documents->findOne([], ['sort' => ['_id' => -1],]);
-        $array = factory(MysqlDocument::class)->make()->toArray();
+        $array = factory(MysqlDocument::class, 'mongo')->make()->toArray();
         $this->callPatch(route('documents.update', ['document_id' => $document->_id]), $array);
         $this->assertResponseOk();
     }

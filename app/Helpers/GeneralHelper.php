@@ -16,7 +16,7 @@ class GeneralHelper
 
     public function __construct()
     {
-        $this->client = new Client(config('database.mongodb.url'));
+        $this->client = new Client(env('MONGODB_URL'));
     }
 
     public function getRelationships($data, $collection_name, $key){

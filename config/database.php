@@ -92,6 +92,28 @@ return [
             ],
 			'url' => 'mongodb://'.env('DB_MONGODB_HOST').':27017',
         ],
+		/*
+	   * Test databases. Run tests over sqlite memory for faster execution on MySQL models and
+	   * a second database for Mongo models
+	   *
+	   * See phpunit.xml
+	   */
+		'sqlite_testing' => [
+			'driver'   => 'sqlite',
+			'database' => ':memory:',
+			'prefix'   => '',
+		],
+		'mongo_testing' => [
+			'driver'   => 'mongodb',
+			'host'     => env('MDB_TEST_HOST', 'localhost'),
+			'port'     => env('MDB_TEST_PORT', 27017),
+			'database' => env('MDB_TEST_DATABASE','mongo_testing'),
+			'username' => env('MDB_TEST_USERNAME','test_user'),
+			'password' => env('MDB_TEST_PASSWORD','test_password'),
+			'options'  => [
+				'database' => env('MDB_TEST_AUTHDB','mongo_testing') // sets the authentication database required by mongo 3
+			]
+		]
     ],
 
     /*

@@ -12,7 +12,14 @@ class Inventory extends Model
      *
      * @var array
      */
-//    protected $fillable = [
-//        'name', 'email', 'password',
-//    ];
+    protected $fillable = [
+		'qty',
+		'current_stock_qty',
+		'product_id',
+		'detail_id',
+		'unit_price',
+		'total_price',
+		'total',
+	];
+
 }

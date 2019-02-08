@@ -12,7 +12,11 @@ class Pricelist extends Model
      *
      * @var array
      */
-//    protected $fillable = [
-//        'name', 'email', 'password',
-//    ];
+    protected $fillable = [
+		'name',
+		'company_id',
+		'percent_price',
+		'percent_subdist',
+		'percent_prevent',
+    ];
 }

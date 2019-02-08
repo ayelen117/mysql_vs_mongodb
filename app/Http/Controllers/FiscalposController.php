@@ -169,4 +169,9 @@ class FiscalposController extends Controller
             return response()->json(['status' => 'success'], 200);
         }
     }
+	
+	public function models()
+	{
+		return view('other_models.dashboard');
+	}
 }

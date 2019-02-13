@@ -75,10 +75,10 @@ class ServiceCrud
 		$mongo_total = microtime(true) - $mongo_start;
 		
 		$myModel = new $mysqlModelClass;
-		$a = $myModel->getFillable();
-		$b = floor(65536 / count($a));
+		$fieldsPerRecord = $myModel->getFillable();
+		$maxAllowedRecords = floor(65536 / count($fieldsPerRecord));
 
-		$sql = $this->helper->getSql($this->modelName, $mysql_objects, 'store', $b, $qty);
+		$sql = $this->helper->getSql($this->modelName, 'store', $maxAllowedRecords, $qty, $mysql_objects);
 		$mysql_start = microtime(true);
 		if (is_array($sql)) {
 			foreach ($sql as $item){
@@ -118,8 +118,10 @@ class ServiceCrud
 		);
 		$mongo_total = microtime(true) - $mongo_start;
 		
+		$sql = $this->helper->getSqlData('update', $this->modelName, $qty, $mysql_object);
+		
 		$mysql_start = microtime(true);
-		DB::table($this->modelName)->where('id', '!=', 0)->limit($qty)->update($mysql_object);
+		$result_mysql = DB::update($sql->query, $sql->bindings);
 		$mysql_total = microtime(true) - $mysql_start;
 		
 		$comparison = [
@@ -147,8 +149,10 @@ class ServiceCrud
 		);
 		$mongo_total = microtime(true) - $mongo_start;
 		
+		$sql = $this->helper->getSqlData('delete', $this->modelName, $qty);
+		
 		$mysql_start = microtime(true);
-		DB::table($this->modelName)->where('id', '!=', 0)->limit($qty)->delete();
+		$result_mysql = DB::delete($sql->query, $sql->bindings);
 		$mysql_total = microtime(true) - $mysql_start;
 		
 		$comparison = [

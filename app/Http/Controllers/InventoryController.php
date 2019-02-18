@@ -15,7 +15,7 @@ class InventoryController extends Controller
 
     public function __construct()
     {
-        $this->client = new Client(config('database.mongodb.url'));
+        $this->client = new Client(env('MONGODB_URL'));
         $this->inventories = $this->client->tesis->inventories;
         $this->helper = new GeneralHelper();
     }
@@ -54,7 +54,7 @@ class InventoryController extends Controller
     {
         $data = $request->all();
 
-        $data = $this->helper->setRelationships($data, 'products', 'product_id');
+        $this->helper->setRelationships($data, 'products', 'product_id');
         $inventory_id = $this->inventories->insertOne($data)->getInsertedId();
         $inventory = $this->inventories->findOne(['_id' => new ObjectID($inventory_id)]);
         $result = json_encode($inventory);
@@ -100,7 +100,7 @@ class InventoryController extends Controller
     public function update(Request $request, $id)
     {
         $data = $request->all();
-        $data = $this->helper->setRelationships($data, 'products', 'product_id');
+        $this->helper->setRelationships($data, 'products', 'product_id');
         $this->inventories->updateOne(
             ['_id' => new ObjectID($id)],
             ['$set' => $data]

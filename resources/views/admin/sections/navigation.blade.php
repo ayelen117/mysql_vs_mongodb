@@ -85,6 +85,12 @@
                             Fiscalpos
                         </a>
                     </li>
+                    <li>
+                        <a href="{{ route('home.models') }}">
+                            <i class="fa fa-users" aria-hidden="true"></i>
+                            Otros modelos
+                        </a>
+                    </li>
                 </ul>
             </div>
             <div class="menu_section">

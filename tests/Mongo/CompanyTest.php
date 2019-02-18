@@ -25,7 +25,7 @@ class CompanyTest extends BaseTest
         $client = new Client();
         $collection = $client->tesis->companies;
 
-        $objects = factory(MysqlCompany::class, 2)->make()->toArray();
+        $objects = factory(MysqlCompany::class, 'mongo', 2)->make()->toArray();
         $collection->insertMany($objects);
     }
 
@@ -39,7 +39,7 @@ class CompanyTest extends BaseTest
 
     public function test_if_company_saves()
     {
-        $array = factory(MysqlCompany::class)->make()->toArray();
+        $array = factory(MysqlCompany::class, 'mongo')->make()->toArray();
         $this->callPost(route('companies.store'), $array);
         $this->assertResponseStatus(201);
     }
@@ -54,7 +54,7 @@ class CompanyTest extends BaseTest
     public function test_if_company_update()
     {
         $company = $this->companies->findOne([], ['sort' => ['_id' => -1],]);
-        $array = factory(MysqlCompany::class)->make()->toArray();
+        $array = factory(MysqlCompany::class, 'mongo')->make()->toArray();
         unset($array['name']);
         $this->callPatch(route('companies.update', ['company_id' => $company->_id]), $array);
         $this->assertResponseOk();

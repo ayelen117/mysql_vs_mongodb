@@ -24,7 +24,7 @@ class ProductTest extends BaseTest
     {
         $client = new Client();
         $collection = $client->tesis->products;
-        $objects = factory(MysqlProduct::class, 2)->make()->toArray();
+        $objects = factory(MysqlProduct::class, 'mongo', 2)->make()->toArray();
         $collection->insertMany($objects);
     }
 
@@ -38,7 +38,7 @@ class ProductTest extends BaseTest
 
     public function test_if_product_saves()
     {
-        $array = factory(MysqlProduct::class)->make()->toArray();
+        $array = factory(MysqlProduct::class, 'mongo')->make()->toArray();
         $this->callPost(route('products.store'), $array);
         $this->assertResponseStatus(201);
     }
@@ -53,7 +53,7 @@ class ProductTest extends BaseTest
     public function test_if_product_update()
     {
         $product = $this->products->findOne([], ['sort' => ['_id' => -1],]);
-        $array = factory(MysqlProduct::class)->make()->toArray();
+        $array = factory(MysqlProduct::class, 'mongo')->make()->toArray();
         $this->callPatch(route('products.update', ['product_id' => $product->_id]), $array);
         $this->assertResponseOk();
     }

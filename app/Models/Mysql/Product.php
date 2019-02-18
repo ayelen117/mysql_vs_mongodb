@@ -3,6 +3,7 @@
 namespace App\Models\Mysql;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class Product extends Model
 {
@@ -12,7 +13,29 @@ class Product extends Model
      *
      * @var array
      */
-//    protected $fillable = [
-//        'name', 'email', 'password',
-//    ];
+//    protected $guarded = [];
+    protected $fillable = [
+		'name',
+		'description',
+		'barcode',
+		'product_type',
+		'duration',
+		'stock_type',
+		'replacement_cost',
+		'author_id',
+		'company_id',
+		'category_id',
+		'tax_id',
+		'currency_id',
+		'stock',
+		'stock_alert',
+		'stock_desired',
+		'high',
+		'width',
+		'length',
+		'weight',
+		'weight_element',
+	];
+	
+
 }

@@ -19,7 +19,7 @@ class ProductController extends Controller
 
     public function __construct()
     {
-        $this->client = new Client(config('database.mongodb.url'));
+        $this->client = new Client(env('MONGODB_URL'));
         $this->products = $this->client->tesis->products;
         $this->helper = new GeneralHelper();
         $this->serviceCrud = new ServiceCrud('products');
@@ -81,11 +81,11 @@ class ProductController extends Controller
             return $result;
         } else {
 
-            $data = $this->helper->setRelationships($data, 'companies', 'company_id');
-            $data = $this->helper->setRelationships($data, 'users', 'author_id');
-            $data = $this->helper->setRelationships($data, 'categories', 'category_id');
-            $data = $this->helper->setRelationships($data, 'taxes', 'tax_id');
-            $data = $this->helper->setRelationships($data, 'currencies', 'currency_id');
+            $this->helper->setRelationships($data, 'companies', 'company_id');
+            $this->helper->setRelationships($data, 'users', 'author_id');
+            $this->helper->setRelationships($data, 'categories', 'category_id');
+            $this->helper->setRelationships($data, 'taxes', 'tax_id');
+            $this->helper->setRelationships($data, 'currencies', 'currency_id');
     
             $product_id = $this->products->insertOne($data)->getInsertedId();
             $product = $this->products->findOne(['_id' => new ObjectID($product_id)]);
@@ -140,11 +140,11 @@ class ProductController extends Controller
 
             return $result;
         } else {
-            $data = $this->helper->setRelationships($data, 'companies', 'company_id');
-            $data = $this->helper->setRelationships($data, 'users', 'author_id');
-            $data = $this->helper->setRelationships($data, 'categories', 'category_id');
-            $data = $this->helper->setRelationships($data, 'taxes', 'tax_id');
-            $data = $this->helper->setRelationships($data, 'currencies', 'currency_id');
+            $this->helper->setRelationships($data, 'companies', 'company_id');
+            $this->helper->setRelationships($data, 'users', 'author_id');
+            $this->helper->setRelationships($data, 'categories', 'category_id');
+            $this->helper->setRelationships($data, 'taxes', 'tax_id');
+            $this->helper->setRelationships($data, 'currencies', 'currency_id');
     
             $this->products->updateOne(
                 ['_id' => new ObjectID($id)],

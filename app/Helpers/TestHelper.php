@@ -15,7 +15,7 @@ class TestHelper
 
     public function __construct()
     {
-        $this->client = new Client(config('database.mongodb.url'));
+        $this->client = new Client(env('MONGODB_URL'));
     }
     public function getRandomObjects($collection_name, $limit){
         $this->$collection_name = $this->client->tesis->$collection_name;

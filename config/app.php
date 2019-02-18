@@ -185,6 +185,7 @@ return [
         Collective\Html\HtmlServiceProvider::class,
         App\Providers\ToJsServiceProvider::class,
         App\Providers\MetaServiceProvider::class,
+		Barryvdh\Debugbar\ServiceProvider::class,
     ],
 
     /*
@@ -239,6 +240,7 @@ return [
 
         'ToJs' => \App\Helpers\ToJs\Facades\ToJsFacade::class,
         'Meta' => \App\Helpers\Meta\Facades\MetaFacade::class,
+		'Debugbar' => Barryvdh\Debugbar\Facade::class,
     ],
 
 ];

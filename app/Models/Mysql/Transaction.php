@@ -12,7 +12,10 @@ class Transaction extends Model
      *
      * @var array
      */
-//    protected $fillable = [
-//        'name', 'email', 'password',
-//    ];
+    protected $fillable = [
+		'due_date',
+		'amount',
+		'currency_id',
+		'observations',
+    ];
 }

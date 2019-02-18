@@ -22,7 +22,7 @@ class UserTest extends BaseTest
         $client = new Client();
         $collection = $client->tesis->users;
 
-        $objects = factory(MysqlUser::class, 2)->make()->toArray();
+        $objects = factory(MysqlUser::class, 'mongo', 2)->make()->toArray();
         $collection->insertMany($objects);
     }
 
@@ -36,7 +36,7 @@ class UserTest extends BaseTest
 
     public function test_if_user_saves()
     {
-        $array = factory(MysqlUser::class)->make()->toArray();
+        $array = factory(MysqlUser::class, 'mongo')->make()->toArray();
         $this->callPost(route('users.store'), $array);
         $this->assertResponseStatus(201);
     }
@@ -51,10 +51,10 @@ class UserTest extends BaseTest
     public function test_if_user_update()
     {
         $user = $this->users->findOne([], ['sort' => ['_id' => -1],]);
-        $array = factory(MysqlUser::class)->make()->toArray();
-        unset($array['name']);
-
-        $this->callPatch(route('users.update', ['user_id' => $user->_id]), $array);
+        $array = factory(MysqlUser::class, 'mongo')->make()->toArray();
+		unset($array['name']);
+	
+		$this->callPatch(route('users.update', ['user_id' => $user->_id]), $array);
         $this->assertResponseOk();
     }
 

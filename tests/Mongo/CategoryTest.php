@@ -25,7 +25,7 @@ class CategoryTest extends BaseTest
         $client = new Client();
         $collection = $client->tesis->categories;
 
-        $objects = factory(MysqlCategory::class, 2)->make()->toArray();
+        $objects = factory(MysqlCategory::class, 'mongo', 2)->make()->toArray();
         $collection->insertMany($objects);
     }
 
@@ -39,7 +39,7 @@ class CategoryTest extends BaseTest
 
     public function test_if_category_saves()
     {
-        $array = factory(MysqlCategory::class)->make()->toArray();
+        $array = factory(MysqlCategory::class, 'mongo')->make()->toArray();
         $this->callPost(route('categories.store'), $array);
         $this->assertResponseStatus(201);
     }
@@ -54,7 +54,7 @@ class CategoryTest extends BaseTest
     public function test_if_category_update()
     {
         $category = $this->categories->findOne([], ['sort' => ['_id' => -1],]);
-        $array = factory(MysqlCategory::class)->make()->toArray();
+        $array = factory(MysqlCategory::class, 'mongo')->make()->toArray();
         $this->callPatch(route('categories.update', ['category_id' => $category->_id]), $array);
         $this->assertResponseOk();
     }

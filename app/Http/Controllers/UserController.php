@@ -17,7 +17,7 @@ class UserController extends Controller
 
     public function __construct()
     {
-        $this->client = new Client(config('database.mongodb.url'));
+        $this->client = new Client(env('MONGODB_URL'));
         $this->users = $this->client->tesis->users;
         $this->serviceCrud = new ServiceCrud('users');
     }

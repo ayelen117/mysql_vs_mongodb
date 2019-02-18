@@ -19,7 +19,7 @@ class CompanyController extends Controller
 
     public function __construct()
     {
-        $this->client = new Client(config('database.mongodb.url'));
+        $this->client = new Client(env('MONGODB_URL'));
         $this->companies = $this->client->tesis->companies;
         $this->helper = new GeneralHelper();
         $this->serviceCrud = new ServiceCrud('companies');
@@ -81,9 +81,9 @@ class CompanyController extends Controller
             return $result;
         } else {
 
-            $data = $this->helper->setRelationships($data, 'users', 'user_id');
-            $data = $this->helper->setRelationships($data, 'currencies', 'currencies');
-            $data = $this->helper->setRelationships($data, 'responsibilities', 'responsibility_id');
+            $this->helper->setRelationships($data, 'users', 'user_id');
+            $this->helper->setRelationships($data, 'currencies', 'currencies');
+            $this->helper->setRelationships($data, 'responsibilities', 'responsibility_id');
             $company_id = $this->companies->insertOne($data)->getInsertedId();
             $company = $this->companies->findOne(['_id' => new ObjectID($company_id)]);
             $result = json_encode($company);
@@ -137,9 +137,9 @@ class CompanyController extends Controller
 
             return $result;
         } else {
-            $data = $this->helper->setRelationships($data, 'users', 'user_id');
-            $data = $this->helper->setRelationships($data, 'currencies', 'currencies');
-            $data = $this->helper->setRelationships($data, 'responsibilities', 'responsibility_id');
+            $this->helper->setRelationships($data, 'users', 'user_id');
+            $this->helper->setRelationships($data, 'currencies', 'currencies');
+            $this->helper->setRelationships($data, 'responsibilities', 'responsibility_id');
 
             $this->companies->updateOne(
                 ['_id' => new ObjectID($id)],

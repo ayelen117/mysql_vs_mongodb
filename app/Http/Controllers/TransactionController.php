@@ -15,7 +15,7 @@ class TransactionController extends Controller
 
     public function __construct()
     {
-        $this->client = new Client(config('database.mongodb.url'));
+        $this->client = new Client(env('MONGODB_URL'));
         $this->transactions = $this->client->tesis->transactions;
         $this->helper = new GeneralHelper();
     }
@@ -54,7 +54,7 @@ class TransactionController extends Controller
     {
         $data = $request->all();
 
-        $data = $this->helper->setRelationships($data, 'currencies', 'currency_id');
+        $this->helper->setRelationships($data, 'currencies', 'currency_id');
         $transaction_id = $this->transactions->insertOne($data)->getInsertedId();
         $transaction = $this->transactions->findOne(['_id' => new ObjectID($transaction_id)]);
         $result = json_encode($transaction);
@@ -100,7 +100,7 @@ class TransactionController extends Controller
     public function update(Request $request, $id)
     {
         $data = $request->all();
-        $data = $this->helper->setRelationships($data, 'currencies', 'currency_id');
+        $this->helper->setRelationships($data, 'currencies', 'currency_id');
         $this->transactions->updateOne(
             ['_id' => new ObjectID($id)],
             ['$set' => $data]

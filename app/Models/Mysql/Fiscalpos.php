@@ -12,7 +12,14 @@ class Fiscalpos extends Model
      *
      * @var array
      */
-//    protected $fillable = [
-//        'name', 'email', 'password',
-//    ];
+    protected $fillable = [
+		'number',
+		'pos_type',
+		'alias',
+		'status',
+		'company_id',
+		'default',
+		'fiscaltoken',
+    ];
+
 }

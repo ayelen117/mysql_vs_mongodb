@@ -25,7 +25,7 @@ class PricelistTest extends BaseTest
         $client = new Client();
         $collection = $client->tesis->pricelists;
 
-        $objects = factory(MysqlPricelist::class, 2)->make()->toArray();
+        $objects = factory(MysqlPricelist::class, 'mongo', 2)->make()->toArray();
         $collection->insertMany($objects);
     }
 
@@ -39,7 +39,7 @@ class PricelistTest extends BaseTest
 
     public function test_if_pricelist_saves()
     {
-        $array = factory(MysqlPricelist::class)->make()->toArray();
+        $array = factory(MysqlPricelist::class, 'mongo')->make()->toArray();
         $this->callPost(route('pricelists.store'), $array);
         $this->assertResponseStatus(201);
     }
@@ -54,7 +54,7 @@ class PricelistTest extends BaseTest
     public function test_if_pricelist_update()
     {
         $pricelist = $this->pricelists->findOne([], ['sort' => ['_id' => -1],]);
-        $array = factory(MysqlPricelist::class)->make()->toArray();
+        $array = factory(MysqlPricelist::class, 'mongo')->make()->toArray();
         $this->callPatch(route('pricelists.update', ['pricelist_id' => $pricelist->_id]), $array);
         $this->assertResponseOk();
     }

@@ -23,5 +23,10 @@
         <env name="CACHE_DRIVER" value="array"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="QUEUE_DRIVER" value="sync"/>
+
+        <!-- Test DB config -->
+        <env name="DB_CONNECTION" value="sqlite_testing" />
+        <env name="DB_MONGO_CONNECTION" value="mongo_testing" />
+
     </php>
 </phpunit>

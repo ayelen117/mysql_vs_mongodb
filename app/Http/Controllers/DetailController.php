@@ -15,7 +15,7 @@ class DetailController extends Controller
 
     public function __construct()
     {
-        $this->client = new Client(config('database.mongodb.url'));
+        $this->client = new Client(env('MONGODB_URL'));
         $this->details = $this->client->tesis->details;
         $this->helper = new GeneralHelper();
     }
@@ -54,7 +54,7 @@ class DetailController extends Controller
     {
         $data = $request->all();
 
-        $data = $this->helper->setRelationships($data, 'products', 'product_id');
+        $this->helper->setRelationships($data, 'products', 'product_id');
         $detail_id = $this->details->insertOne($data)->getInsertedId();
         $detail = $this->details->findOne(['_id' => new ObjectID($detail_id)]);
         $result = json_encode($detail);
@@ -100,7 +100,7 @@ class DetailController extends Controller
     public function update(Request $request, $id)
     {
         $data = $request->all();
-        $data = $this->helper->setRelationships($data, 'products', 'product_id');
+        $this->helper->setRelationships($data, 'products', 'product_id');
         $this->details->updateOne(
             ['_id' => new ObjectID($id)],
             ['$set' => $data]

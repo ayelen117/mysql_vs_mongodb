@@ -11,11 +11,15 @@ pipelines:
         caches:
           - composer
         script:
+          - mv .env.example .env
           - apt-get update && apt-get install -y unzip
           - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
           - composer install
-          - vendor/bin/phpunit
+          - mongo localhost:27017/mongo_testing tests/init.js
+          - vendor/bin/phpunit -c phpunit.xml
           - npm install
+        services: # Application services dependencies
+          - mongo
     - step:
         # set HEROKU_API_KEY and HEROKU_APP_NAME environment variables
         # set clone `depth: full' as described here: https://confluence.atlassian.com/x/Y9-5Mw

@@ -19,7 +19,7 @@ class FiscalposController extends Controller
 
     public function __construct()
     {
-        $this->client = new Client(config('database.mongodb.url'));
+        $this->client = new Client(env('MONGODB_URL'));
         $this->fiscalpos = $this->client->tesis->fiscalpos;
         $this->helper = new GeneralHelper();
         $this->serviceCrud = new ServiceCrud('fiscalpos');
@@ -81,7 +81,7 @@ class FiscalposController extends Controller
             return $result;
         } else {
 
-            $data = $this->helper->setRelationships($data, 'companies', 'company_id');
+            $this->helper->setRelationships($data, 'companies', 'company_id');
             $fiscalpos_id = $this->fiscalpos->insertOne($data)->getInsertedId();
             $fiscalpos = $this->fiscalpos->findOne(['_id' => new ObjectID($fiscalpos_id)]);
             $result = json_encode($fiscalpos);
@@ -135,7 +135,7 @@ class FiscalposController extends Controller
 
             return $result;
         } else {
-            $data = $this->helper->setRelationships($data, 'companies', 'company_id');
+            $this->helper->setRelationships($data, 'companies', 'company_id');
             $this->fiscalpos->updateOne(
                 ['_id' => new ObjectID($id)],
                 ['$set' => $data]
@@ -169,4 +169,9 @@ class FiscalposController extends Controller
             return response()->json(['status' => 'success'], 200);
         }
     }
+	
+	public function models()
+	{
+		return view('other_models.dashboard');
+	}
 }

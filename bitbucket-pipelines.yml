@@ -3,7 +3,8 @@
 # Only use spaces to indent your .yml configuration.
 # -----
 # You can specify a custom docker image from Docker Hub as your build environment..
-image: kwaight/php-mongodb
+#image: kwaight/php-mongodb
+mage: php:7.2-fpm
 
 pipelines:
   default:
@@ -15,8 +16,8 @@ pipelines:
           - apt-get update && apt-get install -y unzip
           - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
           - composer install
-          - mongo localhost:27017/mongo_testing tests/init.js
-          - vendor/bin/phpunit -c phpunit.xml
+          - mongo 127.0.0.1:27017/mongo_testing tests/init.js
+#          - vendor/bin/phpunit -c phpunit.xml
           - npm install
         services: # Application services dependencies
           - mongo

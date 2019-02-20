@@ -36,6 +36,5 @@ class Product extends Model
 		'weight',
 		'weight_element',
 	];
-	
 
 }

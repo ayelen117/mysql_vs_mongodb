@@ -59,24 +59,30 @@ class GeneralHelper
 		}
 	}
 	
-	public function getSql($modelName, $data, $operation, $b, $qty)
+	public function getSql($modelName, $operation, $maxAllowedRecords, $qty, $data = null)
 	{
-		if($qty > $b){
-			foreach (array_chunk($data,$b) as $t) {
-				$sql[] = $this->getSqlData($operation, $modelName, $t);
+		if($qty > $maxAllowedRecords){
+			foreach (array_chunk($data,$maxAllowedRecords) as $datum) {
+				$sql[] = $this->getSqlData($operation, $modelName, $qty, $datum);
 			}
 		} else {
-			$sql = $this->getSqlData($operation, $modelName, $data);
+			$sql = $this->getSqlData($operation, $modelName, $qty, $data);
 		}
 		
 		return $sql;
 	}
 	
-	private function getSqlData($operation, $modelName, $data){
+	public function getSqlData($operation, $modelName, $qty, $data = null){
 		DB::connection()->enableQueryLog();
 		switch ($operation){
 			case 'store':
 				$query = DB::table($modelName)->insert($data);
+				break;
+			case 'update':
+				$query = DB::table($modelName)->where('id', '!=', 0)->limit($qty)->update($data);
+				break;
+			case 'delete':
+				$query = DB::table($modelName)->where('id', '!=', 0)->limit($qty)->delete();
 				break;
 		}
 		$queries = DB::getQueryLog();

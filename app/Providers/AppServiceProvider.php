@@ -13,7 +13,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+		if ($this->app->environment(['staging', 'production'])) {
+			$this->app->register(\Rollbar\Laravel\RollbarServiceProvider::class);
+		}
     }
 
     /**

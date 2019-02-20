@@ -19,7 +19,7 @@ pipelines:
 #          - docker-php-ext-enable zip
           - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
           - composer install
-          - mongo 127.0.0.1:27017/mongo_testing tests/init.js
+#          - mongo 127.0.0.1:27017/mongo_testing tests/init.js
 #          - vendor/bin/phpunit -c phpunit.xml
           - npm install
         services: # Application services dependencies

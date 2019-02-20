@@ -15,8 +15,8 @@ pipelines:
           - apt-get update && apt-get install -y unzip
           - pecl install mongodb
           - docker-php-ext-enable mongodb
-          - docker-php-ext-install zip
-          - docker-php-ext-enable zip
+#          - docker-php-ext-install zip
+#          - docker-php-ext-enable zip
           - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
           - composer install
           - mongo 127.0.0.1:27017/mongo_testing tests/init.js

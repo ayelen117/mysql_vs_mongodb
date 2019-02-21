@@ -17,12 +17,10 @@ pipelines:
           - docker-php-ext-enable mongodb
           - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
           - composer install
+          - vendor/bin/phpunit -c phpunit.xml
         services: # Application services dependencies
           - mongo
-          - mysql
 definitions:
   services:
     mongo:
       image: mongo:3
-    mysql:
-      image: mysql:5.7

@@ -3,7 +3,7 @@
 # Only use spaces to indent your .yml configuration.
 # -----
 # You can specify a custom docker image from Docker Hub as your build environment..
-image: php:7.2-fpm
+image: pyguerder/bitbucket-pipelines-php72
 
 pipelines:
   default:
@@ -12,6 +12,10 @@ pipelines:
           - composer
         script:
           - mv .env.example .env
+          - service mysql start
+          - mysql -h localhost -u root -proot -e "CREATE DATABASE tesis;"
+#          - composer install --no-interaction --no-progress --prefer-dist
+#          - ./vendor/phpunit/phpunit/phpunit -v --coverage-text --colors=never --stderr
           - apt-get update && apt-get install -y unzip
           - pecl install mongodb
           - docker-php-ext-enable mongodb

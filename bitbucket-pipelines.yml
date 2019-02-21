@@ -12,23 +12,18 @@ pipelines:
           - composer
         script:
           - mv .env.example .env
-#          - apt-get update && apt-get install -qy git curl libmcrypt-dev mysql-client  zip unzip
-#          - apt-get install mysql-client -y
-#          - yes | pecl install mcrypt-1.0.1
-#          - apt-get update && apt-get install -y unzip
+          - apt-get update && apt-get install -y unzip
           - pecl install mongodb
           - docker-php-ext-enable mongodb
-#          - docker-php-ext-install pdo_mysql
 #          - docker-php-ext-install zip
 #          - docker-php-ext-enable zip
           - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
           - composer install
 #          - mongo 127.0.0.1:27017/mongo_testing tests/init.js
-          - vendor/bin/phpunit -c phpunit.xml
+#          - vendor/bin/phpunit -c phpunit.xml
 #          - npm install
         services: # Application services dependencies
           - mongo
-#          - mysql
 #    - step:
 #        # set HEROKU_API_KEY and HEROKU_APP_NAME environment variables
 #        # set clone `depth: full' as described here: https://confluence.atlassian.com/x/Y9-5Mw
@@ -41,5 +36,3 @@ definitions:
   services:
     mongo:
       image: mongo:3
-#    mysql:
-#      image: mysql:5.7

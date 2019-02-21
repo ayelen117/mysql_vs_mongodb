@@ -41,5 +41,5 @@ definitions:
   services:
     mongo:
       image: mongo:3
-    mysql:
-      image: mysql:5.7
+#    mysql:
+#      image: mysql:5.7

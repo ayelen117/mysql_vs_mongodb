@@ -33,7 +33,7 @@ class ServiceCrud
 		
 		$sql = $this->helper->getSqlData('list', $this->modelName, $qty);
 		$mysql_start = microtime(true);
-		$result_mysql = DB::select("SELECT * FROM $this->modelName LIMIT $qty");
+		$result_mysql = DB::select($sql->query, $sql->bindings);
 		$mysql_total = microtime(true) - $mysql_start;
 		$total = DB::table($this->modelName)->get()->count();
 		
@@ -43,7 +43,8 @@ class ServiceCrud
 				'time' => $mongo_total
 			],
 			'mysql' => [
-				'time' => $mysql_total
+				'time' => $mysql_total,
+				'query' => $sql->query
 			],
 			'total' => $total,
 			'data' => $qty,
@@ -87,8 +88,10 @@ class ServiceCrud
 			foreach ($sql as $item){
 				$result_mysql[] = DB::insert($item->query, $item->bindings);
 			}
+			$sql_query = $item->query;
 		} else {
 			$result_mysql = DB::insert($sql->query, $sql->bindings);
+			$sql_query = $sql->query;
 		}
 		$mysql_total = microtime(true) - $mysql_start;
 		$total = DB::table($this->modelName)->get()->count();
@@ -99,7 +102,8 @@ class ServiceCrud
 				'time' => $mongo_total
 			],
 			'mysql' => [
-				'time' => $mysql_total
+				'time' => $mysql_total,
+				'query' => $sql_query
 			],
 			'data' => $result->getInsertedCount(),
 			'total' => $total,
@@ -136,7 +140,8 @@ class ServiceCrud
 				'time' => $mongo_total
 			],
 			'mysql' => [
-				'time' => $mysql_total
+				'time' => $mysql_total,
+				'query' => $sql->query
 			],
 			'data' => $result->getModifiedCount(),
 			'total' => $total,
@@ -169,7 +174,8 @@ class ServiceCrud
 				'time' => $mongo_total
 			],
 			'mysql' => [
-				'time' => $mysql_total
+				'time' => $mysql_total,
+				'query' => $sql->query
 			],
 			'data' => $result->getDeletedCount(),
 			'total' => $total,

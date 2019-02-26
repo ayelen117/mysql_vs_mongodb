@@ -61,6 +61,28 @@
                 </div>
             </div>
             {{ Form::close() }}
+
+            <div class="row">
+                <div class="panel-group col-md-12 col-sm-12 col-xs-12" id="accordion_mysql_query_{{$type}}" role="tablist" aria-multiselectable="true">
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingOne">
+                            <h4 class="panel-title">
+                                <a role="button" data-toggle="collapse" data-parent="#accordion_mysql_query" href="#collapseOne_mysql_query_{{$type}}"
+                                   aria-expanded="true" aria-controls="collapseOne_mysql_query_{{$type}}">
+                                    MySQL query
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseOne_mysql_query_{{$type}}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                            <div class="panel-body">
+                                <code>
+                                    <span class="query" style="margin-left:0em"></span><br>
+                                </code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

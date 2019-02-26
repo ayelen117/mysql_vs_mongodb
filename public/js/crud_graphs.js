@@ -171,7 +171,7 @@ function addDataset(qty, random_data, id) {
     }
 
     var max = $("#reading .qty").attr('max');
-    if (parseInt(qty) > parseInt(max)){
+    if ((parseInt(qty) > parseInt(max)) && id !== 'insertion'){
         $("#" + id + " .qty").val(max);
         alert('El máximo permitido es de ' + max)
         qty = parseInt(max)
@@ -196,6 +196,7 @@ function addDataset(qty, random_data, id) {
             var qty = response.data;
             var chart_name = window[id + '_chart'];
             $(".total_records").html(response.total);
+            $("#" + id + " #accordion_mysql_query_" + id + " .query").html(response.mysql.query);
             $("#reading .qty").attr('max', response.total);
             $("#update .qty").attr('max', response.total);
             $("#deleting .qty").attr('max', response.total);

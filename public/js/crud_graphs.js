@@ -1,3 +1,5 @@
+window.onload = function() {getTotal()};
+
 var model = $('#model').val();
 var insertion_ctx = document.getElementById('insertionChart').getContext('2d');
 var insertion_chart = new Chart(insertion_ctx, {
@@ -129,13 +131,23 @@ function removeAllDatasets() {
     });
 }
 
+function getTotal() {
+    var param = '?model=' + model
+    $.ajax({
+        url: 'api/getTotal' + param,
+        type: 'GET',
+        success: function (response) {
+            $(".total_records").html(response);
+            $("#reading .qty").attr('max', response);
+            $("#update .qty").attr('max', response);
+            $("#deleting .qty").attr('max', response);
+        }
+    });
+}
+
 function addDataset(qty, random_data, id) {
 
     console.log('Adding ' + model + ' ' + id + ' dataset.');
-    var data = {
-        "qty": qty,
-        "random_data": random_data
-    };
 
     var type;
     var parameter = '';
@@ -158,6 +170,18 @@ function addDataset(qty, random_data, id) {
             type = 'get';
     }
 
+    var max = $("#reading .qty").attr('max');
+    if ((parseInt(qty) > parseInt(max)) && id !== 'insertion'){
+        $("#" + id + " .qty").val(max);
+        alert('El máximo permitido es de ' + max)
+        qty = parseInt(max)
+    }
+
+    var data = {
+        "qty": qty,
+        "random_data": random_data
+    };
+
     $.ajax({
         data: data,
         url: 'api/' + model + parameter,
@@ -171,6 +195,11 @@ function addDataset(qty, random_data, id) {
             var mysql_time = response.mysql.time;
             var qty = response.data;
             var chart_name = window[id + '_chart'];
+            $(".total_records").html(response.total);
+            $("#" + id + " #accordion_mysql_query_" + id + " .query").html(response.mysql.query);
+            $("#reading .qty").attr('max', response.total);
+            $("#update .qty").attr('max', response.total);
+            $("#deleting .qty").attr('max', response.total);
             addData(chart_name, qty, [mongo_time, mysql_time])
         }
     });

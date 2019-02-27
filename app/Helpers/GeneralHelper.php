@@ -61,8 +61,8 @@ class GeneralHelper
 	
 	public function getSql($modelName, $operation, $maxAllowedRecords, $qty, $data = null)
 	{
-		if($qty > $maxAllowedRecords){
-			foreach (array_chunk($data,$maxAllowedRecords) as $datum) {
+		if ($qty > $maxAllowedRecords) {
+			foreach (array_chunk($data, $maxAllowedRecords) as $datum) {
 				$sql[] = $this->getSqlData($operation, $modelName, $qty, $datum);
 			}
 		} else {
@@ -72,9 +72,26 @@ class GeneralHelper
 		return $sql;
 	}
 	
-	public function getSqlData($operation, $modelName, $qty, $data = null){
+	public function getSqlData($operation, $modelName, $qty, $data = null)
+	{
+		DB::beginTransaction();
 		DB::connection()->enableQueryLog();
-		switch ($operation){
+		switch ($operation) {
+			case 'list':
+				switch ($modelName) {
+					case 'users':
+						$query = DB::table($modelName)
+							->leftJoin('companies', 'users.id', '=', 'companies.user_id')
+							->leftJoin('products', 'users.id', '=', 'products.user_id')
+							->leftJoin('documents', 'users.id', '=', 'documents.author_id')
+							->leftJoin('entities', 'users.id', '=', 'entities.author_id')
+							->limit($qty)
+							->get();
+						break;
+					default:
+						$query = DB::table($modelName)->limit($qty)->get();
+						break;
+				}
 			case 'store':
 				$query = DB::table($modelName)->insert($data);
 				break;
@@ -82,12 +99,26 @@ class GeneralHelper
 				$query = DB::table($modelName)->where('id', '!=', 0)->limit($qty)->update($data);
 				break;
 			case 'delete':
-				$query = DB::table($modelName)->where('id', '!=', 0)->limit($qty)->delete();
+				switch ($modelName) {
+					case 'users':
+						DB::table($modelName)
+							->leftJoin('companies', 'users.id', '=', 'companies.user_id')
+							->leftJoin('products', 'users.id', '=', 'products.user_id')
+							->leftJoin('documents', 'users.id', '=', 'documents.author_id')
+							->leftJoin('entities', 'users.id', '=', 'entities.author_id')
+							->limit($qty)
+							->get();
+						break;
+					default:
+						$query = DB::table($modelName)->where('id', '!=', 0)->limit($qty)->delete();
+						break;
+				}
 				break;
 		}
 		$queries = DB::getQueryLog();
 		DB::connection()->disableQueryLog();
 		DB::connection()->flushQueryLog();
+		DB::rollback();
 		$query = $queries[0]['query'];
 		$bindings = $queries[0]['bindings'];
 		

@@ -3,7 +3,7 @@
 # Only use spaces to indent your .yml configuration.
 # -----
 # You can specify a custom docker image from Docker Hub as your build environment..
-image: php:7.2-fpm
+image: pyguerder/bitbucket-pipelines-php72
 
 pipelines:
   default:
@@ -12,26 +12,18 @@ pipelines:
           - composer
         script:
           - mv .env.example .env
+          - service mysql start
+          - mysql -h localhost -u root -proot -e "CREATE DATABASE tesis;"
+#          - composer install --no-interaction --no-progress --prefer-dist
+#          - ./vendor/phpunit/phpunit/phpunit -v --coverage-text --colors=never --stderr
           - apt-get update && apt-get install -y unzip
           - pecl install mongodb
           - docker-php-ext-enable mongodb
-#          - docker-php-ext-install zip
-#          - docker-php-ext-enable zip
           - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
           - composer install
-#          - mongo 127.0.0.1:27017/mongo_testing tests/init.js
-#          - vendor/bin/phpunit -c phpunit.xml
-#          - npm install
+          - vendor/bin/phpunit -c phpunit.xml
         services: # Application services dependencies
           - mongo
-#    - step:
-#        # set HEROKU_API_KEY and HEROKU_APP_NAME environment variables
-#        # set clone `depth: full' as described here: https://confluence.atlassian.com/x/Y9-5Mw
-#        name: Deploy to Heroku
-#        deployment: production   # set to test, staging or production
-#        # trigger: manual  # uncomment to have a manual step
-#        script:
-#          - git push https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git HEAD
 definitions:
   services:
     mongo:

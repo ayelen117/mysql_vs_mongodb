@@ -61,11 +61,11 @@
         </div>
     </div>
     <div class="row">
+        @include('partials.dashboard.crud_graphs', ['type' => 'reading'])
         @include('partials.dashboard.crud_graphs', ['type' => 'insertion'])
-        @include('partials.dashboard.crud_graphs', ['type' => 'update'])
     </div>
     <div class="row">
-        @include('partials.dashboard.crud_graphs', ['type' => 'reading'])
+        @include('partials.dashboard.crud_graphs', ['type' => 'update'])
         @include('partials.dashboard.crud_graphs', ['type' => 'deleting'])
     </div>
 @endsection

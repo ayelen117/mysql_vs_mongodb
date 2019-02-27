@@ -39,4 +39,25 @@ class User extends Authenticatable
 //    protected $hidden = [
 //        'password', 'remember_token',
 //    ];
+	
+	
+	public function companies()
+	{
+		return $this->hasMany(Company::class);
+	}
+	
+	public function products()
+	{
+		return $this->hasMany(Product::class, 'author_id');
+	}
+	
+	public function documents()
+	{
+		return $this->hasMany(Document::class, 'author_id');
+	}
+	
+	public function entities()
+	{
+		return $this->hasMany(Entity::class, 'user_id');
+	}
 }

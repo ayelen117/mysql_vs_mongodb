@@ -31,9 +31,11 @@ class ServiceCrud
 		$result_mongo = $this->mongoInstance->find([], ['limit' => $qty]);
 		$mongo_total = microtime(true) - $mongo_start;
 		
+		$sql = $this->helper->getSqlData('list', $this->modelName, $qty);
 		$mysql_start = microtime(true);
-		$result_mysql = DB::select("SELECT * FROM $this->modelName LIMIT $qty");
+		$result_mysql = DB::select($sql->query, $sql->bindings);
 		$mysql_total = microtime(true) - $mysql_start;
+		$total = DB::table($this->modelName)->get()->count();
 		
 		$comparison = [
 			'qty' => $qty,
@@ -41,8 +43,10 @@ class ServiceCrud
 				'time' => $mongo_total
 			],
 			'mysql' => [
-				'time' => $mysql_total
+				'time' => $mysql_total,
+				'query' => $sql->query
 			],
+			'total' => $total,
 			'data' => $qty,
 		];
 		
@@ -84,10 +88,13 @@ class ServiceCrud
 			foreach ($sql as $item){
 				$result_mysql[] = DB::insert($item->query, $item->bindings);
 			}
+			$sql_query = $item->query;
 		} else {
 			$result_mysql = DB::insert($sql->query, $sql->bindings);
+			$sql_query = $sql->query;
 		}
 		$mysql_total = microtime(true) - $mysql_start;
+		$total = DB::table($this->modelName)->get()->count();
 		
 		$comparison = [
 			'qty' => $qty,
@@ -95,9 +102,11 @@ class ServiceCrud
 				'time' => $mongo_total
 			],
 			'mysql' => [
-				'time' => $mysql_total
+				'time' => $mysql_total,
+				'query' => $sql_query
 			],
 			'data' => $result->getInsertedCount(),
+			'total' => $total,
 		];
 		
 		return response($comparison, 201);
@@ -123,6 +132,7 @@ class ServiceCrud
 		$mysql_start = microtime(true);
 		$result_mysql = DB::update($sql->query, $sql->bindings);
 		$mysql_total = microtime(true) - $mysql_start;
+		$total = DB::table($this->modelName)->get()->count();
 		
 		$comparison = [
 			'qty' => $qty,
@@ -130,9 +140,11 @@ class ServiceCrud
 				'time' => $mongo_total
 			],
 			'mysql' => [
-				'time' => $mysql_total
+				'time' => $mysql_total,
+				'query' => $sql->query
 			],
 			'data' => $result->getModifiedCount(),
+			'total' => $total,
 		];
 		
 		return response($comparison, 200);
@@ -154,6 +166,7 @@ class ServiceCrud
 		$mysql_start = microtime(true);
 		$result_mysql = DB::delete($sql->query, $sql->bindings);
 		$mysql_total = microtime(true) - $mysql_start;
+		$total = DB::table($this->modelName)->get()->count();
 		
 		$comparison = [
 			'qty' => $qty,
@@ -161,9 +174,11 @@ class ServiceCrud
 				'time' => $mongo_total
 			],
 			'mysql' => [
-				'time' => $mysql_total
+				'time' => $mysql_total,
+				'query' => $sql->query
 			],
 			'data' => $result->getDeletedCount(),
+			'total' => $total,
 		];
 		
 		return response($comparison, 200);

@@ -82,7 +82,7 @@ class GeneralHelper
 					case 'users':
 						$query = DB::table($modelName)
 							->leftJoin('companies', 'users.id', '=', 'companies.user_id')
-							->leftJoin('products', 'users.id', '=', 'products.user_id')
+							->leftJoin('products', 'users.id', '=', 'products.author_id')
 							->leftJoin('documents', 'users.id', '=', 'documents.author_id')
 							->leftJoin('entities', 'users.id', '=', 'entities.author_id')
 							->limit($qty)
@@ -92,6 +92,7 @@ class GeneralHelper
 						$query = DB::table($modelName)->limit($qty)->get();
 						break;
 				}
+				break;
 			case 'store':
 				$query = DB::table($modelName)->insert($data);
 				break;

@@ -4,7 +4,6 @@ namespace App\Services;
 ini_set('max_execution_time', 180);
 
 use App\Helpers\GeneralHelper;
-use App\Models\Mysql\Product;
 use Illuminate\Support\Facades\DB;
 use MongoDB\Client;
 
@@ -37,10 +36,13 @@ class ServiceCrud
 		$mysql_total = microtime(true) - $mysql_start;
 		$total = DB::table($this->modelName)->get()->count();
 		
+		$mongo_query = '$this->client->tesis->' . $this->modelName . '->find([], ["limit" => ' . $qty . '])';
+		
 		$comparison = [
 			'qty' => $qty,
 			'mongo' => [
-				'time' => $mongo_total
+				'time' => $mongo_total,
+				'query' => $mongo_query,
 			],
 			'mysql' => [
 				'time' => $mysql_total,
@@ -81,11 +83,11 @@ class ServiceCrud
 		$myModel = new $mysqlModelClass;
 		$fieldsPerRecord = $myModel->getFillable();
 		$maxAllowedRecords = floor(65536 / count($fieldsPerRecord));
-
+		
 		$sql = $this->helper->getSql($this->modelName, 'store', $maxAllowedRecords, $qty, $mysql_objects);
 		$mysql_start = microtime(true);
 		if (is_array($sql)) {
-			foreach ($sql as $item){
+			foreach ($sql as $item) {
 				$result_mysql[] = DB::insert($item->query, $item->bindings);
 			}
 			$sql_query = $item->query;
@@ -95,15 +97,22 @@ class ServiceCrud
 		}
 		$mysql_total = microtime(true) - $mysql_start;
 		$total = DB::table($this->modelName)->get()->count();
+		$mongo_objects = json_encode($mongo_objects, true);
+		$mongo_objects = str_replace(',', ', ', $mongo_objects);
+		$mongo_query = '$this->client->tesis->' . $this->modelName . '->insertMany(' . $mongo_objects . ')';
+		
+		$sql_bindings = json_encode($sql->bindings, true);
+		$sql_bindings = str_replace(',', ', ', $sql_bindings);
 		
 		$comparison = [
 			'qty' => $qty,
 			'mongo' => [
-				'time' => $mongo_total
+				'time' => $mongo_total,
+				'query' => $mongo_query
 			],
 			'mysql' => [
 				'time' => $mysql_total,
-				'query' => $sql_query
+				'query' => $sql_query . ', ' . $sql_bindings
 			],
 			'data' => $result->getInsertedCount(),
 			'total' => $total,
@@ -134,14 +143,23 @@ class ServiceCrud
 		$mysql_total = microtime(true) - $mysql_start;
 		$total = DB::table($this->modelName)->get()->count();
 		
+		$mongo_object = json_encode($mongo_object, true);
+		$mongo_object = str_replace(',', ', ', $mongo_object);
+		$mongo_query = '$this->client->tesis->' . $this->modelName . '->updateMany(["_id" => ["$gte" => '
+			. $start_id . ', "$lte" => ' . $end_id . ']],["$set" => ' . $mongo_object . '])';
+		
+		$sql_bindings = json_encode($sql->bindings, true);
+		$sql_bindings = str_replace(',', ', ', $sql_bindings);
+		
 		$comparison = [
 			'qty' => $qty,
 			'mongo' => [
-				'time' => $mongo_total
+				'time' => $mongo_total,
+				'query' => $mongo_query
 			],
 			'mysql' => [
 				'time' => $mysql_total,
-				'query' => $sql->query
+				'query' => $sql->query . ', ' . $sql_bindings
 			],
 			'data' => $result->getModifiedCount(),
 			'total' => $total,
@@ -168,10 +186,13 @@ class ServiceCrud
 		$mysql_total = microtime(true) - $mysql_start;
 		$total = DB::table($this->modelName)->get()->count();
 		
+		$mongo_query = '$this->client->tesis->' . $this->modelName . '->deleteMany(["_id" => ["$gte" => ' . $start_id . ', "$lte" => ' . $end_id . ']])';
+		
 		$comparison = [
 			'qty' => $qty,
 			'mongo' => [
-				'time' => $mongo_total
+				'time' => $mongo_total,
+				'query' => $mongo_query
 			],
 			'mysql' => [
 				'time' => $mysql_total,

@@ -197,6 +197,7 @@ function addDataset(qty, random_data, id) {
             var chart_name = window[id + '_chart'];
             $(".total_records").html(response.total);
             $("#" + id + " #accordion_mysql_query_" + id + " .query").html(response.mysql.query);
+            $("#" + id + " #accordion_mongo_query_" + id + " .query").html(response.mongo.query);
             $("#reading .qty").attr('max', response.total);
             $("#update .qty").attr('max', response.total);
             $("#deleting .qty").attr('max', response.total);

@@ -12,23 +12,23 @@ class CreateMongodbTables extends Migration
      */
     public function up()
     {
-//        $client = new Client(env('MONGODB_URL'));
-//        $tables = ['categories', 'companies', 'company_currency', 'currencies', 'details', 'document_document',
-//                   'document_transaction', 'documents', 'entities', 'entity_entity', 'fiscalpos', 'identifications',
-//                   'inventories', 'pricelist_product', 'pricelists', 'products', 'receipts', 'responsibilities',
-//                   'transactions'];
-//
-//        foreach ($tables as $table){
-//            $client->tesis->createCollection(
-//                $table,
-//                array(
-//                    'autoIndexId' => true,
-//                    //                'validator' => true,
-//                    //                'validationLevel' => true,
-//                    //                'validationAction' => true,
-//                )
-//            );
-//        }
+        $client = new Client(env('MONGODB_URL'));
+        $tables = ['categories', 'companies', 'company_currency', 'currencies', 'details', 'document_document',
+                   'document_transaction', 'documents', 'entities', 'entity_entity', 'fiscalpos', 'identifications',
+                   'inventories', 'pricelist_product', 'pricelists', 'products', 'receipts', 'responsibilities',
+                   'transactions'];
+
+        foreach ($tables as $table){
+            $client->tesis->createCollection(
+                $table,
+                array(
+                    'autoIndexId' => true,
+                    //                'validator' => true,
+                    //                'validationLevel' => true,
+                    //                'validationAction' => true,
+                )
+            );
+        }
     }
 
     /**

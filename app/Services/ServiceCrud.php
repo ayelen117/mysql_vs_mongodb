@@ -174,9 +174,7 @@ class ServiceCrud
 		$end_id = $this->mongoInstance->find([], ['limit' => 1, 'skip' => ($qty - 1)])->toArray()[0]->_id;
 		
 		$mongo_start = microtime(true);
-		$result = $this->mongoInstance->deleteMany(
-			['_id' => ['$gte' => $start_id, '$lte' => $end_id]]
-		);
+		$result = $this->mongoInstance->deleteMany(['_id' => ['$gte' => $start_id, '$lte' => $end_id]]);
 		$mongo_total = microtime(true) - $mongo_start;
 		
 		$sql = $this->helper->getSqlData('delete', $this->modelName, $qty);

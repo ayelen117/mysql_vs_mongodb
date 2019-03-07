@@ -85,6 +85,7 @@ class GeneralHelper
 							->leftJoin('products', 'users.id', '=', 'products.author_id')
 							->leftJoin('documents', 'users.id', '=', 'documents.author_id')
 							->leftJoin('entities', 'users.id', '=', 'entities.author_id')
+							->select($modelName . '.*')
 							->limit($qty)
 							->get();
 						break;

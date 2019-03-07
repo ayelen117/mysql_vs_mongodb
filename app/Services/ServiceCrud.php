@@ -22,12 +22,14 @@ class ServiceCrud
 	}
 	
 	/**
-	 * Toma los tiempos de
+	 * Toma los primeros registros
+	 * @param integer $qty
+	 * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
 	 */
 	public function index($qty)
 	{
 		$mongo_start = microtime(true);
-		$result_mongo = $this->mongoInstance->find([], ['limit' => $qty]);
+		$result_mongo = $this->mongoInstance->find([], ['limit' => $qty])->toArray();
 		$mongo_total = microtime(true) - $mongo_start;
 		
 		$sql = $this->helper->getSqlData('list', $this->modelName, $qty);
@@ -55,6 +57,14 @@ class ServiceCrud
 		return response($comparison, 201);
 	}
 	
+	/**
+	 * Almacena al final de la tabla
+	 * @param integer $qty
+	 * @param boolean $random_data
+	 * @param string $mysqlModelClass
+	 * @param string $mongoModelModel
+	 * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
+	 */
 	public function store($qty, $random_data, $mysqlModelClass, $mongoModelModel)
 	{
 		$mongo_objects = [];
@@ -121,6 +131,12 @@ class ServiceCrud
 		return response($comparison, 201);
 	}
 	
+	/**
+	 * Actualiza los primeros
+	 * @param integer $qty
+	 * @param string $mysqlModelClass
+	 * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
+	 */
 	public function update($qty, $mysqlModelClass)
 	{
 		$mongo_object = factory($mysqlModelClass, 'mongo')->make()->toArray();
@@ -168,15 +184,18 @@ class ServiceCrud
 		return response($comparison, 200);
 	}
 	
+	/**
+	 * Elimina los primeros registros
+	 * @param integer $qty
+	 * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
+	 */
 	public function destroy($qty)
 	{
 		$start_id = $this->mongoInstance->find([], ['limit' => 1])->toArray()[0]->_id;
 		$end_id = $this->mongoInstance->find([], ['limit' => 1, 'skip' => ($qty - 1)])->toArray()[0]->_id;
 		
 		$mongo_start = microtime(true);
-		$result = $this->mongoInstance->deleteMany(
-			['_id' => ['$gte' => $start_id, '$lte' => $end_id]]
-		);
+		$result = $this->mongoInstance->deleteMany(['_id' => ['$gte' => $start_id, '$lte' => $end_id]]);
 		$mongo_total = microtime(true) - $mongo_start;
 		
 		$sql = $this->helper->getSqlData('delete', $this->modelName, $qty);

@@ -85,6 +85,7 @@ class GeneralHelper
 							->leftJoin('products', 'users.id', '=', 'products.author_id')
 							->leftJoin('documents', 'users.id', '=', 'documents.author_id')
 							->leftJoin('entities', 'users.id', '=', 'entities.author_id')
+							->select($modelName . '.*')
 							->limit($qty)
 							->get();
 						break;
@@ -103,12 +104,8 @@ class GeneralHelper
 				switch ($modelName) {
 					case 'users':
 						DB::table($modelName)
-							->leftJoin('companies', 'users.id', '=', 'companies.user_id')
-							->leftJoin('products', 'users.id', '=', 'products.user_id')
-							->leftJoin('documents', 'users.id', '=', 'documents.author_id')
-							->leftJoin('entities', 'users.id', '=', 'entities.author_id')
 							->limit($qty)
-							->get();
+							->delete();
 						break;
 					default:
 						$query = DB::table($modelName)->where('id', '!=', 0)->limit($qty)->delete();

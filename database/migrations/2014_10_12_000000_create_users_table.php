@@ -27,7 +27,6 @@ class CreateUsersTable extends Migration
             $table->timestamp('activated_at')->nullable();
             $table->timestamp('last_login')->nullable();
             $table->timestamps();
-            $table->softDeletes();
             $table->rememberToken();
             $table->engine = 'InnoDB';
         });

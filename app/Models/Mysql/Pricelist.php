@@ -19,4 +19,15 @@ class Pricelist extends Model
 		'percent_subdist',
 		'percent_prevent',
     ];
+	
+	
+	public function entities()
+	{
+		return $this->hasMany(Entity::class);
+	}
+	
+	public function products()
+	{
+		return $this->belongsToMany(Product::class);
+	}
 }

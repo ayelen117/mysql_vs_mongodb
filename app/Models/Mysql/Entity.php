@@ -34,4 +34,19 @@ class Entity extends Model
 		'balance',
 		'balance_at',
 	];
+	
+	public function documents()
+	{
+		return $this->hasMany(Document::class);
+	}
+	
+	public function transactions()
+	{
+		return $this->hasMany(Transaction::class);
+	}
+	
+	public function entities()
+	{
+		return $this->hasMany(Entity::class);
+	}
 }

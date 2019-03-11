@@ -22,7 +22,7 @@ class ServiceCrud
 	}
 	
 	/**
-	 * Toma los primeros registros
+	 * Toma los primeros registros porque al ser los primeros los que se actualizan son los que tienen más objetos relacionados.
 	 * @param integer $qty
 	 * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
 	 */
@@ -185,7 +185,7 @@ class ServiceCrud
 	}
 	
 	/**
-	 * Elimina los primeros registros
+	 * Elimina los primeros registros porque al ser los primeros los que se actualizan son los que tienen más objetos relacionados.
 	 * @param integer $qty
 	 * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
 	 */
@@ -195,7 +195,8 @@ class ServiceCrud
 		$end_id = $this->mongoInstance->find([], ['limit' => 1, 'skip' => ($qty - 1)])->toArray()[0]->_id;
 		
 		$mongo_start = microtime(true);
-		$result = $this->mongoInstance->deleteMany(['_id' => ['$gte' => $start_id, '$lte' => $end_id]]);
+//		$result = $this->mongoInstance->deleteMany(['_id' => ['$gte' => $start_id, '$lte' => $end_id]]);
+		$result = $this->helper->runMongoQuery($this->client->tesis, $this->modelName, $start_id, $end_id);
 		$mongo_total = microtime(true) - $mongo_start;
 		
 		$sql = $this->helper->getSqlData('delete', $this->modelName, $qty);

@@ -28,7 +28,9 @@ use App\Helpers\TestHelper;
 | database. Just tell the factory how a default model should look.
 |
 */
-
+/**
+ * User factory
+ */
 $factory->defineAs(User::class, 'mongo', function (Faker\Generator $faker) {
     static $password;
     $array =  [
@@ -68,6 +70,9 @@ $factory->defineAs(User::class, 'mysql', function (Faker\Generator $faker) {
     return $array;
 });
 
+/**
+ * Company factory
+ */
 $factory->defineAs(Company::class, 'mysql', function (Faker\Generator $faker) {
     $array =  [
         'name' => $faker->company,
@@ -115,7 +120,9 @@ $factory->defineAs(Company::class, 'mongo', function (Faker\Generator $faker) {
     return $array;
 });
 
-
+/**
+ * Category factory
+ */
 $factory->defineAs(Category::class, 'mysql', function (Faker\Generator $faker) {
     $array =  [
         'name' => $faker->numerify('category_###'),
@@ -137,6 +144,9 @@ $factory->defineAs(Category::class, 'mongo', function (Faker\Generator $faker) {
     return $array;
 });
 
+/**
+ * Fiscalpos factory
+ */
 $factory->defineAs(Fiscalpos::class, 'mysql', function (Faker\Generator $faker) {
     $array =  [
         'number' => $faker->numerify('##'),
@@ -150,7 +160,6 @@ $factory->defineAs(Fiscalpos::class, 'mysql', function (Faker\Generator $faker) 
 
     return $array;
 });
-
 
 $factory->defineAs(Fiscalpos::class, 'mongo', function (Faker\Generator $faker) {
     $array =  [
@@ -167,6 +176,9 @@ $factory->defineAs(Fiscalpos::class, 'mongo', function (Faker\Generator $faker) 
     return $array;
 });
 
+/**
+ * Product factory
+ */
 $factory->defineAs(Product::class, 'mysql', function (Faker\Generator $faker) {
     $array = [
         'name' => $faker->word,
@@ -232,6 +244,9 @@ $factory->defineAs(Product::class, 'mongo', function (Faker\Generator $faker) {
     return $array;
 });
 
+/**
+ * Pricelist factory
+ */
 $factory->defineAs(Pricelist::class, 'mysql', function (Faker\Generator $faker) {
     $array =  [
         'name' => $faker->word,
@@ -257,6 +272,9 @@ $factory->defineAs(Pricelist::class, 'mongo', function (Faker\Generator $faker) 
     return $array;
 });
 
+/**
+ * PricelistProduct factory
+ */
 $factory->define(PricelistProduct::class, function (Faker\Generator $faker) {
 
     $array = [
@@ -271,6 +289,9 @@ $factory->define(PricelistProduct::class, function (Faker\Generator $faker) {
     return $array;
 });
 
+/**
+ * Entity factory
+ */
 $factory->defineAs(Entity::class, 'mysql', function (Faker\Generator $faker) {
     $array = [
         'name' => $faker->firstName,
@@ -338,6 +359,9 @@ $factory->defineAs(Entity::class, 'mongo', function (Faker\Generator $faker) {
     return $array;
 });
 
+/**
+ * Inventory factory
+ */
 $factory->define(Inventory::class, function (Faker\Generator $faker) {
 
     $helper = new TestHelper();
@@ -356,6 +380,9 @@ $factory->define(Inventory::class, function (Faker\Generator $faker) {
     return $array;
 });
 
+/**
+ * Document factory
+ */
 $factory->defineAs(Document::class, 'mysql', function (Faker\Generator $faker) {
     $array = [
         'author_id' => $faker->randomElement(User::all()->pluck('id')->toArray()),
@@ -435,6 +462,9 @@ $factory->defineAs(Document::class, 'mongo', function (Faker\Generator $faker) {
     return $array;
 });
 
+/**
+ * Detail factory
+ */
 $factory->define(Detail::class, function (Faker\Generator $faker) {
 
     $helper = new TestHelper();
@@ -469,6 +499,9 @@ $factory->define(Detail::class, function (Faker\Generator $faker) {
     return $array;
 });
 
+/**
+ * Transaction factory
+ */
 $factory->define(Transaction::class, function (Faker\Generator $faker) {
 
     $helper = new TestHelper();

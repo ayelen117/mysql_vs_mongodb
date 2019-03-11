@@ -18,5 +18,44 @@ class User extends Moloquent {
             $helper->setRelationships($object, $relationship, $foreign_key);
         }
     }
-
+	
+	/**
+	 * -------------------- HasMany
+	 */
+	
+	/**
+	 * Se referencia porque se de embeberlo superaría el límite disponible en los documentos.
+	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
+	 */
+	public function companies()
+	{
+		return $this->hasMany(Company::class);
+	}
+	
+	/**
+	 * Se referencia porque se actualiza periódicamente
+	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
+	 */
+	public function products()
+	{
+		return $this->hasMany(Product::class, 'author_id');
+	}
+	
+	/**
+	 * Se referencia porque se actualiza periódicamente
+	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
+	 */
+	public function documents()
+	{
+		return $this->hasMany(Document::class, 'author_id');
+	}
+	
+	/**
+	 * Se referencia porque se actualiza periódicamente
+	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
+	 */
+	public function entities()
+	{
+		return $this->hasMany(Entity::class, 'user_id');
+	}
 }

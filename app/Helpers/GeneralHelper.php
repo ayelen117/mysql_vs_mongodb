@@ -149,7 +149,6 @@ class GeneralHelper
 			
 			$users_ids = $db->users->find(['_id' => ['$gte' => $start_id, '$lte' => $end_id]], ['projection' => ['_id' => 1]])->toArray();
 			$users_ids = array_map(function($a) { foreach ($a as $item) { return (string) $item; } }, $users_ids);
-			$result = $db->users->deleteMany(['_id' => ['$gte' => $start_id, '$lte' => $end_id]]);
 			
 			$companies_ids = $db->companies->find(['user_id' => ['$in' => $users_ids]], ['projection' => ['_id' => 1]])->toArray();
 			$this->removeCompaniesFromMongoBD($db, 'array', null, null, $companies_ids);
@@ -162,6 +161,8 @@ class GeneralHelper
 			
 			$entities = $db->entities->find(['user_id' => ['$in' => $users_ids]], ['projection' => ['_id' => 1]])->toArray();
 			$this->removeEntitiesFromMongoBD($db, 'array', null, null, $entities);
+			
+			$result = $db->users->deleteMany(['_id' => ['$gte' => $start_id, '$lte' => $end_id]]);
 		
 		} else if ($type === 'array'){
 			$array = array_map(function($a) { foreach ($a as $item) { return $item;} }, $array);
@@ -181,29 +182,31 @@ class GeneralHelper
 			$companies_ids = array_map(function($a) { foreach ($a as $item) { return (string) $item; } }, $companies_ids);
 			$result = $db->companies->deleteMany(['_id' => ['$gte' => $start_id, '$lte' => $end_id]]);
 			
-			$entities = $db->entities->find(['company_id' => ['$in' => $companies_ids]], ['projection' => ['_id' => 1]])->toArray();
-			$this->removeEntitiesFromMongoBD($db, 'array', null, null, $entities);
-			
-			$fiscalpos = $db->fiscalpos->find(['company_id' => ['$in' => $companies_ids]], ['projection' => ['_id' => 1]])->toArray();
-			$this->removeFiscalPointOfSaleFromMongoBD($db, 'array', null, null, $fiscalpos);
-			
-			$products = $db->products->find(['company_id' => ['$in' => $companies_ids]], ['projection' => ['_id' => 1]])->toArray();
-			$this->removeProductsFromMongoBD($db, 'array', null, null, $products);
-			
-			$categories = $db->categories->find(['company_id' => ['$in' => $companies_ids]], ['projection' => ['_id' => 1]])->toArray();
-			$this->removeCategoriesFromMongoBD($db, 'array', null, null, $categories);
-			
-			$documents = $db->documents->find(['company_id' => ['$in' => $companies_ids]], ['projection' => ['_id' => 1]])->toArray();
-			$this->removeDocumentsFromMongoBD($db, 'array', null, null, $documents);
-			
-			$pricelists = $db->pricelists->find(['company_id' => ['$in' => $companies_ids]], ['projection' => ['_id' => 1]])->toArray();
-			$this->removePricelistsFromMongoBD($db, 'array', null, null, $pricelists);
-			
 		} else if ($type === 'array'){
 //			$array = array_map(function($a) { foreach ($a as $item) { return new ObjectID((string) $item);} }, $array);
-			$array = array_map(function($a) { foreach ($a as $item) { return $item;} }, $array);
-			$result = $db->companies->deleteMany(['_id' => ['$in' => $array]]);
+			$companies_ids = array_map(function($a) { foreach ($a as $item) { return $item;} }, $array);
+			$result = $db->companies->deleteMany(['_id' => ['$in' => $companies_ids]]);
 		}
+		
+		$companies_ids = array_map(function($a) { return (string) $a; }, $companies_ids);
+		
+		$entities = $db->entities->find(['company_id' => ['$in' => $companies_ids]], ['projection' => ['_id' => 1]])->toArray();
+		$this->removeEntitiesFromMongoBD($db, 'array', null, null, $entities);
+		
+		$fiscalpos = $db->fiscalpos->find(['company_id' => ['$in' => $companies_ids]], ['projection' => ['_id' => 1]])->toArray();
+		$this->removeFiscalPointOfSaleFromMongoBD($db, 'array', null, null, $fiscalpos);
+		
+		$products = $db->products->find(['company_id' => ['$in' => $companies_ids]], ['projection' => ['_id' => 1]])->toArray();
+		$this->removeProductsFromMongoBD($db, 'array', null, null, $products);
+		
+		$categories = $db->categories->find(['company_id' => ['$in' => $companies_ids]], ['projection' => ['_id' => 1]])->toArray();
+		$this->removeCategoriesFromMongoBD($db, 'array', null, null, $categories);
+		
+		$documents = $db->documents->find(['company_id' => ['$in' => $companies_ids]], ['projection' => ['_id' => 1]])->toArray();
+		$this->removeDocumentsFromMongoBD($db, 'array', null, null, $documents);
+		
+		$pricelists = $db->pricelists->find(['company_id' => ['$in' => $companies_ids]], ['projection' => ['_id' => 1]])->toArray();
+		$this->removePricelistsFromMongoBD($db, 'array', null, null, $pricelists);
 		
 		return $result;
 	}
@@ -216,16 +219,18 @@ class GeneralHelper
 			$products_ids = $db->products->find(['_id' => ['$gte' => $start_id, '$lte' => $end_id]], ['projection' => ['_id' => 1]])->toArray();
 			$products_ids = array_map(function($a) { foreach ($a as $item) { return (string) $item; } }, $products_ids);
 			$result = $db->products->deleteMany(['_id' => ['$gte' => $start_id, '$lte' => $end_id]]);
-			
-			$details = $db->details->find(['product_id' => ['$in' => $products_ids]], ['projection' => ['_id' => 1]])->toArray();
-			$this->removeDetailsFromMongoBD($db, 'array', null, null, $details);
-			
-			$inventories = $db->inventories->find(['product_id' => ['$in' => $products_ids]], ['projection' => ['_id' => 1]])->toArray();
-			$this->removeInventoriesFromMongoBD($db, 'array', null, null, $inventories);
 		} else if ($type === 'array'){
-			$array = array_map(function($a) { foreach ($a as $item) { return $item;} }, $array);
-			$result = $db->products->deleteMany(['_id' => ['$in' => $array]]);
+			$products_ids = array_map(function($a) { foreach ($a as $item) { return $item;} }, $array);
+			$result = $db->products->deleteMany(['_id' => ['$in' => $products_ids]]);
 		}
+		
+		$products_ids = array_map(function($a) { return (string) $a; }, $products_ids);
+		
+		$details = $db->details->find(['product_id' => ['$in' => $products_ids]], ['projection' => ['_id' => 1]])->toArray();
+		$this->removeDetailsFromMongoBD($db, 'array', null, null, $details);
+		
+		$inventories = $db->inventories->find(['product_id' => ['$in' => $products_ids]], ['projection' => ['_id' => 1]])->toArray();
+		$this->removeInventoriesFromMongoBD($db, 'array', null, null, $inventories);
 		
 		return $result;
 	}
@@ -239,19 +244,21 @@ class GeneralHelper
 			$documents_ids = array_map(function($a) { foreach ($a as $item) { return (string) $item; } }, $documents_ids);
 			$result = $db->documents->deleteMany(['_id' => ['$gte' => $start_id, '$lte' => $end_id]]);
 			
-			$details = $db->details->find(['document_id' => ['$in' => $documents_ids]], ['projection' => ['_id' => 1]])->toArray();
-			$this->removeDetailsFromMongoBD($db, 'array', null, null, $details);
+		} else if ($type === 'array'){
+			$documents_ids = array_map(function($a) { foreach ($a as $item) { return $item;} }, $array);
+			$result = $db->documents->deleteMany(['_id' => ['$in' => $documents_ids]]);
+		}
+		
+		$documents_ids = array_map(function($a) { return (string) $a; }, $documents_ids);
+		
+		$details = $db->details->find(['document_id' => ['$in' => $documents_ids]], ['projection' => ['_id' => 1]])->toArray();
+		$this->removeDetailsFromMongoBD($db, 'array', null, null, $details);
 
 //			$documents = $db->documents->find(['document_id' => ['$in' => $documents_ids]])->toArray();
 //			$this->removeDocumentsFromMongoBD($db, 'array', null, null, $documents);
-			
-			$inventories = $db->inventories->find(['document_id' => ['$in' => $documents_ids]], ['projection' => ['_id' => 1]])->toArray();
-			$this->removeInventoriesFromMongoBD($db, 'array', null, null, $inventories);
-			
-		} else if ($type === 'array'){
-			$array = array_map(function($a) { foreach ($a as $item) { return $item;} }, $array);
-			$result = $db->documents->deleteMany(['_id' => ['$in' => $array]]);
-		}
+		
+		$inventories = $db->inventories->find(['document_id' => ['$in' => $documents_ids]], ['projection' => ['_id' => 1]])->toArray();
+		$this->removeInventoriesFromMongoBD($db, 'array', null, null, $inventories);
 		
 		return $result;
 	}
@@ -264,19 +271,20 @@ class GeneralHelper
 			$entities_ids = $db->entities->find(['_id' => ['$gte' => $start_id, '$lte' => $end_id]], ['projection' => ['_id' => 1]])->toArray();
 			$entities_ids = array_map(function($a) { foreach ($a as $item) { return (string) $item; } }, $entities_ids);
 			$result = $db->entities->deleteMany(['_id' => ['$gte' => $start_id, '$lte' => $end_id]]);
-			
-			$documents = $db->documents->find(['entity_id' => ['$in' => $entities_ids]], ['projection' => ['_id' => 1]])->toArray();
-			$this->removeDocumentsFromMongoBD($db, 'array', null, null, $documents);
-			
-			$transactions = $db->transactions->find(['entity_id' => ['$in' => $entities_ids]], ['projection' => ['_id' => 1]])->toArray();
-			$this->removeTransactionsFromMongoBD($db, 'array', null, null, $transactions);
-			
+		} else if ($type === 'array'){
+			$entities_ids = array_map(function($a) { foreach ($a as $item) { return $item;} }, $array);
+			$result = $db->entities->deleteMany(['_id' => ['$in' => $entities_ids]]);
+		}
+		$entities_ids = array_map(function($a) { return (string) $a; }, $entities_ids);
+		
+		$documents = $db->documents->find(['entity_id' => ['$in' => $entities_ids]], ['projection' => ['_id' => 1]])->toArray();
+		$this->removeDocumentsFromMongoBD($db, 'array', null, null, $documents);
+		
+		$transactions = $db->transactions->find(['entity_id' => ['$in' => $entities_ids]], ['projection' => ['_id' => 1]])->toArray();
+		$this->removeTransactionsFromMongoBD($db, 'array', null, null, $transactions);
+
 //			$entities = $db->entities->find(['entity_id' => ['$in' => $entities_ids]])->toArray();
 //			$this->removeEntitiesFromMongoBD($db, 'array', null, null, $entities);
-		} else if ($type === 'array'){
-			$array = array_map(function($a) { foreach ($a as $item) { return $item;} }, $array);
-			$result = $db->entities->deleteMany(['_id' => ['$in' => $array]]);
-		}
 		
 		return $result;
 	}
@@ -301,13 +309,15 @@ class GeneralHelper
 			$categories_ids = array_map(function($a) { foreach ($a as $item) { return (string) $item; } }, $categories_ids);
 			$result = $db->categories->deleteMany(['_id' => ['$gte' => $start_id, '$lte' => $end_id]]);
 			
-			$products = $db->products->find(['category_id' => ['$in' => $categories_ids]], ['projection' => ['_id' => 1]])->toArray();
-			$this->removeProductsFromMongoBD($db, 'array', null, null, $products);
-			
 		} else if ($type === 'array'){
-			$array = array_map(function($a) { foreach ($a as $item) { return $item;} }, $array);
-			$result = $db->categories->deleteMany(['_id' => ['$in' => $array]]);
+			$categories_ids = array_map(function($a) { foreach ($a as $item) { return $item;} }, $array);
+			$result = $db->categories->deleteMany(['_id' => ['$in' => $categories_ids]]);
 		}
+		
+		$categories_ids = array_map(function($a) { return (string) $a; }, $categories_ids);
+		
+		$products = $db->products->find(['category_id' => ['$in' => $categories_ids]], ['projection' => ['_id' => 1]])->toArray();
+		$this->removeProductsFromMongoBD($db, 'array', null, null, $products);
 		
 		return $result;
 	}
@@ -321,13 +331,15 @@ class GeneralHelper
 			$pricelists_ids = array_map(function($a) { foreach ($a as $item) { return (string) $item; } }, $pricelists_ids);
 			$result = $db->pricelists->deleteMany(['_id' => ['$gte' => $start_id, '$lte' => $end_id]]);
 			
-			$entities = $db->entities->find(['pricelist_id' => ['$in' => $pricelists_ids]], ['projection' => ['_id' => 1]])->toArray();
-			$this->removeEntitiesFromMongoBD($db, 'array', null, null, $entities);
-			
 		} else if ($type === 'array'){
-			$array = array_map(function($a) { foreach ($a as $item) { return $item;} }, $array);
-			$result = $db->pricelists->deleteMany(['_id' => ['$in' => $array]]);
+			$pricelists_ids = array_map(function($a) { foreach ($a as $item) { return $item;} }, $array);
+			$result = $db->pricelists->deleteMany(['_id' => ['$in' => $pricelists_ids]]);
 		}
+		
+		$pricelists_ids = array_map(function($a) { return (string) $a; }, $pricelists_ids);
+		
+		$entities = $db->entities->find(['pricelist_id' => ['$in' => $pricelists_ids]], ['projection' => ['_id' => 1]])->toArray();
+		$this->removeEntitiesFromMongoBD($db, 'array', null, null, $entities);
 		
 		return $result;
 	}
@@ -356,14 +368,16 @@ class GeneralHelper
 			$details_ids = $db->details->find(['_id' => ['$gte' => $start_id, '$lte' => $end_id]], ['projection' => ['_id' => 1]])->toArray();
 			$details_ids = array_map(function($a) { foreach ($a as $item) { return (string) $item; } }, $details_ids);
 			$result = $db->details->deleteMany(['_id' => ['$gte' => $start_id, '$lte' => $end_id]]);
-
-			$inventories = $db->inventories->find(['detail_id' => ['$in' => $details_ids]], ['projection' => ['_id' => 1]])->toArray();
-			$this->removeInventoriesFromMongoBD($db, 'array', null, null, $inventories);
 		
 		} else if ($type === 'array'){
-			$array = array_map(function($a) { foreach ($a as $item) { return $item;} }, $array);
-			$result = $db->details->deleteMany(['_id' => ['$in' => $array]]);
+			$details_ids = array_map(function($a) { foreach ($a as $item) { return $item;} }, $array);
+			$result = $db->details->deleteMany(['_id' => ['$in' => $details_ids]]);
 		}
+		
+		$details_ids = array_map(function($a) { return (string) $a; }, $details_ids);
+		
+		$inventories = $db->inventories->find(['detail_id' => ['$in' => $details_ids]], ['projection' => ['_id' => 1]])->toArray();
+		$this->removeInventoriesFromMongoBD($db, 'array', null, null, $inventories);
 		
 		return $result;
 	}

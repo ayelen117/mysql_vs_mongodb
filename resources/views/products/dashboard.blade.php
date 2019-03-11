@@ -12,7 +12,7 @@
                     <h4 class="panel-title">
                         <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne"
                            aria-expanded="true" aria-controls="collapseOne">
-                            MongoDB example
+                            Ejemplo de MongoDB
                         </a>
                     </h4>
                 </div>
@@ -73,7 +73,7 @@
                     <h4 class="panel-title">
                         <a role="button" data-toggle="collapse" data-parent="#accordion_mysql" href="#collapseOne_mysql"
                            aria-expanded="true" aria-controls="collapseOne_mysql">
-                            Mysql example
+                            Ejemplo de Mysql
                         </a>
                     </h4>
                 </div>
@@ -191,12 +191,12 @@
         </div>
     </div>
     <div class="row">
-        @include('partials.dashboard.crud_graphs', ['type' => 'reading'])
-        @include('partials.dashboard.crud_graphs', ['type' => 'insertion'])
+        @include('partials.dashboard.crud_graphs', ['type' => 'reading', 'name' => 'Lectura'])
+        @include('partials.dashboard.crud_graphs', ['type' => 'insertion', 'name' => 'Inserción'])
     </div>
     <div class="row">
-        @include('partials.dashboard.crud_graphs', ['type' => 'update'])
-        @include('partials.dashboard.crud_graphs', ['type' => 'deleting'])
+        @include('partials.dashboard.crud_graphs', ['type' => 'update', 'name' => 'Actualización'])
+        @include('partials.dashboard.crud_graphs', ['type' => 'deleting', 'name' => 'Eliminación'])
     </div>
 @endsection
 

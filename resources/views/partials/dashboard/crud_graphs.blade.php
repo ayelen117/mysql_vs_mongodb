@@ -2,7 +2,7 @@
 <div class="col-sm-6 col-xs-12" id="{{$type}}">
     <div class="x_panel">
         <div class="x_title">
-            <h2>{{ucfirst($type)}}<small></small></h2>
+            <h2>{{ucfirst($name)}}<small></small></h2>
             <ul class="nav navbar-right panel_toolbox">
                 <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                 </li>
@@ -69,7 +69,7 @@
                             <h4 class="panel-title">
                                 <a role="button" data-toggle="collapse" data-parent="#accordion_mysql_query" href="#collapseOne_mysql_query_{{$type}}"
                                    aria-expanded="true" aria-controls="collapseOne_mysql_query_{{$type}}">
-                                    MySQL query
+                                    Consulta MySQL
                                 </a>
                             </h4>
                         </div>
@@ -90,7 +90,7 @@
                             <h4 class="panel-title">
                                 <a role="button" data-toggle="collapse" data-parent="#accordion_mongo_query" href="#collapseOne_mongo_query_{{$type}}"
                                    aria-expanded="true" aria-controls="collapseOne_mongo_query_{{$type}}">
-                                    MongoDB query
+                                    Consulta MongoDB
                                 </a>
                             </h4>
                         </div>

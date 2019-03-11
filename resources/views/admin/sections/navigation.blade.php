@@ -38,56 +38,56 @@
                 <h3>{{ __('views.backend.section.navigation.sub_header_1') }}</h3>
                 <ul class="nav side-menu">
                     <li>
-                        <a href="{{ route('users.dashboard') }}">
+                        <a href="<?php echo e(route('users.dashboard')); ?>">
                             <i class="fa fa-users" aria-hidden="true"></i>
                             Usuarios
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('companies.dashboard') }}">
-                            <i class="fa fa-users" aria-hidden="true"></i>
+                        <a href="<?php echo e(route('companies.dashboard')); ?>">
+                            <i class="fa fa-industry" aria-hidden="true"></i>
                             Compañías
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('categories.dashboard') }}">
-                            <i class="fa fa-users" aria-hidden="true"></i>
+                        <a href="<?php echo e(route('categories.dashboard')); ?>">
+                            <i class="fa fa-list" aria-hidden="true"></i>
                             Categorías
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('pricelists.dashboard') }}">
-                            <i class="fa fa-users" aria-hidden="true"></i>
+                        <a href="<?php echo e(route('pricelists.dashboard')); ?>">
+                            <i class="fa fa-money" aria-hidden="true"></i>
                             Listas de precio
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('entities.dashboard') }}">
-                            <i class="fa fa-bar-chart" aria-hidden="true"></i>
+                        <a href="<?php echo e(route('entities.dashboard')); ?>">
+                            <i class="fa fa-user" aria-hidden="true"></i>
                             Entidades
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('products.dashboard') }}">
-                            <i class="fa fa-users" aria-hidden="true"></i>
+                        <a href="<?php echo e(route('products.dashboard')); ?>">
+                            <i class="fa fa-shopping-cart" aria-hidden="true"></i>
                             Productos
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('documents.dashboard') }}">
-                            <i class="fa fa-users" aria-hidden="true"></i>
+                        <a href="<?php echo e(route('documents.dashboard')); ?>">
+                            <i class="fa fa-file-text" aria-hidden="true"></i>
                             Documentos
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('fiscalpos.dashboard') }}">
-                            <i class="fa fa-users" aria-hidden="true"></i>
+                        <a href="<?php echo e(route('fiscalpos.dashboard')); ?>">
+                            <i class="fa fa-credit-card-alt" aria-hidden="true"></i>
                             Fiscalpos
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('home.models') }}">
-                            <i class="fa fa-users" aria-hidden="true"></i>
+                        <a href="<?php echo e(route('home.models')); ?>">
+                            <i class="fa fa-th" aria-hidden="true"></i>
                             Otros modelos
                         </a>
                     </li>

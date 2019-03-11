@@ -82,11 +82,45 @@ class GeneralHelper
 				switch ($modelName) {
 					case 'users':
 						$query = DB::table($modelName)
-//							->leftJoin('companies', 'users.id', '=', 'companies.user_id')
-//							->leftJoin('products', 'users.id', '=', 'products.author_id')
-//							->leftJoin('documents', 'users.id', '=', 'documents.author_id')
-//							->leftJoin('entities', 'users.id', '=', 'entities.author_id')
+							->limit($qty)
+							->get();
+						break;
+					case 'companies':
+						$query = DB::table($modelName)
+							->leftJoin('company_currency', 'companies.id', '=', 'company_currency.company_id')
+							->leftJoin('currencies', 'currencies.id', '=', 'company_currency.currency_id')
 							->select($modelName . '.*')
+							->limit($qty)
+							->get();
+						break;
+					case 'categories':
+						$query = DB::table($modelName)
+							->limit($qty)
+							->get();
+						break;
+					case 'pricelists':
+						$query = DB::table($modelName)
+							->limit($qty)
+							->get();
+						break;
+					case 'entities':
+						$query = DB::table($modelName)
+							->leftJoin('transactions', 'entities.id', '=', 'transactions.entity_id')
+							->select($modelName . '.*')
+							->limit($qty)
+							->get();
+						break;
+					case 'documents':
+						$query = DB::table($modelName)
+							->leftJoin('details', 'documents.id', '=', 'details.document_id')
+							->select($modelName . '.*')
+							->limit($qty)
+							->get();
+						break;
+					case 'products':
+						$query = DB::table($modelName)
+							->leftJoin('pricelist_product', 'products.id', '=', 'pricelist_product.product_id')
+							->leftJoin('pricelists', 'pricelists.id', '=', 'pricelist_product.pricelist_id')
 							->limit($qty)
 							->get();
 						break;

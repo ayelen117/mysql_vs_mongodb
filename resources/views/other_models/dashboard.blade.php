@@ -3,7 +3,7 @@
 @section('title', 'Otros modelos')
 
 @section('content')
-    <h3>MongoDB example</h3>
+    <h3>Ejemplo de MongoDB</h3>
     <div class="row">
         <div class="panel-group col-md-12 col-sm-12 col-xs-12" id="accordion1" role="tablist" aria-multiselectable="true">
             <div class="panel panel-default">

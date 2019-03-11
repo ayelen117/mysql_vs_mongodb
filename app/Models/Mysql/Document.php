@@ -37,5 +37,32 @@ class Document extends Model
 		'canceled',
 		'show_amounts',
 	];
- 
+	
+	public function details()
+	{
+		return $this->hasMany(Detail::class);
+	}
+	
+	public function documents()
+	{
+		return $this->hasMany(Document::class);
+	}
+	
+	public function inventories()
+	{
+		return $this->hasMany(Inventory::class);
+	}
+	
+	
+	public function transactions()
+	{
+		return $this->belongsToMany(Transaction::class);
+	}
+	
+	
+	public function company()
+	{
+		return $this->belongsTo(Company::class);
+	}
+	
 }

@@ -23,7 +23,11 @@ class Detail extends Model
      *
      * @var array
      */
-//    protected $fillable = [
-//        'name', 'email', 'password',
-//    ];
+	protected $guarded = [];
+	
+	
+	public function inventories()
+	{
+		return $this->hasMany(Inventory::class);
+	}
 }

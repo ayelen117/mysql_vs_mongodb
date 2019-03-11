@@ -23,6 +23,24 @@ class Company extends Model
 		'responsibility_id',
 	];
 	
+	/**
+	 * ---------- BelongsTo
+	 */
+	
+	public function user()
+	{
+		return $this->belongsTo(User::class);
+	}
+	
+	public function responsibility()
+	{
+		return $this->belongsTo(Responsibility::class);
+	}
+	
+	/**
+	 * ---------- hasMany
+	 */
+	
 	public function entities()
 	{
 		return $this->hasMany(Entity::class);
@@ -32,10 +50,33 @@ class Company extends Model
 	{
 		return $this->hasMany(FiscalPos::class);
 	}
-
+	
 	public function products()
 	{
 		return $this->hasMany(Product::class);
 	}
 	
+	public function categories()
+	{
+		return $this->hasMany(Category::class);
+	}
+	
+	public function documents()
+	{
+		return $this->hasMany(Document::class);
+	}
+	
+	public function pricelists()
+	{
+		return $this->hasMany(Pricelist::class);
+	}
+	
+	/**
+	 * ---------- belongsToMany
+	 */
+	
+	public function currencies()
+	{
+		return $this->belongsToMany(Currency::class);
+	}
 }

@@ -56,7 +56,7 @@
                             <span style="margin-left:6em"><strong>percent_prevent</strong>: 37.3,</span><br>
                             <span style="margin-left:6em"><strong>activated</strong>: false</span><br>
                             <span style="margin-left:4em">}</span><br>
-                            <span style="margin-left:2em"><strong>]</span><br>
+                            <span style="margin-left:2em"><strong>]</strong></span><br>
                             <span style="margin-left:0em">},</span><br>
                             </span>
                         </code>

@@ -22,7 +22,8 @@ class ServiceCrud
 	}
 	
 	/**
-	 * Toma los primeros registros porque al ser los primeros los que se actualizan son los que tienen más objetos relacionados.
+	 * Toma los primeros registros porque al ser los primeros los que se actualizan son los que tienen más objetos
+	 * relacionados.
 	 * @param integer $qty
 	 * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
 	 */
@@ -99,19 +100,23 @@ class ServiceCrud
 		if (is_array($sql)) {
 			foreach ($sql as $item) {
 				$result_mysql[] = DB::insert($item->query, $item->bindings);
+				$sql_bindings = $item->bindings;
+				$sql_query = $item->query;
 			}
-			$sql_query = $item->query;
 		} else {
 			$result_mysql = DB::insert($sql->query, $sql->bindings);
 			$sql_query = $sql->query;
+			$sql_bindings = $sql->bindings;
 		}
 		$mysql_total = microtime(true) - $mysql_start;
+		
+		
 		$total = DB::table($this->modelName)->get()->count();
 		$mongo_objects = json_encode($mongo_objects, true);
 		$mongo_objects = str_replace(',', ', ', $mongo_objects);
 		$mongo_query = '$this->client->tesis->' . $this->modelName . '->insertMany(' . $mongo_objects . ')';
 		
-		$sql_bindings = json_encode($sql->bindings, true);
+		$sql_bindings = json_encode($sql_bindings, true);
 		$sql_bindings = str_replace(',', ', ', $sql_bindings);
 		
 		$comparison = [
@@ -191,11 +196,9 @@ class ServiceCrud
 	 */
 	public function destroy($qty)
 	{
+		$mongo_start = microtime(true);
 		$start_id = $this->mongoInstance->find([], ['limit' => 1])->toArray()[0]->_id;
 		$end_id = $this->mongoInstance->find([], ['limit' => 1, 'skip' => ($qty - 1)])->toArray()[0]->_id;
-		
-		$mongo_start = microtime(true);
-//		$result = $this->mongoInstance->deleteMany(['_id' => ['$gte' => $start_id, '$lte' => $end_id]]);
 		$result = $this->helper->runMongoQuery($this->client->tesis, $this->modelName, $start_id, $end_id);
 		$mongo_total = microtime(true) - $mongo_start;
 		
@@ -206,7 +209,9 @@ class ServiceCrud
 		$mysql_total = microtime(true) - $mysql_start;
 		$total = DB::table($this->modelName)->get()->count();
 		
-		$mongo_query = '$this->client->tesis->' . $this->modelName . '->deleteMany(["_id" => ["$gte" => ' . $start_id . ', "$lte" => ' . $end_id . ']])';
+		$mongo_query = "\$this->client->tesis->" . $this->modelName .
+			"->deleteMany(['_id' => ['\$gte' => ' . $start_id . ', '\$lte'' => " . $end_id . "]])";
+		$mongo_query .= $this->helper->getChildMongoDeletionQueries($this->modelName);
 		
 		$comparison = [
 			'qty' => $qty,

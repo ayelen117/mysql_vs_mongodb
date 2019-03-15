@@ -4,7 +4,6 @@ namespace App\Helpers;
 
 use Illuminate\Support\Facades\DB;
 use MongoDB\BSON\ObjectID;
-use function MongoDB\BSON\toPHP;
 use MongoDB\Client;
 
 /**
@@ -163,15 +162,9 @@ class GeneralHelper
 	}
 	
 	public function runMongoQuery($db, $modelName, $start_id, $end_id){
-		switch ($modelName){
-			case 'users':
-				$result = $this->removeUsersFromMongoBD($db, 'range', $start_id, $end_id);
-				break;
-			default:
-				$result = $db->$modelName->deleteMany(['_id' => ['$gte' => $start_id, '$lte' => $end_id]]);
-				break;
-		}
-		
+		$function = 'remove' . ucfirst($modelName) . 'FromMongoBD';
+		$result = $this->$function($db, 'range', $start_id, $end_id);
+
 		return $result;
 	}
 	
@@ -198,7 +191,7 @@ class GeneralHelper
 			
 			$result = $db->users->deleteMany(['_id' => ['$gte' => $start_id, '$lte' => $end_id]]);
 		
-		} else if ($type === 'array'){
+		} else if ($type === 'array') {
 			$array = array_map(function($a) { foreach ($a as $item) { return $item;} }, $array);
 			$result = $db->users->deleteMany(['_id' => ['$in' => $array]]);
 		}
@@ -438,4 +431,78 @@ class GeneralHelper
 		
 		return $result;
 	}
+	
+	public function getChildMongoDeletionQueries($modelName){
+		$childDeletion = '';
+		switch ($modelName){
+			case 'users':
+//				$childDeletion .= "<br>\$this->client->tesis->" . $modelName . "->find(['_id' => ['\$gte' => \$start_id, '\$lte' => \$end_id]], ['projection' => ['_id' => 1]])->toArray();";
+				$childDeletion .= "<br>\$this->client->tesis->companies->deleteMany(['_id' => ['\$in' => \$companies_ids]])";
+				$childDeletion .= $this->getChildMongoDeletionQueries('companies');
+				$childDeletion .= "<br>\$this->client->tesis->documents->deleteMany(['_id' => ['\$in' => \$documents_ids]])";
+				$childDeletion .= $this->getChildMongoDeletionQueries('documents');
+				$childDeletion .= "<br>\$this->client->tesis->products->deleteMany(['_id' => ['\$in' => \$products_ids]])";
+				$childDeletion .= $this->getChildMongoDeletionQueries('products');
+				$childDeletion .= "<br>\$this->client->tesis->entities->deleteMany(['_id' => ['\$in' => \$entities_ids]])";
+				$childDeletion .= $this->getChildMongoDeletionQueries('entities');
+				$childDeletion .= "<br>\$this->client->tesis->documents->deleteMany(['_id' => ['\$in' => \$_ids]])";
+				break;
+			case 'companies':
+				$childDeletion .= "<br>\$this->client->tesis->entities->deleteMany(['_id' => ['\$in' => \$entities_ids]])";
+				$childDeletion .= $this->getChildMongoDeletionQueries('entities');
+				$childDeletion .= "<br>\$this->client->tesis->fiscalpos->deleteMany(['_id' => ['\$in' => \$fiscalpos_ids]])";
+				$childDeletion .= $this->getChildMongoDeletionQueries('fiscalpos');
+				$childDeletion .= "<br>\$this->client->tesis->products->deleteMany(['_id' => ['\$in' => \$products_ids]])";
+				$childDeletion .= $this->getChildMongoDeletionQueries('products');
+				$childDeletion .= "<br>\$this->client->tesis->categories->deleteMany(['_id' => ['\$in' => \$categories_ids]])";
+				$childDeletion .= $this->getChildMongoDeletionQueries('categories');
+				$childDeletion .= "<br>\$this->client->tesis->documents->deleteMany(['_id' => ['\$in' => \$documents_ids]])";
+				$childDeletion .= $this->getChildMongoDeletionQueries('documents');
+				$childDeletion .= "<br>\$this->client->tesis->pricelists->deleteMany(['_id' => ['\$in' => \$pricelists_ids]])";
+				$childDeletion .= $this->getChildMongoDeletionQueries('pricelists');
+				break;
+			case 'categories':
+				$childDeletion .= "<br>\$this->client->tesis->products->deleteMany(['_id' => ['\$in' => \$products_ids]])";
+				$childDeletion .= $this->getChildMongoDeletionQueries('products');
+				break;
+			case 'pricelists':
+				$childDeletion .= "<br>\$this->client->tesis->entities->deleteMany(['_id' => ['\$in' => \$entities_ids]])";
+				$childDeletion .= $this->getChildMongoDeletionQueries('entities');
+				break;
+			case 'entities':
+				$childDeletion .= "<br>\$this->client->tesis->documents->deleteMany(['_id' => ['\$in' => \$documents_ids]])";
+				$childDeletion .= $this->getChildMongoDeletionQueries('documents');
+				$childDeletion .= "<br>\$this->client->tesis->transactions->deleteMany(['_id' => ['\$in' => \$transactions_ids]])";
+				$childDeletion .= $this->getChildMongoDeletionQueries('transactions');
+				break;
+			case 'documents':
+				$childDeletion .= "<br>\$this->client->tesis->details->deleteMany(['_id' => ['\$in' => \$details_ids]])";
+				$childDeletion .= $this->getChildMongoDeletionQueries('details');
+				$childDeletion .= "<br>\$this->client->tesis->inventories->deleteMany(['_id' => ['\$in' => \$inventories_ids]])";
+				$childDeletion .= $this->getChildMongoDeletionQueries('inventories');
+				break;
+			case 'products':
+				$childDeletion .= "<br>\$this->client->tesis->details->deleteMany(['_id' => ['\$in' => \$details_ids]])";
+				$childDeletion .= $this->getChildMongoDeletionQueries('details');
+				$childDeletion .= "<br>\$this->client->tesis->inventories->deleteMany(['_id' => ['\$in' => \$inventories_ids]])";
+				$childDeletion .= $this->getChildMongoDeletionQueries('inventories');
+				break;
+			case 'details':
+				$childDeletion .= "<br>\$this->client->tesis->inventories->deleteMany(['_id' => ['\$in' => \$inventories_ids]])";
+				$childDeletion .= $this->getChildMongoDeletionQueries('inventories');
+				break;
+//			case 'fiscalpos':
+//				break;
+//			case 'transactions':
+//				break;
+//			case 'inventories':
+//				break;
+			default:
+				break;
+		}
+		
+		return $childDeletion;
+	}
+	
+	
 }

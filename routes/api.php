@@ -28,5 +28,4 @@ Route::resource('inventories', 'InventoryController');
 Route::resource('documents', 'DocumentController');
 Route::resource('details', 'DetailController');
 Route::resource('transactions', 'TransactionController');
-Route::resource('invoices', 'InvoiceController');
 Route::get('/getTotal', 'Controller@getTotal');

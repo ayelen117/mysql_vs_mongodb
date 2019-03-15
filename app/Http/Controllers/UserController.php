@@ -28,7 +28,7 @@ class UserController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * Devuelve una lista de usuarios
      *
      * @return \Illuminate\Http\Response
      */

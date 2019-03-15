@@ -22,7 +22,8 @@ class ServiceCrud
 	}
 	
 	/**
-	 * Toma los primeros registros porque al ser los primeros los que se actualizan son los que tienen más objetos relacionados.
+	 * Toma los primeros registros porque al ser los primeros los que se actualizan son los que tienen más objetos
+	 * relacionados.
 	 * @param integer $qty
 	 * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
 	 */
@@ -108,6 +109,8 @@ class ServiceCrud
 			$sql_bindings = $sql->bindings;
 		}
 		$mysql_total = microtime(true) - $mysql_start;
+		
+		
 		$total = DB::table($this->modelName)->get()->count();
 		$mongo_objects = json_encode($mongo_objects, true);
 		$mongo_objects = str_replace(',', ', ', $mongo_objects);
@@ -206,7 +209,8 @@ class ServiceCrud
 		$mysql_total = microtime(true) - $mysql_start;
 		$total = DB::table($this->modelName)->get()->count();
 		
-		$mongo_query = "\$this->client->tesis->" . $this->modelName . "->deleteMany(['_id' => ['\$gte' => ' . $start_id . ', '\$lte'' => " . $end_id . "]])";
+		$mongo_query = "\$this->client->tesis->" . $this->modelName .
+			"->deleteMany(['_id' => ['\$gte' => ' . $start_id . ', '\$lte'' => " . $end_id . "]])";
 		$mongo_query .= $this->helper->getChildMongoDeletionQueries($this->modelName);
 		
 		$comparison = [

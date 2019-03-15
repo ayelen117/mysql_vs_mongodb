@@ -4,7 +4,6 @@ namespace App\Helpers;
 
 use Illuminate\Support\Facades\DB;
 use MongoDB\BSON\ObjectID;
-use function MongoDB\BSON\toPHP;
 use MongoDB\Client;
 
 /**
@@ -163,15 +162,9 @@ class GeneralHelper
 	}
 	
 	public function runMongoQuery($db, $modelName, $start_id, $end_id){
-		switch ($modelName){
-			case 'users':
-				$result = $this->removeUsersFromMongoBD($db, 'range', $start_id, $end_id);
-				break;
-			default:
-				$result = $db->$modelName->deleteMany(['_id' => ['$gte' => $start_id, '$lte' => $end_id]]);
-				break;
-		}
-		
+		$function = 'remove' . ucfirst($modelName) . 'FromMongoBD';
+		$result = $this->$function($db, 'range', $start_id, $end_id);
+
 		return $result;
 	}
 	
@@ -198,7 +191,7 @@ class GeneralHelper
 			
 			$result = $db->users->deleteMany(['_id' => ['$gte' => $start_id, '$lte' => $end_id]]);
 		
-		} else if ($type === 'array'){
+		} else if ($type === 'array') {
 			$array = array_map(function($a) { foreach ($a as $item) { return $item;} }, $array);
 			$result = $db->users->deleteMany(['_id' => ['$in' => $array]]);
 		}

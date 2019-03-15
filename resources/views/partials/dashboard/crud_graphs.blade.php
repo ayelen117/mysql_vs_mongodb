@@ -33,6 +33,7 @@
                 </div>
             </div>
 
+            @if( in_array($type, ['insertion', 'update']))
             <div class="form-group">
                 <label class="control-label col-md-6 col-sm-6 col-xs-12" for="name" >
                     Generar registros aleatorios
@@ -41,6 +42,7 @@
                     <input type="checkbox" class="random_data" name="random_data"/>
                 </div>
             </div>
+            @endif
 
             <div class="col-md-12">
                 <canvas id="{{$type}}Chart"></canvas>

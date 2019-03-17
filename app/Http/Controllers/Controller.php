@@ -14,7 +14,7 @@ class Controller extends BaseController
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
     
 	public function getTotal(Request $request){
-		$total = DB::table($request->model)->get()->count();
+		$total = DB::table($request->model)->count();
 		
 		return $total;
 	}

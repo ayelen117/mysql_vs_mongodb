@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Services;
-ini_set('max_execution_time', 180);
+ini_set('max_execution_time', 1800);
 
 use App\Helpers\GeneralHelper;
 use Illuminate\Support\Facades\DB;

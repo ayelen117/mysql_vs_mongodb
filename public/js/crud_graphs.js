@@ -202,6 +202,10 @@ function addDataset(qty, random_data, id) {
             $("#update .qty").attr('max', response.total);
             $("#deleting .qty").attr('max', response.total);
             addData(chart_name, qty, [mongo_time, mysql_time])
+        },
+        error: function (response) {
+            $("#" + id + " .result").html("");
+            console.log(response)
         }
     });
 }

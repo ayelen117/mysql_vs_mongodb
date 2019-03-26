@@ -147,6 +147,10 @@ function getTotal() {
 
 function addDataset(qty, random_data, id) {
 
+    if (random_data == 'on'){
+        random_data = true
+    }
+
     console.log('Adding ' + model + ' ' + id + ' dataset.');
 
     var type;
@@ -204,7 +208,7 @@ function addDataset(qty, random_data, id) {
             addData(chart_name, qty, [mongo_time, mysql_time])
         },
         error: function (response) {
-            $("#" + id + " .result").html("");
+            $("#" + id + " .result").html("<div class='error' style='color:red; margin:10px 0px'>Error: verificar que las dependencias existan.</div>");
             console.log(response)
         }
     });

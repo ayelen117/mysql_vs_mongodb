@@ -233,7 +233,7 @@ class GeneralHelper
 		$this->removeEntitiesFromMongoBD($db, 'array', null, null, $entities_ids);
 		
 		$fiscalpos_ids = $this->getIdsFromArray($db, $companies_ids, 'company_id', 'fiscalpos');
-		$this->removeFiscalPointOfSaleFromMongoBD($db, 'array', null, null, $fiscalpos_ids);
+		$this->removeFiscalposFromMongoBD($db, 'array', null, null, $fiscalpos_ids);
 		
 		$products_ids = $this->getIdsFromArray($db, $companies_ids, 'company_id', 'products');
 		$this->removeProductsFromMongoBD($db, 'array', null, null, $products_ids);
@@ -328,7 +328,7 @@ class GeneralHelper
 		return $result;
 	}
 	
-	private function removeFiscalPointOfSaleFromMongoBD($db, $type, $start_id, $end_id, $array = []){
+	private function removeFiscalposFromMongoBD($db, $type, $start_id, $end_id, $array = []){
 		if ($type === 'range'){
 			$result = $db->fiscalpos->deleteMany(['_id' => ['$gte' => $start_id, '$lte' => $end_id]]);
 		} else if ($type === 'array'){

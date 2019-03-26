@@ -5,6 +5,7 @@ ini_set('max_execution_time', 1800);
 
 use App\Helpers\GeneralHelper;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use MongoDB\Client;
 
 class ServiceCrud
@@ -29,8 +30,10 @@ class ServiceCrud
 	 */
 	public function index($qty)
 	{
+		Log::info('index');
 		$mongo_start = microtime(true);
-		$result_mongo = $this->mongoInstance->find([], ['limit' => $qty])->toArray();
+		$result_mongo = $this->mongoInstance->find([], ['limit' => $qty]);
+		$result_mongo  = $result_mongo->toArray();
 		$mongo_total = microtime(true) - $mongo_start;
 		
 		$sql = $this->helper->getSqlData('list', $this->modelName, $qty);
@@ -44,16 +47,18 @@ class ServiceCrud
 		$comparison = [
 			'qty' => $qty,
 			'mongo' => [
-				'time' => $mongo_total,
+				'time' => round($mongo_total, 4),
 				'query' => $mongo_query,
 			],
 			'mysql' => [
-				'time' => $mysql_total,
+				'time' => round($mysql_total, 4),
 				'query' => $sql->query
 			],
 			'total' => $total,
 			'data' => $qty,
 		];
+		Log::info('mongo => ' . round($mongo_total, 4));
+		Log::info('mysql => ' . round($mysql_total, 4));
 		
 		return response($comparison, 201);
 	}
@@ -68,15 +73,12 @@ class ServiceCrud
 	 */
 	public function store($qty, $random_data, $mysqlModelClass, $mongoModelModel)
 	{
+		Log::info('store');
 		$mongo_objects = [];
 		$mysql_objects = [];
 		
 		if ($random_data === 'true') {
 			$mongo_objects = factory($mysqlModelClass, 'mongo', $qty)->make()->toArray();
-			foreach ($mongo_objects as &$mongo_object) {
-				($mongoModelModel)->setRelationships($mongo_object);
-			}
-			
 			$mysql_objects = factory($mysqlModelClass, 'mysql', $qty)->make()->toArray();
 		} else {
 			$mongo_object = factory($mysqlModelClass, 'mongo')->make()->toArray();
@@ -110,7 +112,6 @@ class ServiceCrud
 		}
 		$mysql_total = microtime(true) - $mysql_start;
 		
-		
 		$total = DB::table($this->modelName)->get()->count();
 		$mongo_objects = json_encode($mongo_objects, true);
 		$mongo_objects = str_replace(',', ', ', $mongo_objects);
@@ -122,16 +123,18 @@ class ServiceCrud
 		$comparison = [
 			'qty' => $qty,
 			'mongo' => [
-				'time' => $mongo_total,
-				'query' => $mongo_query
+				'time' => round($mongo_total, 4),
+				'query' =>  substr($mongo_query, 0, 100)
 			],
 			'mysql' => [
-				'time' => $mysql_total,
-				'query' => $sql_query . ', ' . $sql_bindings
+				'time' => round($mysql_total, 4),
+				'query' => substr($sql_query . ', ' . $sql_bindings, 0, 100)
 			],
 			'data' => $result->getInsertedCount(),
 			'total' => $total,
 		];
+		Log::info('mongo => ' . round($mongo_total, 4));
+		Log::info('mysql => ' . round($mysql_total, 4));
 		
 		return response($comparison, 201);
 	}
@@ -144,6 +147,7 @@ class ServiceCrud
 	 */
 	public function update($qty, $mysqlModelClass)
 	{
+		Log::info('update');
 		$mongo_object = factory($mysqlModelClass, 'mongo')->make()->toArray();
 		$mysql_object = factory($mysqlModelClass, 'mysql')->make()->toArray();
 		
@@ -175,16 +179,18 @@ class ServiceCrud
 		$comparison = [
 			'qty' => $qty,
 			'mongo' => [
-				'time' => $mongo_total,
+				'time' => round($mongo_total, 4),
 				'query' => $mongo_query
 			],
 			'mysql' => [
-				'time' => $mysql_total,
+				'time' => round($mysql_total, 4),
 				'query' => $sql->query . ', ' . $sql_bindings
 			],
 			'data' => $result->getModifiedCount(),
 			'total' => $total,
 		];
+		Log::info('mongo => ' . round($mongo_total, 4));
+		Log::info('mysql => ' . round($mysql_total, 4));
 		
 		return response($comparison, 200);
 	}
@@ -196,6 +202,7 @@ class ServiceCrud
 	 */
 	public function destroy($qty)
 	{
+		Log::info('destroy');
 		$mongo_start = microtime(true);
 		$start_id = $this->mongoInstance->find([], ['limit' => 1])->toArray()[0]->_id;
 		$end_id = $this->mongoInstance->find([], ['limit' => 1, 'skip' => ($qty - 1)])->toArray()[0]->_id;
@@ -216,16 +223,18 @@ class ServiceCrud
 		$comparison = [
 			'qty' => $qty,
 			'mongo' => [
-				'time' => $mongo_total,
+				'time' => round($mongo_total, 4),
 				'query' => $mongo_query
 			],
 			'mysql' => [
-				'time' => $mysql_total,
+				'time' => round($mysql_total, 4),
 				'query' => $sql->query
 			],
 			'data' => $result->getDeletedCount(),
 			'total' => $total,
 		];
+		Log::info('mongo => ' . round($mongo_total, 4));
+		Log::info('mysql => ' . round($mysql_total, 4));
 		
 		return response($comparison, 200);
 	}

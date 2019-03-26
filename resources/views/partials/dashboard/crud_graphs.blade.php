@@ -38,8 +38,8 @@
                 <label class="control-label col-md-6 col-sm-6 col-xs-12" for="name" >
                     Generar registros aleatorios
                 </label>
-                <div class="col-md-6 col-sm-6 col-xs-12">
-                    <input type="checkbox" class="random_data" name="random_data"/>
+                <div class="col-md-6 col-sm-6 col-xs-12 random_data">
+                    <input type="checkbox" name="random_data"/>
                 </div>
             </div>
             @endif
@@ -58,7 +58,7 @@
             <div class="form-group center-block">
                 <div class="col-md-12">
                     <input type="reset" class="btn btn-primary" value="Reset">
-                    <input type="button" class="btn btn-success" href="javascript:;" onclick="addDataset( $('#{{$type}} .qty:first-child').val(), $('#{{$type}} .random-data:first-child').val(), '{{$type}}');return false;" value="Calcular"/>
+                    <input type="button" class="btn btn-success" href="javascript:;" onclick="addDataset( $('#{{$type}} .qty:first-child').val(), $('#{{$type}} .random_data input:checked').val(), '{{$type}}');return false;" value="Calcular"/>
                     <input type="button" class="btn btn-success" href="javascript:;" onclick="removeData('{{$type}}');return false;" value="Eliminar"/>
                 </div>
             </div>

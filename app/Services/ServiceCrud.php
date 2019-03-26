@@ -203,10 +203,15 @@ class ServiceCrud
 	public function destroy($qty)
 	{
 		Log::info('destroy');
-		$mongo_start = microtime(true);
 		$start_id = $this->mongoInstance->find([], ['limit' => 1])->toArray()[0]->_id;
 		$end_id = $this->mongoInstance->find([], ['limit' => 1, 'skip' => ($qty - 1)])->toArray()[0]->_id;
-		$result = $this->helper->runMongoQuery($this->client->tesis, $this->modelName, $start_id, $end_id);
+		
+		$mongo_start = microtime(true);
+		if($this->modelName == 'fiscalpos'){
+			$result = $this->mongoInstance->deleteMany(['_id' => ['$gte' => $start_id, '$lte' => $end_id]]);
+		} else {
+			$result = $this->helper->runMongoQuery($this->client->tesis, $this->modelName, $start_id, $end_id);
+		}
 		$mongo_total = microtime(true) - $mongo_start;
 		
 		$sql = $this->helper->getSqlData('delete', $this->modelName, $qty);

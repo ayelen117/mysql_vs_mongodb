@@ -38,11 +38,11 @@ class PricelistController extends Controller
      */
     public function index(Request $request)
     {
-        $data = $request->all();
-        $qty = isset($data['qty']) ? (int) $data['qty'] : null;
+        $request = $request->all();
+        $qty = isset($request['qty']) ? (int) $request['qty'] : null;
 
         if ($qty){
-            $result = $this->serviceCrud->index($qty);
+            $result = $this->serviceCrud->index($qty, $request);
 
             return $result;
         } else {
@@ -72,17 +72,16 @@ class PricelistController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->all();
-        $qty = isset($data['qty']) ? (int) $data['qty'] : null;
-        $random_data = isset($data['random_data']) ? $data['random_data'] : null;
+		$request = $request->all();
+        $qty = isset($request['qty']) ? (int) $request['qty'] : null;
 
         if ($qty){
-            $result = $this->serviceCrud->store($qty, $random_data, MysqlPricelist::class, new MongoPricelist());
+            $result = $this->serviceCrud->store($qty, $request, MysqlPricelist::class, new MongoPricelist());
 
             return $result;
         } else {
-            $this->helper->setRelationships($data, 'companies', 'company_id');
-            $pricelist_id = $this->pricelists->insertOne($data)->getInsertedId();
+            $this->helper->setRelationships($request, 'companies', 'company_id');
+            $pricelist_id = $this->pricelists->insertOne($request)->getInsertedId();
             $pricelist = $this->pricelists->findOne(['_id' => new ObjectID($pricelist_id)]);
             $result = json_encode($pricelist);
 
@@ -127,18 +126,18 @@ class PricelistController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $data = $request->all();
-        $qty = isset($data['qty']) ? (int) $data['qty'] : null;
+        $request = $request->all();
+        $qty = isset($request['qty']) ? (int) $request['qty'] : null;
 
         if ($qty){
-            $result = $this->serviceCrud->update($qty,  MysqlPricelist::class);
+            $result = $this->serviceCrud->update($qty, $request, MysqlPricelist::class);
 
             return $result;
         } else {
-            $this->helper->setRelationships($data, 'companies', 'company_id');
+            $this->helper->setRelationships($request, 'companies', 'company_id');
             $this->pricelists->updateOne(
                 ['_id' => new ObjectID($id)],
-                ['$set' => $data]
+                ['$set' => $request]
             );
             $pricelist = $this->pricelists->findOne(['_id' => new ObjectID($id)]);
             $result = json_encode($pricelist);
@@ -156,11 +155,11 @@ class PricelistController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-        $data = $request->all();
-        $qty = isset($data['qty']) ? (int) $data['qty'] : null;
+        $request = $request->all();
+        $qty = isset($request['qty']) ? (int) $request['qty'] : null;
 
         if ($qty){
-            $result = $this->serviceCrud->destroy($qty);
+            $result = $this->serviceCrud->destroy($qty, $request);
 
             return $result;
         } else {

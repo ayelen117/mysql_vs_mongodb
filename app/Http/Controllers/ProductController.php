@@ -37,11 +37,11 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $data = $request->all();
-        $qty = isset($data['qty']) ? (int) $data['qty'] : null;
+        $request = $request->all();
+        $qty = isset($request['qty']) ? (int) $request['qty'] : null;
 
         if ($qty){
-            $result = $this->serviceCrud->index($qty);
+            $result = $this->serviceCrud->index($qty, $request);
 
             return $result;
         } else {
@@ -71,23 +71,22 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->all();
-        $qty = isset($data['qty']) ? (int) $data['qty'] : null;
-        $random_data = isset($data['random_data']) ? $data['random_data'] : null;
+		$request = $request->all();
+        $qty = isset($request['qty']) ? (int) $request['qty'] : null;
 
         if ($qty){
-            $result = $this->serviceCrud->store($qty, $random_data, MysqlProduct::class, new MongoProduct());
+            $result = $this->serviceCrud->store($qty, $request, MysqlProduct::class, new MongoProduct());
 
             return $result;
         } else {
 
-            $this->helper->setRelationships($data, 'companies', 'company_id');
-            $this->helper->setRelationships($data, 'users', 'author_id');
-            $this->helper->setRelationships($data, 'categories', 'category_id');
-            $this->helper->setRelationships($data, 'taxes', 'tax_id');
-            $this->helper->setRelationships($data, 'currencies', 'currency_id');
+            $this->helper->setRelationships($request, 'companies', 'company_id');
+            $this->helper->setRelationships($request, 'users', 'author_id');
+            $this->helper->setRelationships($request, 'categories', 'category_id');
+            $this->helper->setRelationships($request, 'taxes', 'tax_id');
+            $this->helper->setRelationships($request, 'currencies', 'currency_id');
     
-            $product_id = $this->products->insertOne($data)->getInsertedId();
+            $product_id = $this->products->insertOne($request)->getInsertedId();
             $product = $this->products->findOne(['_id' => new ObjectID($product_id)]);
             $result = json_encode($product);
     
@@ -132,23 +131,23 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $data = $request->all();
-        $qty = isset($data['qty']) ? (int) $data['qty'] : null;
+        $request = $request->all();
+        $qty = isset($request['qty']) ? (int) $request['qty'] : null;
 
         if ($qty){
-            $result = $this->serviceCrud->update($qty,  MysqlProduct::class);
+            $result = $this->serviceCrud->update($qty, $request, MysqlProduct::class);
 
             return $result;
         } else {
-            $this->helper->setRelationships($data, 'companies', 'company_id');
-            $this->helper->setRelationships($data, 'users', 'author_id');
-            $this->helper->setRelationships($data, 'categories', 'category_id');
-            $this->helper->setRelationships($data, 'taxes', 'tax_id');
-            $this->helper->setRelationships($data, 'currencies', 'currency_id');
+            $this->helper->setRelationships($request, 'companies', 'company_id');
+            $this->helper->setRelationships($request, 'users', 'author_id');
+            $this->helper->setRelationships($request, 'categories', 'category_id');
+            $this->helper->setRelationships($request, 'taxes', 'tax_id');
+            $this->helper->setRelationships($request, 'currencies', 'currency_id');
     
             $this->products->updateOne(
                 ['_id' => new ObjectID($id)],
-                ['$set' => $data]
+                ['$set' => $request]
             );
             $product = $this->products->findOne(['_id' => new ObjectID($id)]);
             $result = json_encode($product);
@@ -166,11 +165,11 @@ class ProductController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-        $data = $request->all();
-        $qty = isset($data['qty']) ? (int) $data['qty'] : null;
+        $request = $request->all();
+        $qty = isset($request['qty']) ? (int) $request['qty'] : null;
 
         if ($qty){
-            $result = $this->serviceCrud->destroy($qty);
+            $result = $this->serviceCrud->destroy($qty, $request);
 
             return $result;
         } else {

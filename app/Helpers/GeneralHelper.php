@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use MongoDB\BSON\ObjectID;
 use MongoDB\Client;
 
@@ -59,20 +60,30 @@ class GeneralHelper
 		}
 	}
 	
-	public function getSql($modelName, $operation, $maxAllowedRecords, $qty, $data = null)
+	public function getSql($modelName, $operation, $maxAllowedRecords, $qty, $data = null, $ids = null)
 	{
 		if ($qty > $maxAllowedRecords) {
-			foreach (array_chunk($data, $maxAllowedRecords) as $datum) {
-				$sql[] = $this->getSqlData($operation, $modelName, $qty, $datum);
+			if($operation === 'update'){
+				foreach (array_chunk($ids, $maxAllowedRecords) as $id) {
+					$sql[] = $this->getSqlData($operation, $modelName, $qty, $data, $id);
+				}
+			} else {
+				foreach (array_chunk($data, $maxAllowedRecords) as $datum) {
+					$sql[] = $this->getSqlData($operation, $modelName, $qty, $datum);
+				}
 			}
 		} else {
-			$sql = $this->getSqlData($operation, $modelName, $qty, $data);
+			if($operation === 'update'){
+				$sql = $this->getSqlData($operation, $modelName, $qty, $data, $ids);
+			} else {
+				$sql = $this->getSqlData($operation, $modelName, $qty, $data);
+			}
 		}
 		
 		return $sql;
 	}
 	
-	public function getSqlData($operation, $modelName, $qty, $data = null)
+	public function getSqlData($operation, $modelName, $qty, $data = null, $ids = null)
 	{
 		DB::beginTransaction();
 		DB::connection()->enableQueryLog();
@@ -132,17 +143,12 @@ class GeneralHelper
 				$query = DB::table($modelName)->insert($data);
 				break;
 			case 'update':
-				$query = DB::table($modelName)->where('id', '!=', 0)->limit($qty)->update($data);
+				$query = DB::table($modelName)->whereIn('id', $ids)->update($data);
 				break;
 			case 'delete':
 				switch ($modelName) {
-					case 'users':
-						DB::table($modelName)
-							->limit($qty)
-							->delete();
-						break;
 					default:
-						$query = DB::table($modelName)->where('id', '!=', 0)->limit($qty)->delete();
+						$query = DB::table($modelName)->whereIn('id', $ids)->delete();
 						break;
 				}
 				break;
@@ -504,5 +510,20 @@ class GeneralHelper
 		return $childDeletion;
 	}
 	
+	public function clearCache($modelName){
+		Log::info('Limpiando la cache...');
+		$os = strtoupper(substr(PHP_OS, 0, 3));
+		if($os === 'DAR'){
+			shell_exec('sync && echo ' . env('PASS') . ' | sudo purge -S ');
+		} else if ($os === 'LIN'){
+			shell_exec('sync && sudo sysctl -w vm.drop_caches=3'); // funciona
+		}
+		
+		DB::statement("RESET QUERY CACHE;");
+		DB::statement("FLUSH TABLES;");
+		
+		$this->client->tesis->command(['planCacheClear' => $modelName])->toArray();
+		$this->client->tesis->command([ 'planCacheClearFilters' => $modelName])->toArray();
+	}
 	
 }

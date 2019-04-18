@@ -84,9 +84,12 @@ class ServiceCrud
 	 * @param string $mongoModelModel
 	 * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
 	 */
-	public function store($qty, $random_data, $mysqlModelClass, $mongoModelModel)
+	public function store($qty, $request, $mysqlModelClass, $mongoModelModel)
 	{
-		Log::info('store');
+		$random_data = isset($request['random_data']) ? $request['random_data'] : null;
+		$clean_cache = isset($request['clean_cache']) ? $request['clean_cache'] : null;
+		
+		Log::info('---------------- store start ----------------');
 		$mongo_objects = [];
 		$mysql_objects = [];
 		
@@ -102,15 +105,23 @@ class ServiceCrud
 			}
 			// todo: setear las relaciones para mysql
 		}
+		
+		$clean_cache ? $this->helper->clearCache($this->modelName): null ;
+		
+		/** MongoDB */
 		$mongo_start = microtime(true);
 		$result = $this->mongoInstance->insertMany($mongo_objects);
 		$mongo_total = microtime(true) - $mongo_start;
+		/** MongoDB */
 		
 		$myModel = new $mysqlModelClass;
 		$fieldsPerRecord = $myModel->getFillable();
 		$maxAllowedRecords = floor(65536 / count($fieldsPerRecord));
 		
 		$sql = $this->helper->getSql($this->modelName, 'store', $maxAllowedRecords, $qty, $mysql_objects);
+		$clean_cache ? $this->helper->clearCache($this->modelName): null ;
+		
+		/** MySQL */
 		$mysql_start = microtime(true);
 		if (is_array($sql)) {
 			foreach ($sql as $item) {
@@ -124,8 +135,9 @@ class ServiceCrud
 			$sql_bindings = $sql->bindings;
 		}
 		$mysql_total = microtime(true) - $mysql_start;
+		/** MySQL */
 		
-		$total = DB::table($this->modelName)->get()->count();
+		$total = DB::select("select count(*) from $this->modelName")[0]->{'count(*)'};
 		$mongo_objects = json_encode($mongo_objects, true);
 		$mongo_objects = str_replace(',', ', ', $mongo_objects);
 		$mongo_query = '$this->client->tesis->' . $this->modelName . '->insertMany(' . $mongo_objects . ')';
@@ -148,6 +160,7 @@ class ServiceCrud
 		];
 		Log::info('mongo => ' . round($mongo_total, 4));
 		Log::info('mysql => ' . round($mysql_total, 4));
+		Log::info('---------------- store end ----------------');
 		
 		return response($comparison, 201);
 	}

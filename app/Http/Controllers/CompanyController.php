@@ -37,11 +37,11 @@ class CompanyController extends Controller
      */
     public function index(Request $request)
     {
-        $data = $request->all();
-        $qty = isset($data['qty']) ? (int) $data['qty'] : null;
+        $request = $request->all();
+        $qty = isset($request['qty']) ? (int) $request['qty'] : null;
 
         if ($qty){
-            $result = $this->serviceCrud->index($qty);
+            $result = $this->serviceCrud->index($qty, $request);
 
             return $result;
         } else {
@@ -71,20 +71,19 @@ class CompanyController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->all();
-        $qty = isset($data['qty']) ? (int) $data['qty'] : null;
-        $random_data = isset($data['random_data']) ? $data['random_data'] : null;
+		$request = $request->all();
+        $qty = isset($request['qty']) ? (int) $request['qty'] : null;
 
         if ($qty){
-            $result = $this->serviceCrud->store($qty, $random_data, MysqlCompany::class, new MongoCompany());
+            $result = $this->serviceCrud->store($qty, $request, MysqlCompany::class, new MongoCompany());
 
             return $result;
         } else {
 
-            $this->helper->setRelationships($data, 'users', 'user_id');
-            $this->helper->setRelationships($data, 'currencies', 'currencies');
-            $this->helper->setRelationships($data, 'responsibilities', 'responsibility_id');
-            $company_id = $this->companies->insertOne($data)->getInsertedId();
+            $this->helper->setRelationships($request, 'users', 'user_id');
+            $this->helper->setRelationships($request, 'currencies', 'currencies');
+            $this->helper->setRelationships($request, 'responsibilities', 'responsibility_id');
+            $company_id = $this->companies->insertOne($request)->getInsertedId();
             $company = $this->companies->findOne(['_id' => new ObjectID($company_id)]);
             $result = json_encode($company);
 
@@ -129,21 +128,21 @@ class CompanyController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $data = $request->all();
-        $qty = isset($data['qty']) ? (int) $data['qty'] : null;
+        $request = $request->all();
+        $qty = isset($request['qty']) ? (int) $request['qty'] : null;
 
         if ($qty){
-            $result = $this->serviceCrud->update($qty,  MysqlCompany::class);
+            $result = $this->serviceCrud->update($qty, $request, MysqlCompany::class);
 
             return $result;
         } else {
-            $this->helper->setRelationships($data, 'users', 'user_id');
-            $this->helper->setRelationships($data, 'currencies', 'currencies');
-            $this->helper->setRelationships($data, 'responsibilities', 'responsibility_id');
+            $this->helper->setRelationships($request, 'users', 'user_id');
+            $this->helper->setRelationships($request, 'currencies', 'currencies');
+            $this->helper->setRelationships($request, 'responsibilities', 'responsibility_id');
 
             $this->companies->updateOne(
                 ['_id' => new ObjectID($id)],
-                ['$set' => $data]
+                ['$set' => $request]
             );
             $company = $this->companies->findOne(['_id' => new ObjectID($id)]);
             $result = json_encode($company);
@@ -161,11 +160,11 @@ class CompanyController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-        $data = $request->all();
-        $qty = isset($data['qty']) ? (int) $data['qty'] : null;
+        $request = $request->all();
+        $qty = isset($request['qty']) ? (int) $request['qty'] : null;
 
         if ($qty){
-            $result = $this->serviceCrud->destroy($qty);
+            $result = $this->serviceCrud->destroy($qty, $request);
 
             return $result;
         } else {

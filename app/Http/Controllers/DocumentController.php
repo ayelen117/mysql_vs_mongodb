@@ -36,11 +36,11 @@ class DocumentController extends Controller
      */
     public function index(Request $request)
     {
-        $data = $request->all();
-        $qty = isset($data['qty']) ? (int) $data['qty'] : null;
+        $request = $request->all();
+        $qty = isset($request['qty']) ? (int) $request['qty'] : null;
 
         if ($qty){
-            $result = $this->serviceCrud->index($qty);
+            $result = $this->serviceCrud->index($qty, $request);
 
             return $result;
         } else {
@@ -70,24 +70,23 @@ class DocumentController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->all();
-        $qty = isset($data['qty']) ? (int) $data['qty'] : null;
-        $random_data = isset($data['random_data']) ? $data['random_data'] : null;
+		$request = $request->all();
+        $qty = isset($request['qty']) ? (int) $request['qty'] : null;
 
         if ($qty){
-            $result = $this->serviceCrud->store($qty, $random_data, MysqlDocument::class, new MongoDocument());
+            $result = $this->serviceCrud->store($qty, $request, MysqlDocument::class, new MongoDocument());
 
             return $result;
         } else {
 
-            $this->helper->setRelationships($data, 'users', 'author_id');
-            $this->helper->setRelationships($data, 'companies', 'company_id');
-            $this->helper->setRelationships($data, 'entities', 'entity_id');
-            $this->helper->setRelationships($data, 'entities', 'seller_id');
-            $this->helper->setRelationships($data, 'currencies', 'currency_id');
-            $this->helper->setRelationships($data, 'receipts', 'receipt_id');
-    //        $this->helper->setRelationships($data, 'details', 'details');
-            $document_id = $this->documents->insertOne($data)->getInsertedId();
+            $this->helper->setRelationships($request, 'users', 'author_id');
+            $this->helper->setRelationships($request, 'companies', 'company_id');
+            $this->helper->setRelationships($request, 'entities', 'entity_id');
+            $this->helper->setRelationships($request, 'entities', 'seller_id');
+            $this->helper->setRelationships($request, 'currencies', 'currency_id');
+            $this->helper->setRelationships($request, 'receipts', 'receipt_id');
+    //        $this->helper->setRelationships($request, 'details', 'details');
+            $document_id = $this->documents->insertOne($request)->getInsertedId();
             $document = $this->documents->findOne(['_id' => new ObjectID($document_id)]);
             $result = json_encode($document);
 
@@ -132,24 +131,24 @@ class DocumentController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $data = $request->all();
-        $qty = isset($data['qty']) ? (int) $data['qty'] : null;
+        $request = $request->all();
+        $qty = isset($request['qty']) ? (int) $request['qty'] : null;
 
         if ($qty){
-            $result = $this->serviceCrud->update($qty,  MysqlDocument::class);
+            $result = $this->serviceCrud->update($qty, $request, MysqlDocument::class);
 
             return $result;
         } else {
-            $this->helper->setRelationships($data, 'users', 'author_id');
-            $this->helper->setRelationships($data, 'companies', 'company_id');
-            $this->helper->setRelationships($data, 'entities', 'entity_id');
-            $this->helper->setRelationships($data, 'entities', 'seller_id');
-            $this->helper->setRelationships($data, 'currencies', 'currency_id');
-            $this->helper->setRelationships($data, 'receipts', 'receipt_id');
-    //        $this->helper->setRelationships($data, 'details', 'details');
+            $this->helper->setRelationships($request, 'users', 'author_id');
+            $this->helper->setRelationships($request, 'companies', 'company_id');
+            $this->helper->setRelationships($request, 'entities', 'entity_id');
+            $this->helper->setRelationships($request, 'entities', 'seller_id');
+            $this->helper->setRelationships($request, 'currencies', 'currency_id');
+            $this->helper->setRelationships($request, 'receipts', 'receipt_id');
+    //        $this->helper->setRelationships($request, 'details', 'details');
             $this->documents->updateOne(
                 ['_id' => new ObjectID($id)],
-                ['$set' => $data]
+                ['$set' => $request]
             );
             $document = $this->documents->findOne(['_id' => new ObjectID($id)]);
             $result = json_encode($document);
@@ -167,11 +166,11 @@ class DocumentController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-        $data = $request->all();
-        $qty = isset($data['qty']) ? (int) $data['qty'] : null;
+        $request = $request->all();
+        $qty = isset($request['qty']) ? (int) $request['qty'] : null;
 
         if ($qty){
-            $result = $this->serviceCrud->destroy($qty);
+            $result = $this->serviceCrud->destroy($qty, $request);
 
             return $result;
         } else {

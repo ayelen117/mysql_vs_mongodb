@@ -35,11 +35,11 @@ class EntityController extends Controller
      */
     public function index(Request $request)
     {
-        $data = $request->all();
-        $qty = isset($data['qty']) ? (int) $data['qty'] : null;
+        $request = $request->all();
+        $qty = isset($request['qty']) ? (int) $request['qty'] : null;
 
         if ($qty){
-            $result = $this->serviceCrud->index($qty);
+            $result = $this->serviceCrud->index($qty, $request);
 
             return $result;
         } else {
@@ -59,17 +59,16 @@ class EntityController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->all();
-        $qty = isset($data['qty']) ? (int) $data['qty'] : null;
-        $random_data = isset($data['random_data']) ? $data['random_data'] : null;
+        $request = $request->all();
+        $qty = isset($request['qty']) ? (int) $request['qty'] : null;
 
         if ($qty){
-            $result = $this->serviceCrud->store($qty, $random_data, MysqlEntity::class, new MongoEntity());
+            $result = $this->serviceCrud->store($qty, $request, MysqlEntity::class, new MongoEntity());
 
             return $result;
         } else {
-            (new MongoEntity())->setRelationships($data);
-            $entity_id = $this->entities->insertOne($data)->getInsertedId();
+            (new MongoEntity())->setRelationships($request);
+            $entity_id = $this->entities->insertOne($request)->getInsertedId();
             $entity = $this->entities->findOne(['_id' => new ObjectID($entity_id)]);
             $result = json_encode($entity);
 
@@ -102,19 +101,19 @@ class EntityController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $data = $request->all();
-        $qty = isset($data['qty']) ? (int) $data['qty'] : null;
+        $request = $request->all();
+        $qty = isset($request['qty']) ? (int) $request['qty'] : null;
 
         if ($qty){
-            $result = $this->serviceCrud->update($qty,  MysqlEntity::class);
+            $result = $this->serviceCrud->update($qty, $request, MysqlEntity::class);
 
             return $result;
         } else {
-            $data = $request->all();
-            (new MongoEntity())->setRelationships($data);
+            $request = $request->all();
+            (new MongoEntity())->setRelationships($request);
             $this->entities->updateOne(
                 ['_id' => new ObjectID($id)],
-                ['$set' => $data]
+                ['$set' => $request]
             );
             $entity = $this->entities->findOne(['_id' => new ObjectID($id)]);
             $result = json_encode($entity);
@@ -133,11 +132,11 @@ class EntityController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-        $data = $request->all();
-        $qty = isset($data['qty']) ? (int) $data['qty'] : null;
+        $request = $request->all();
+        $qty = isset($request['qty']) ? (int) $request['qty'] : null;
 
         if ($qty){
-            $result = $this->serviceCrud->destroy($qty);
+            $result = $this->serviceCrud->destroy($qty, $request);
 
             return $result;
         } else {

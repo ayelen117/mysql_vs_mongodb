@@ -171,52 +171,78 @@ class ServiceCrud
 	 * @param string $mysqlModelClass
 	 * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
 	 */
-	public function update($qty, $mysqlModelClass)
+	public function update($qty, $request, $mysqlModelClass)
 	{
-		Log::info('update');
+		Log::info('---------------- update start ----------------');
+		$clean_cache = isset($request['clean_cache']) ? $request['clean_cache'] : null;
+		
+		$clean_cache ? $this->helper->clearCache($this->modelName): null ;
+		
 		$mongo_object = factory($mysqlModelClass, 'mongo')->make()->toArray();
 		$mysql_object = factory($mysqlModelClass, 'mysql')->make()->toArray();
 		
-		$start_id = $this->mongoInstance->find([], ['limit' => 1])->toArray()[0]->_id;
-		$end_id = $this->mongoInstance->find([], ['limit' => 1, 'skip' => ($qty - 1)])->toArray()[0]->_id;
+		$objects = $this->mongoInstance->find([], ['limit' => $qty])->toArray();
+		$ids = array_map(function($a) { foreach ($a as $item) { return new ObjectId($item); } }, $objects);
 		
+		/** MongoDB */
 		$mongo_start = microtime(true);
 		$result = $this->mongoInstance->updateMany(
-			['_id' => ['$gte' => $start_id, '$lte' => $end_id]],
+			['_id' => ['$in' => $ids]],
 			['$set' => $mongo_object]
 		);
 		$mongo_total = microtime(true) - $mongo_start;
+		/** MongoDB */
 		
-		$sql = $this->helper->getSqlData('update', $this->modelName, $qty, $mysql_object);
+		$myModel = new $mysqlModelClass;
+		$fieldsPerRecord = sizeof($myModel->getFillable());
+		$maxAllowedRecords = 65530 - $fieldsPerRecord;
+		$ids = DB::table($this->modelName)->where('id', '!=', 0)->limit($qty)->pluck('id')->toArray();
+		$sql = $this->helper->getSql($this->modelName, 'update', $maxAllowedRecords, $qty, $mysql_object, $ids);
+		$clean_cache ? $this->helper->clearCache($this->modelName): null ;
 		
+		/** MySQL */
 		$mysql_start = microtime(true);
-		$result_mysql = DB::update($sql->query, $sql->bindings);
+		if (is_array($sql)) {
+			foreach ($sql as $item) {
+				$result_mysql[] = DB::update($item->query, $item->bindings);
+				$sql_bindings = $item->bindings;
+				$sql_query = $item->query;
+			}
+		} else {
+			$result_mysql = DB::update($sql->query, $sql->bindings);
+			$sql_query = $sql->query;
+			$sql_bindings = $sql->bindings;
+		}
 		$mysql_total = microtime(true) - $mysql_start;
-		$total = DB::table($this->modelName)->get()->count();
+		/** MySQL */
 		
+		$total = DB::select("select count(*) from $this->modelName")[0]->{'count(*)'};
 		$mongo_object = json_encode($mongo_object, true);
 		$mongo_object = str_replace(',', ', ', $mongo_object);
-		$mongo_query = '$this->client->tesis->' . $this->modelName . '->updateMany(["_id" => ["$gte" => '
-			. $start_id . ', "$lte" => ' . $end_id . ']],["$set" => ' . $mongo_object . '])';
+		$mongo_query = '$this->client->tesis->' . $this->modelName .
+			'->updateMany(["_id" => ["$in" => ' . json_encode($ids) .
+			']],["$set" => ' . $mongo_object . '])';
 		
-		$sql_bindings = json_encode($sql->bindings, true);
+		$sql_bindings = json_encode($sql_bindings, true);
 		$sql_bindings = str_replace(',', ', ', $sql_bindings);
 		
 		$comparison = [
 			'qty' => $qty,
 			'mongo' => [
 				'time' => round($mongo_total, 4),
-				'query' => $mongo_query
+				'query' =>substr($mongo_query, 0, 100),
 			],
 			'mysql' => [
 				'time' => round($mysql_total, 4),
-				'query' => $sql->query . ', ' . $sql_bindings
+				'query' =>substr($sql_query . ', ' . $sql_bindings, 0, 100),
 			],
 			'data' => $result->getModifiedCount(),
 			'total' => $total,
 		];
+		
 		Log::info('mongo => ' . round($mongo_total, 4));
 		Log::info('mysql => ' . round($mysql_total, 4));
+		Log::info('---------------- update end ----------------');
 		
 		return response($comparison, 200);
 	}

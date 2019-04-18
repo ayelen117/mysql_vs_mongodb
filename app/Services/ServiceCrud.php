@@ -252,46 +252,64 @@ class ServiceCrud
 	 * @param integer $qty
 	 * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
 	 */
-	public function destroy($qty)
+	public function destroy($qty, $request)
 	{
-		Log::info('destroy');
-		$start_id = $this->mongoInstance->find([], ['limit' => 1])->toArray()[0]->_id;
-		$end_id = $this->mongoInstance->find([], ['limit' => 1, 'skip' => ($qty - 1)])->toArray()[0]->_id;
+		Log::info('---------------- destroy start ----------------');
+		$clean_cache = isset($request['clean_cache']) ? $request['clean_cache'] : null;
+		$clean_cache ? $this->helper->clearCache($this->modelName): null ;
 		
+		$objects = $this->mongoInstance->find([], ['limit' => $qty])->toArray();
+		$ids = array_map(function($a) { foreach ($a as $item) { return new ObjectId($item); } }, $objects);
+		
+		/** MongoDB */
 		$mongo_start = microtime(true);
-		if($this->modelName == 'fiscalpos'){
-			$result = $this->mongoInstance->deleteMany(['_id' => ['$gte' => $start_id, '$lte' => $end_id]]);
-		} else {
-			$result = $this->helper->runMongoQuery($this->client->tesis, $this->modelName, $start_id, $end_id);
-		}
+		$result = $this->helper->runMongoQuery($this->client->tesis, $this->modelName, $ids);
 		$mongo_total = microtime(true) - $mongo_start;
+		/** MongoDB */
 		
-		$sql = $this->helper->getSqlData('delete', $this->modelName, $qty);
+		$maxAllowedRecords = 65530;
+		$ids = DB::table($this->modelName)->where('id', '!=', 0)->limit($qty)->pluck('id')->toArray();
+		$sql = $this->helper->getSql($this->modelName, 'delete', $maxAllowedRecords, $qty, null, $ids);
+		$clean_cache ? $this->helper->clearCache($this->modelName): null ;
 		
+		/** MySQL */
 		$mysql_start = microtime(true);
-		$result_mysql = DB::delete($sql->query, $sql->bindings);
+		if (is_array($sql)) {
+			foreach ($sql as $item) {
+				$result_mysql[] = DB::delete($item->query, $item->bindings);
+				$sql_bindings = $item->bindings;
+				$sql_query = $item->query;
+			}
+		} else {
+			$result_mysql = DB::delete($sql->query, $sql->bindings);
+			$sql_query = $sql->query;
+			$sql_bindings = $sql->bindings;
+		}
 		$mysql_total = microtime(true) - $mysql_start;
-		$total = DB::table($this->modelName)->get()->count();
+		/** MySQL */
+		$total = DB::select("select count(*) from $this->modelName")[0]->{'count(*)'};
 		
 		$mongo_query = "\$this->client->tesis->" . $this->modelName .
-			"->deleteMany(['_id' => ['\$gte' => ' . $start_id . ', '\$lte'' => " . $end_id . "]])";
+			"->deleteMany(['_id' => ['\$in' => " . json_encode($ids)  . "]])";
 		$mongo_query .= $this->helper->getChildMongoDeletionQueries($this->modelName);
+		$mysql_query =  $sql_query . ', ' . json_encode($sql_bindings);
 		
 		$comparison = [
 			'qty' => $qty,
 			'mongo' => [
 				'time' => round($mongo_total, 4),
-				'query' => $mongo_query
+				'query' => substr($mongo_query, 0, 4000),
 			],
 			'mysql' => [
 				'time' => round($mysql_total, 4),
-				'query' => $sql->query
+				'query' =>substr($mysql_query, 0, 100),
 			],
 			'data' => $result->getDeletedCount(),
 			'total' => $total,
 		];
 		Log::info('mongo => ' . round($mongo_total, 4));
 		Log::info('mysql => ' . round($mysql_total, 4));
+		Log::info('---------------- destroy end ----------------');
 		
 		return response($comparison, 200);
 	}

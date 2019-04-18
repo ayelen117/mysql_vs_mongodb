@@ -6,6 +6,7 @@ ini_set('max_execution_time', 1800);
 use App\Helpers\GeneralHelper;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use MongoDB\BSON\ObjectId;
 use MongoDB\Client;
 
 class ServiceCrud
@@ -28,21 +29,32 @@ class ServiceCrud
 	 * @param integer $qty
 	 * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
 	 */
-	public function index($qty)
+	public function index($qty, $request)
 	{
-		Log::info('index');
+		Log::info('---------------- index start ----------------');
+		$clean_cache = isset($request['clean_cache']) ? $request['clean_cache'] : null;
+		
+		$clean_cache ? $this->helper->clearCache($this->modelName): null ;
+		
+		/** MongoDB */
 		$mongo_start = microtime(true);
 		$result_mongo = $this->mongoInstance->find([], ['limit' => $qty]);
-		$result_mongo  = $result_mongo->toArray();
 		$mongo_total = microtime(true) - $mongo_start;
+		/** MongoDB */
+		$result_mongo  = $result_mongo->toArray();
 		
 		$sql = $this->helper->getSqlData('list', $this->modelName, $qty);
+		$clean_cache ? $this->helper->clearCache($this->modelName): null ;
+		
+		/** MySQL */
 		$mysql_start = microtime(true);
 		$result_mysql = DB::select($sql->query, $sql->bindings);
 		$mysql_total = microtime(true) - $mysql_start;
-		$total = DB::table($this->modelName)->get()->count();
+		/** MySQL */
+		$total = DB::select("select count(*) from $this->modelName")[0]->{'count(*)'};
 		
-		$mongo_query = '$this->client->tesis->' . $this->modelName . '->find([], ["limit" => ' . $qty . '])';
+		$mongo_query = '$this->client->tesis->' . $this->modelName .
+			'->find([], ["limit" => ' . $qty . '])';
 		
 		$comparison = [
 			'qty' => $qty,
@@ -59,6 +71,7 @@ class ServiceCrud
 		];
 		Log::info('mongo => ' . round($mongo_total, 4));
 		Log::info('mysql => ' . round($mysql_total, 4));
+		Log::info('---------------- index end ----------------');
 		
 		return response($comparison, 201);
 	}

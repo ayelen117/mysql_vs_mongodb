@@ -33,7 +33,7 @@
                 </div>
             </div>
 
-            @if( in_array($type, ['insertion', 'update']))
+            @if( in_array($type, ['insertion']))
             <div class="form-group">
                 <label class="control-label col-md-6 col-sm-6 col-xs-12" for="name" >
                     Generar registros aleatorios
@@ -43,6 +43,14 @@
                 </div>
             </div>
             @endif
+            <div class="form-group">
+                <label class="control-label col-md-6 col-sm-6 col-xs-12" for="clean_cache" >
+                    Limpiar cache
+                </label>
+                <div class="col-md-6 col-sm-6 col-xs-12 clean_cache">
+                    <input type="checkbox" name="clean_cache"/>
+                </div>
+            </div>
 
             <div class="col-md-12">
                 <canvas id="{{$type}}Chart"></canvas>
@@ -58,7 +66,7 @@
             <div class="form-group center-block">
                 <div class="col-md-12">
                     <input type="reset" class="btn btn-primary" value="Reset">
-                    <input type="button" class="btn btn-success" href="javascript:;" onclick="addDataset( $('#{{$type}} .qty:first-child').val(), $('#{{$type}} .random_data input:checked').val(), '{{$type}}');return false;" value="Calcular"/>
+                    <input type="button" class="btn btn-success" href="javascript:;" onclick="addDataset( $('#{{$type}} .qty:first-child').val(), $('#{{$type}} .random_data input:checked').val(), $('#{{$type}} .clean_cache input:checked').val(), '{{$type}}');return false;" value="Calcular"/>
                     <input type="button" class="btn btn-success" href="javascript:;" onclick="removeData('{{$type}}');return false;" value="Eliminar"/>
                 </div>
             </div>

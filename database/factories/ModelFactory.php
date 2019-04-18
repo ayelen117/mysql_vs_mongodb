@@ -85,7 +85,7 @@ $factory->defineAs(Company::class, 'mysql', function (Faker\Generator $faker) {
 	$array =  [
         'name' => $faker->company,
         'status' => 'activated',
-        'user_id' => $faker->randomElement(User::where('id', '!=', 0)->limit(100)->get()->pluck('id')->toArray()),
+        'user_id' => $faker->randomElement(User::where('id', '!=', 0)->limit(1000)->get()->pluck('id')->toArray()),
 //        'currencies' => [],  // todo: agregar relacion
         'abbreviation' => $faker->numerify('t_###'),
         'description' => $faker->sentence(5),
@@ -96,7 +96,7 @@ $factory->defineAs(Company::class, 'mysql', function (Faker\Generator $faker) {
         'phone' => $faker->phoneNumber,
         'fiscal_ws' => '',
         'fiscal_ws_status' => '',
-        'responsibility_id' => $faker->randomElement(Responsibility::where('id', '!=', 0)->limit(100)->get()->pluck('id')->toArray()),
+        'responsibility_id' => $faker->randomElement(Responsibility::where('id', '!=', 0)->limit(1000)->get()->pluck('id')->toArray()),
     ];
 
     return $array;
@@ -137,7 +137,7 @@ $factory->defineAs(Category::class, 'mysql', function (Faker\Generator $faker) {
 	
     $array =  [
         'name' => $faker->numerify('category_###'),
-        'company_id' => $faker->randomElement(Company::where('id', '!=', 0)->limit(100)->get()->pluck('id')->toArray()),
+        'company_id' => $faker->randomElement(Company::where('id', '!=', 0)->limit(1000)->get()->pluck('id')->toArray()),
         'parent_id' => null,
     ];
 
@@ -167,7 +167,7 @@ $factory->defineAs(Fiscalpos::class, 'mysql', function (Faker\Generator $faker) 
         'pos_type' => $faker->randomElement(['electronic', 'fiscal_printer', 'manual']),
         'alias' => $faker->word(),
         'status' => $faker->boolean(),
-        'company_id' => $faker->randomElement(Company::where('id', '!=', 0)->limit(100)->get()->pluck('id')->toArray()),
+        'company_id' => $faker->randomElement(Company::where('id', '!=', 0)->limit(10)->get()->pluck('id')->toArray()),
         'default' => $faker->boolean(),
         'fiscaltoken' => ''
         ];
@@ -214,11 +214,11 @@ $factory->defineAs(Product::class, 'mysql', function (Faker\Generator $faker) {
 		'duration' => 1,
 		'stock_type' => 'negative',
 		'replacement_cost' => '1',
-		'author_id' => $faker->randomElement(User::where('id', '!=', 0)->limit(100)->get()->pluck('id')->toArray()),
-		'company_id' => $faker->randomElement(Company::where('id', '!=', 0)->limit(100)->get()->pluck('id')->toArray()),
-		'category_id' => $faker->randomElement(Category::where('id', '!=', 0)->limit(100)->get()->pluck('id')->toArray()),
-		'tax_id' => $faker->randomElement(Tax::where('id', '!=', 0)->limit(100)->get()->pluck('id')->toArray()),
-		'currency_id' => $faker->randomElement(Currency::where('id', '!=', 0)->limit(100)->get()->pluck('id')->toArray()),
+		'author_id' => $faker->randomElement(User::where('id', '!=', 0)->limit(1000)->get()->pluck('id')->toArray()),
+		'company_id' => $faker->randomElement(Company::where('id', '!=', 0)->limit(1000)->get()->pluck('id')->toArray()),
+		'category_id' => $faker->randomElement(Category::where('id', '!=', 0)->limit(1000)->get()->pluck('id')->toArray()),
+		'tax_id' => $faker->randomElement(Tax::where('id', '!=', 0)->limit(1000)->get()->pluck('id')->toArray()),
+		'currency_id' => $faker->randomElement(Currency::where('id', '!=', 0)->limit(1000)->get()->pluck('id')->toArray()),
 		'stock' => $faker->numerify('##'),
 		'stock_alert' => $faker->numerify('##'),
 		'stock_desired' => $faker->numerify('##'),
@@ -279,7 +279,7 @@ $factory->defineAs(Pricelist::class, 'mysql', function (Faker\Generator $faker) 
 //
     $array =  [
         'name' => $faker->word,
-        'company_id' => $faker->randomElement(Company::where('id', '!=', 0)->limit(100)->get()->pluck('id')->toArray()),
+        'company_id' => $faker->randomElement(Company::where('id', '!=', 0)->limit(1000)->get()->pluck('id')->toArray()),
         'percent_price' => $faker->randomFloat(2, 0, 50),
         'percent_subdist' => $faker->randomFloat(2, 0, 50),
         'percent_prevent' => $faker->randomFloat(2, 0, 50),
@@ -331,8 +331,8 @@ $factory->defineAs(Entity::class, 'mysql', function (Faker\Generator $faker) {
 	
     $array = [
         'name' => $faker->firstName,
-        'company_id' => $faker->randomElement(Company::where('id', '!=', 0)->limit(100)->get()->pluck('id')->toArray()),
-        'author_id' => $faker->randomElement(User::where('id', '!=', 0)->limit(100)->get()->pluck('id')->toArray()),
+        'company_id' => $faker->randomElement(Company::where('id', '!=', 0)->limit(1000)->get()->pluck('id')->toArray()),
+        'author_id' => $faker->randomElement(User::where('id', '!=', 0)->limit(1000)->get()->pluck('id')->toArray()),
         'identification_id' => 25,
         'identification_number' => 20327936221,
         'contact_name' => $faker->firstName,
@@ -343,7 +343,7 @@ $factory->defineAs(Entity::class, 'mysql', function (Faker\Generator $faker) {
         'additional_info' => $faker->sentence(3),
         'email' => $faker->email,
         'phone' => $faker->phoneNumber,
-        'pricelist_id' => $faker->randomElement(Pricelist::where('id', '!=', 0)->limit(100)->get()->pluck('id')->toArray()),
+        'pricelist_id' => $faker->randomElement(Pricelist::where('id', '!=', 0)->limit(1000)->get()->pluck('id')->toArray()),
         'entity_type' => $faker->randomElement(['client', 'supplier', 'employee', 'creditor', 'subdist', 'seller']),
         'responsibility_id' => $faker->randomElement([1, 5, 6]),
         'observations' => $faker->sentence(),
@@ -432,12 +432,12 @@ $factory->defineAs(Document::class, 'mysql', function (Faker\Generator $faker) {
 //	$receipt_id = $receipts[array_rand($receipts, 1)]->id;
 	
     $array = [
-        'author_id' => $faker->randomElement(User::where('id', '!=', 0)->limit(100)->get()->pluck('id')->toArray()),
-        'company_id' => $faker->randomElement(Company::where('id', '!=', 0)->limit(100)->get()->pluck('id')->toArray()),
-        'entity_id' => $faker->randomElement(Entity::where('id', '!=', 0)->limit(100)->get()->pluck('id')->toArray()),
-        'seller_id' => $faker->randomElement(Entity::where('id', '!=', 0)->limit(100)->get()->pluck('id')->toArray()),
-        'currency_id' => $faker->randomElement(Currency::where('id', '!=', 0)->limit(100)->get()->pluck('id')->toArray()),
-        'receipt_id' => $faker->randomElement(Receipt::where('id', '!=', 0)->limit(100)->get()->pluck('id')->toArray()),
+        'author_id' => $faker->randomElement(User::where('id', '!=', 0)->limit(1000)->get()->pluck('id')->toArray()),
+        'company_id' => $faker->randomElement(Company::where('id', '!=', 0)->limit(1000)->get()->pluck('id')->toArray()),
+        'entity_id' => $faker->randomElement(Entity::where('id', '!=', 0)->limit(1000)->get()->pluck('id')->toArray()),
+        'seller_id' => $faker->randomElement(Entity::where('id', '!=', 0)->limit(1000)->get()->pluck('id')->toArray()),
+        'currency_id' => $faker->randomElement(Currency::where('id', '!=', 0)->limit(1000)->get()->pluck('id')->toArray()),
+        'receipt_id' => $faker->randomElement(Receipt::where('id', '!=', 0)->limit(1000)->get()->pluck('id')->toArray()),
         'section' => $faker->randomElement(['sales', 'purchases']),
         'receipt_type' => $faker->randomElement(['invoice', 'credit', 'debit', 'order_sell', 'order_buy', 'quotation', 'zeta']),
         'receipt_volume' => $faker->numerify('#'),

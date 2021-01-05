@@ -11,7 +11,7 @@
         "postinstall": "npm run production"
     },
     "devDependencies": {
-        "axios": "^0.15.3",
+        "axios": "^0.21.1",
         "bootstrap": "^3.3.7",
         "bootstrap-sass": "^3.3.7",
         "clean-webpack-plugin": "^0.1.16",
